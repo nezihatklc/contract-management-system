@@ -1,4 +1,4 @@
-package main.java.com.project.cms.service;
+package com.project.cms.service;
 
 public class UserServiceImpl {
     

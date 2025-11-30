@@ -1,4 +1,4 @@
-package main.java.com.project.cms.ui.input;
+package com.project.cms.ui.input;
 
 public class ConsolePrinter {
     

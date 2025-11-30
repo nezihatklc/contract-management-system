@@ -1,4 +1,4 @@
-package main.java.com.project.cms.app;
+package com.project.cms.app;
 
 public class ApplicationInitializer {
     

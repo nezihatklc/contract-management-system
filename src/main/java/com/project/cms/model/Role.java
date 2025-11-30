@@ -1,5 +1,8 @@
-package main.java.com.project.cms.model;
+package com.project.cms.model;
 
-public class Role {
-    
+public enum Role {
+    MANAGER,
+    SENIOR_DEVELOPER,
+    JUNIOR_DEVELOPER,
+    TESTER
 }

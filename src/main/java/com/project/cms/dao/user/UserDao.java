@@ -1,5 +1,7 @@
-package main.java.com.project.cms.dao.user;
+package com.project.cms.dao.user;
 
-public class UserDao {
-    
+import com.project.cms.model.User;
+
+public interface UserDao {
+    User findByUsername(String username);
 }

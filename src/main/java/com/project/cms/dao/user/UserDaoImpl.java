@@ -1,5 +1,3 @@
-package main.java.com.project.cms.dao.user;
+package com.project.cms.dao.user;
 
-public class UserDaoImpl {
-    
-}
+

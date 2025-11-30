@@ -1,4 +1,4 @@
-package main.java.com.project.cms.util;
+package com.project.cms.util;
 
 public class DateUtils {
     
