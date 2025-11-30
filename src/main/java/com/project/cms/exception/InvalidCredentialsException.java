@@ -1,4 +1,4 @@
-package main.java.com.project.cms.exception;
+package com.project.cms.exception;
 
 public class InvalidCredentialsException {
     

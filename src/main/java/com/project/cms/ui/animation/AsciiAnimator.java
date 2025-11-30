@@ -1,4 +1,4 @@
-package main.java.com.project.cms.ui.animation;
+package com.project.cms.ui.animation;
 
 public class AsciiAnimator {
     
