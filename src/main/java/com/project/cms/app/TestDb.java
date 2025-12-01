@@ -1,78 +1,72 @@
 package com.project.cms.app;
 
-import com.project.cms.dao.user.UserDao;
-import com.project.cms.dao.user.UserDaoImpl;
-import com.project.cms.model.Role;
-import com.project.cms.model.User;
+import com.project.cms.dao.contact.ContactDao;
+import com.project.cms.dao.contact.ContactDaoImpl;
+import com.project.cms.model.Contact;
+import com.project.cms.model.SearchCriteria;
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
 
 public class TestDb {
 
     public static void main(String[] args) {
 
-        UserDao userDao = new UserDaoImpl();
+        ContactDao dao = new ContactDaoImpl();
 
-        // -------------------------------
-        // 1) TEST: Find user by username
-        // -------------------------------
-        System.out.println("==== FIND BY USERNAME ====");
-        User u = userDao.findByUsername("tt"); // var olan bir user gir
-        System.out.println(u != null ? u.getName() + " " + u.getSurname() : "User not found");
+        System.out.println("===== DB TEST BAŞLIYOR =====");
 
-        // -------------------------------
-        // 2) TEST: Get user by ID
-        // -------------------------------
-        System.out.println("\n==== GET USER BY ID ====");
-        User u2 = userDao.getUserById(1);
-        System.out.println(u2 != null ? u2.getUsername() : "User not found");
+        // 1) ADD TEST
+        Contact c = new Contact();
+        c.setFirstName("Test");
+        c.setMiddleName("X");
+        c.setLastName("Person");
+        c.setNickname("tester123");
+        c.setCity("Istanbul");
+        c.setPhonePrimary("+905555555555");
+        c.setPhoneSecondary(null);
+        c.setEmail("test.person@example.com");
+        c.setLinkedinUrl(null);
+        c.setBirthDate(LocalDate.of(2000, 1, 1));
 
-        // -------------------------------
-        // 3) TEST: List all users
-        // -------------------------------
-        System.out.println("\n==== GET ALL USERS ====");
-        for (User usr : userDao.getAllUsers()) {
-            System.out.println(usr.getUserId() + " - " + usr.getUsername());
-        }
+        System.out.println("→ addContact() deniyoruz...");
+        dao.addContact(c);
+        System.out.println("✓ Contact başarıyla eklendi.");
 
-        // -------------------------------
-        // 4) TEST: Add new user
-        // -------------------------------
-        System.out.println("\n==== ADD NEW USER ====");
-        User newUser = new User();
-        newUser.setUsername("newuser123");
-        newUser.setPasswordHash("pass123");
-        newUser.setName("Yeni");
-        newUser.setSurname("Kullanici");
-        newUser.setPhone("00000000000");
-        newUser.setBirthDate(LocalDate.of(2000, 1, 1));
-        newUser.setRole(Role.TESTER);
+        // 2) FIND ALL
+        System.out.println("\n→ findAll() sonucu:");
+        List<Contact> all = dao.findAll();
+        all.forEach(System.out::println);
 
-        userDao.addUser(newUser);
-        System.out.println("New user added!");
+        // 3) FIND BY ID
+        System.out.println("\n→ findById(1) sonucu:");
+        Contact byId = dao.findById(1);
+        System.out.println(byId);
 
-        // -------------------------------
-        // 5) TEST: Update user
-        // -------------------------------
-        System.out.println("\n==== UPDATE USER ====");
-        User toUpdate = userDao.findByUsername("newuser123");
-        if (toUpdate != null) {
-            toUpdate.setName("Guncel");
-            toUpdate.setSurname("Isim");
-            toUpdate.setPhone("11111111111");
-            toUpdate.setRole(Role.JUNIOR_DEVELOPER);
+        // 4) SEARCH TEST
+        System.out.println("\n→ search() sonucu:");
+        SearchCriteria criteria = new SearchCriteria();
+        criteria.add("first_name", "Ahmet");
+        criteria.add("city", "İstanbul");
 
-            userDao.updateUser(toUpdate);
-            System.out.println("User updated!");
-        }
+        List<Contact> searchResults = dao.search(criteria);
+        searchResults.forEach(System.out::println);
 
-        // -------------------------------
-        // 6) TEST: Delete user
-        // -------------------------------
-        System.out.println("\n==== DELETE USER ====");
-        User toDelete = userDao.findByUsername("newuser123");
-        if (toDelete != null) {
-            userDao.deleteUser(toDelete.getUserId());
-            System.out.println("User deleted!");
-        }
+        // 5) SORT TEST
+        System.out.println("\n→ findAllSorted('first_name', true) sonucu:");
+        List<Contact> sorted = dao.findAllSorted("first_name", true);
+        sorted.forEach(System.out::println);
+
+        // 6) DELETE SINGLE
+        System.out.println("\n→ deleteContactById(1) deniyoruz...");
+        dao.deleteContactById(1);
+        System.out.println("✓ Contact ID 1 silindi.");
+
+        // 7) DELETE MULTIPLE
+        System.out.println("\n→ deleteContactsByIds(Arrays.asList(2,3)) deniyoruz...");
+        dao.deleteContactsByIds(Arrays.asList(2, 3));
+        System.out.println("✓ Contact ID 2 ve 3 silindi.");
+
+        System.out.println("\n===== TEST BİTTİ =====");
     }
 }
