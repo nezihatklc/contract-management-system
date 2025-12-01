@@ -1,6 +1,6 @@
 package com.project.cms.dao.user;
 
-import com.project.cms.model.Role;
+import com.project.cms.model.RoleType;
 import com.project.cms.model.User;
 import com.project.cms.util.DbConnection;
 import java.sql.*;
@@ -207,7 +207,7 @@ public class UserDaoImpl implements UserDao{
 
         String roleStr = rs.getString("role");
         if (roleStr != null) {
-            user.setRole(Role.valueOf(roleStr));
+            user.setRole(RoleType.valueOf(roleStr));
         }
 
         Timestamp createdAtTs = rs.getTimestamp("created_at");
