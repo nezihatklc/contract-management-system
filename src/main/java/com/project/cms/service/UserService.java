@@ -10,19 +10,22 @@ public interface UserService {
 
     /* Called when the user tries to log in. */
     User login(String userName, String passwordPlain)
-    throws InvalidCredentialsException, UserNotFoundException;
+            throws InvalidCredentialsException, UserNotFoundException;
 
     /* The user logged into the system updates own password. */
     void changePassword(int userId, String oldPlain, String newPlain)
-    throws ValidationException, InvalidCredentialsException;
+            throws ValidationException, InvalidCredentialsException;
 
     /* For Manager: Adding a new user */
-    User createUser(User user) throws ValidationException;
+    User createUser(User user) 
+            throws ValidationException;
 
     /* For Manager: User update */
-    void updateUser(User user) throws ValidationException, UserNotFoundException;
+    void updateUser(User user) 
+            throws ValidationException, UserNotFoundException;
 
     /*For Manager: Delete User */
-    void deletUser(int userId) throws UserNotFoundException;
+    void deletUser(int userId) 
+            throws UserNotFoundException;
     
 }

@@ -17,7 +17,7 @@ public class UserServiceImpl implements UserService  {
 
     @Override
     public User login(String userName, String passwordPlain)
-    throws InvalidCredentialsException, UserNotFoundException{
+            throws InvalidCredentialsException, UserNotFoundException{
 
         User user = userDao.findByUsername(userName);
         if(user==null){
@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService  {
 
     @Override
     public void changePassword(int userId, String oldPlain, String newPlain)
-    throws ValidationException, InvalidCredentialsException{
+            throws ValidationException, InvalidCredentialsException{
 
         User user = userDao.findById(userId);
         if(user==null){
