@@ -58,6 +58,20 @@ public class Contact {
 
     @Override
     public String toString() {
-        return firstName + " " + lastName + " (" + phonePrimary + ")";
+        return "Contact {" +
+                "id=" + contactId +
+                ", firstName='" + firstName + '\'' +
+                ", middleName='" + middleName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", nickname='" + nickname + '\'' +
+                ", city='" + city + '\'' +
+                ", phonePrimary='" + phonePrimary + '\'' +
+                ", phoneSecondary='" + phoneSecondary + '\'' +
+                ", email='" + email + '\'' +
+                ", linkedinUrl='" + linkedinUrl + '\'' +
+                ", birthDate=" + birthDate +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
     }
 }
