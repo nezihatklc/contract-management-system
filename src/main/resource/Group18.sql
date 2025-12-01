@@ -26,6 +26,11 @@ VALUES
 ('sd',  'sd',  'Senior',  'Dev',      '+905553334455', '1995-07-22', 'SENIOR_DEVELOPER'),
 ('man', 'man', 'Project', 'Manager',  '+905554445566', '1990-03-05', 'MANAGER');
 
+-- Updated user names (Team Sync)
+UPDATE users SET name='Nezihat', surname='Kılıç' WHERE user_id=1;
+UPDATE users SET name='Pelin', surname='Cömertler' WHERE user_id=2;
+UPDATE users SET name='Simay', surname='Mutlu' WHERE user_id=3;
+UPDATE users SET name='Sıla', surname='Şimşek' WHERE user_id=4;
 
 CREATE TABLE contacts (
     contact_id INT AUTO_INCREMENT PRIMARY KEY,

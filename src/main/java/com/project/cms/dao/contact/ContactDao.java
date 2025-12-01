@@ -1,5 +1,32 @@
 package com.project.cms.dao.contact;
 
-public class ContactDao {
+import com.project.cms.model.Contact;
+import com.project.cms.model.SearchCriteria;
+import java.util.List;
+
+public interface ContactDao {
+
+     // CREATE
+    void addContact(Contact contact);
+    void addContacts(List<Contact> contacts);
+
+    // READ
+    Contact findById(int id);
+    List<Contact> findAll();
+
+    // UPDATE
+    void updateContact(Contact contact);
+
+    // DELETE (single)
+    void deleteContactById(int id);
+
+    // DELETE (multiple)
+    void deleteContactsByIds(List<Integer> ids);
+
+    // SEARCH (single + multi field)
+    List<Contact> search(SearchCriteria criteria);
+
+    // SORT
+    List<Contact> findAllSorted(String field, boolean ascending);
     
 }
