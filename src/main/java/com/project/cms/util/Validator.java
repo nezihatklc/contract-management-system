@@ -1,5 +1,7 @@
 package com.project.cms.util;
 
+
+
 import com.project.cms.model.Contact;
 import com.project.cms.model.User;
 import com.project.cms.exception.ValidationException;
@@ -82,3 +84,11 @@ public class Validator {
         return str == null || str.trim().isEmpty();
     }
 }
+
+
+
+
+
+
+
+
