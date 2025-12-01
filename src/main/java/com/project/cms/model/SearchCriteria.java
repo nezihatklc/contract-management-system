@@ -7,7 +7,7 @@ public class SearchCriteria {
     
     private Map<String, String> criteria = new HashMap<>();
 
-    // İSMİNİ "addCriterion" YERİNE "add" YAPTIK:
+    // fixed as "add" :
     public void add(String field, String value) {
         if (value != null && !value.trim().isEmpty()) {
             criteria.put(field, value);
