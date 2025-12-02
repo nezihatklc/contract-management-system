@@ -377,9 +377,5 @@ public class AsciiAnimator {
         sleep(1500);
     }
 
-    // Test main
-    public static void main(String[] args) {
-        showWelcome();
-        showGoodbye();
-    }
+   
 }
