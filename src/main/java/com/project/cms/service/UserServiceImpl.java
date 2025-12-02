@@ -2,8 +2,13 @@ package com.project.cms.service;
 
 import com.project.cms.dao.user.UserDao;
 import com.project.cms.dao.user.UserDaoImpl;
+
+import com.project.cms.exception.AppExceptions.InvalidCredentialsException;
+import com.project.cms.exception.AppExceptions.UserNotFoundException;
 import com.project.cms.exception.AppExceptions.ValidationException;
+
 import com.project.cms.model.User;
+import com.project.cms.model.role.RolePermissions;
 import com.project.cms.util.PasswordHasher;
 import com.project.cms.util.Validator;
 
@@ -11,31 +16,32 @@ public class UserServiceImpl implements UserService {
 
     private final UserDao userDao = new UserDaoImpl();
 
-    /* LOGIN */
+    /*  LOGIN */
     @Override
-    public User login(String username, String password) throws ValidationException {
+    public User login(String username, String password)
+            throws InvalidCredentialsException, UserNotFoundException {
 
         User user = userDao.findByUsername(username);
         if (user == null)
-            throw new ValidationException("User not found.");
+            throw new UserNotFoundException("User not found.");
 
         if (!PasswordHasher.verifyPassword(password, user.getPasswordHash()))
-            throw new ValidationException("Invalid password.");
+            throw new InvalidCredentialsException("Invalid password.");
 
         return user;
     }
 
-    /* CHANGE PASSWORD */
+    /*  CHANGE PASSWORD */
     @Override
     public void changePassword(int userId, String oldPass, String newPass)
-            throws ValidationException {
+            throws ValidationException, InvalidCredentialsException {
 
         User user = userDao.getUserById(userId);
         if (user == null)
             throw new ValidationException("User not found.");
 
         if (!PasswordHasher.verifyPassword(oldPass, user.getPasswordHash()))
-            throw new ValidationException("Old password is incorrect.");
+            throw new InvalidCredentialsException("Old password is incorrect.");
 
         if (!Validator.isValidPassword(newPass))
             throw new ValidationException("Weak password.");
@@ -44,41 +50,52 @@ public class UserServiceImpl implements UserService {
         userDao.updatePassword(userId, hashed);
     }
 
-    /* GET ALL USERS */
+    /* GET ROLE PERMISSIONS */
     @Override
-    public java.util.List<User> getAllUsers() {
-        return userDao.getAllUsers();
+    public RolePermissions getPermissionsFor(User user) {
+        if (user == null || user.getRole() == null)
+            throw new IllegalArgumentException("User or role cannot be null.");
+        return user.getRole().createPermissions();
     }
 
-    /* CREATE USER (Manager will handle permissions externally) */
+    /*  MANAGER: CREATE USER  */
     @Override
-    public void addUser(User user) throws ValidationException {
+    public User createUser(User user)
+            throws ValidationException {
 
-        if (!Validator.isValidUsername(user.getUsername()))
-            throw new ValidationException("Invalid username.");
-
-        if (!Validator.isValidPassword(user.getPasswordHash()))
-            throw new ValidationException("Invalid password.");
+        // Validate fields (username, name, etc.)
+        Validator.validateUser(user);
 
         // Hash password before saving
         user.setPasswordHash(PasswordHasher.hashPassword(user.getPasswordHash()));
-
+        
         userDao.addUser(user);
-    }
+        return user;
+     }
 
-    /* UPDATE USER */
+    /* MANAGER: UPDATE USER */
     @Override
-    public void updateUser(User user) throws ValidationException {
+    public void updateUser(User user)
+            throws ValidationException, UserNotFoundException {
 
-        if (!Validator.isValidUsername(user.getUsername()))
-            throw new ValidationException("Invalid username.");
+        User existing = userDao.getUserById(user.getUserId());
+        if (existing == null)
+            throw new UserNotFoundException("User not found.");
+
+        Validator.validateUser(user);
 
         userDao.updateUser(user);
     }
 
-    /* DELETE USER */
+    /* MANAGER: DELETE USER  */
     @Override
-    public void deleteUser(int userId) {
+    public void deleteUser(int userId)
+            throws UserNotFoundException {
+
+        User existing = userDao.getUserById(userId);
+        if (existing == null)
+            throw new UserNotFoundException("User not found.");
+
         userDao.deleteUser(userId);
     }
 }

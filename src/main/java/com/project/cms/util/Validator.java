@@ -70,6 +70,23 @@ public class Validator {
     }
 
     /* ------------------------------------------------------
+   PASSWORD VALIDATION  
+   ------------------------------------------------------ */
+     public static boolean isValidPassword(String password) {
+
+    // Cannot be null or empty
+         if (password == null || password.trim().isEmpty())
+            return false;
+
+    // Minimum 4 characters
+         if (password.length() < 4)
+            return false;
+
+    
+    return true;
+}
+
+    /* ------------------------------------------------------
        EMAIL VALIDATION 
        ------------------------------------------------------ */
     public static void validateEmail(String email) throws ValidationException {
