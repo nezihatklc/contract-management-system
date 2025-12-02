@@ -1,6 +1,6 @@
-package main.java.com.project.cms.ui.input;
+package com.project.cms.ui.input;
 
-import main.java.com.project.cms.util.ConsoleColors;
+import com.project.cms.util.ConsoleColors;
 
 public class ConsolePrinter {
 

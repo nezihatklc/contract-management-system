@@ -1,8 +1,5 @@
 package com.project.cms.util;
 
-import com.project.cms.ui.input.ConsolePrinter;
-import com.project.cms.ui.util.ConsoleColors;
-
 import java.util.List;
 
 
@@ -54,7 +51,7 @@ public class ConsoleTable {
             String cell = row.get(i);
 
             String content = " "
-                    + (isHeader ? ConsoleColors.BOLD : "")
+                    + (isHeader ? ConsoleColors.BLUE_BOLD : "")
                     + ConsoleColors.GREEN
                     + cell
                     + ConsoleColors.RESET
@@ -73,4 +70,4 @@ public class ConsoleTable {
 
 
     
-}
+

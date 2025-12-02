@@ -1,9 +1,6 @@
-package main.java.com.project.cms.ui.input;
+package com.project.cms.ui.input;
 
-    
-import main.java.com.project.cms.ui.input.ConsolePrinter;
-import main.java.com.project.cms.util.ConsoleColors;
-
+import com.project.cms.util.ConsoleColors;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
