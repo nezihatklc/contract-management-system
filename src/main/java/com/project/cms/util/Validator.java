@@ -1,50 +1,41 @@
 package com.project.cms.util;
 
-
-
+import com.project.cms.exception.ValidationException;
 import com.project.cms.model.Contact;
 import com.project.cms.model.User;
-import com.project.cms.exception.ValidationException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.regex.Pattern;
 
 /**
- * Utility class performing data validation operations throughout the application.
- * <p>
- * Checks whether incoming data complies with business rules (e.g., email format, mandatory fields).
+ * Utility class for validating data integrity.
+ * Ensures that Contacts and Users meet business rules before persistence.
  */
 public class Validator {
 
-    // Regex: Basic email format check
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
-    // Regex: Checks if the string contains only digits
-    private static final Pattern PHONE_PATTERN = Pattern.compile("^\\d+$");
+    // Supports formats like: +905551234567, 05551234567, 5551234567
+    private static final Pattern PHONE_PATTERN = Pattern.compile("^(\\+90|0)?5\\d{9}$");
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-    /**
-     * Validates all fields of a Contact object.
-     * @param contact The contact object to validate.
-     * @throws ValidationException Thrown if mandatory fields are missing or formats are invalid.
-     */
     public static void validateContact(Contact contact) throws ValidationException {
         if (contact == null) throw new ValidationException("Contact object cannot be null.");
 
-        // Check mandatory fields
         if (isEmpty(contact.getFirstName())) throw new ValidationException("First name cannot be empty.");
         if (isEmpty(contact.getLastName())) throw new ValidationException("Last name cannot be empty.");
         
-        // Check phone format
-        validatePhone(contact.getPhonePrimary());
+        validatePhone(contact.getPhone());
 
-        // Check email format if it exists
         if (!isEmpty(contact.getEmail())) {
             validateEmail(contact.getEmail());
         }
+        
+        if (contact.getBirthDate() != null && contact.getBirthDate().isAfter(LocalDate.now())) {
+             throw new ValidationException("Birth date cannot be in the future.");
+        }
     }
 
-    /**
-     * Validates User object (For creating new system users).
-     * @param user The user object to validate.
-     * @throws ValidationException Thrown if mandatory fields are missing.
-     */
     public static void validateUser(User user) throws ValidationException {
         if (user == null) throw new ValidationException("User object cannot be null.");
 
@@ -52,43 +43,35 @@ public class Validator {
         if (isEmpty(user.getName())) throw new ValidationException("Name cannot be empty.");
         if (isEmpty(user.getSurname())) throw new ValidationException("Surname cannot be empty.");
         
-        // Role check
         if (user.getRole() == null) throw new ValidationException("User role must be selected.");
     }
 
-    /**
-     * Validates the format of a phone number.
-     * @param phone The phone number string.
-     * @throws ValidationException Thrown if the phone is empty or contains non-digit characters.
-     */
     public static void validatePhone(String phone) throws ValidationException {
         if (isEmpty(phone)) throw new ValidationException("Phone number is mandatory.");
-        if (!PHONE_PATTERN.matcher(phone).matches()) {
-            throw new ValidationException("Phone number must consist of digits only.");
+        // Remove spaces and dashes for validation
+        String cleanPhone = phone.replaceAll("[\\s-]", "");
+        if (!PHONE_PATTERN.matcher(cleanPhone).matches()) {
+            throw new ValidationException("Invalid phone number format. Use +90555xxxxxxx or 0555xxxxxxx.");
         }
     }
 
-    /**
-     * Validates the format of an email address.
-     * @param email The email address string.
-     * @throws ValidationException Thrown if the format is invalid.
-     */
     public static void validateEmail(String email) throws ValidationException {
         if (!EMAIL_PATTERN.matcher(email).matches()) {
             throw new ValidationException("Invalid email format.");
         }
     }
+    
+    public static boolean isValidDate(String dateStr) {
+        if (dateStr == null || dateStr.trim().isEmpty()) return false;
+        try {
+            LocalDate date = LocalDate.parse(dateStr, DATE_FORMATTER);
+            return !date.isAfter(LocalDate.now());
+        } catch (DateTimeParseException e) {
+            return false;
+        }
+    }
 
-    // Helper method: Checks if a string is null or empty
     private static boolean isEmpty(String str) {
         return str == null || str.trim().isEmpty();
     }
 }
-
-
-
-
-
-
-
-

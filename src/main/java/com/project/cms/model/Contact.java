@@ -43,16 +43,15 @@ public class Contact {
 
     // === SETTER METHODS (DAO ile Uyumlu) ===
     public void setContactId(int contactId) { this.contactId = contactId; }
-    public void setFirstName(String firstName) { this.firstName = firstName; }
     public void setMiddleName(String middleName) { this.middleName = middleName; }
-    public void setLastName(String lastName) { this.lastName = lastName; }
     public void setNickname(String nickname) { this.nickname = nickname; }
     public void setCity(String city) { this.city = city; }
-    public void setPhonePrimary(String phonePrimary) { this.phonePrimary = phonePrimary; }
+    
+
+    
     public void setPhoneSecondary(String phoneSecondary) { this.phoneSecondary = phoneSecondary; }
     public void setEmail(String email) { this.email = email; }
     public void setLinkedinUrl(String linkedinUrl) { this.linkedinUrl = linkedinUrl; }
-    public void setBirthDate(LocalDate birthDate) { this.birthDate = birthDate; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 
@@ -60,16 +59,16 @@ public class Contact {
     public String toString() {
         return "Contact {" +
                 "id=" + contactId +
-                ", firstName='" + firstName + '\'' +
+                ", firstName='" + getFirstName() + '\'' +
                 ", middleName='" + middleName + '\'' +
-                ", lastName='" + lastName + '\'' +
+                ", lastName='" + getLastName() + '\'' +
                 ", nickname='" + nickname + '\'' +
                 ", city='" + city + '\'' +
-                ", phonePrimary='" + phonePrimary + '\'' +
+                ", phone='" + getPhone() + '\'' +
                 ", phoneSecondary='" + phoneSecondary + '\'' +
                 ", email='" + email + '\'' +
                 ", linkedinUrl='" + linkedinUrl + '\'' +
-                ", birthDate=" + birthDate +
+                ", birthDate=" + getBirthDate() +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';
