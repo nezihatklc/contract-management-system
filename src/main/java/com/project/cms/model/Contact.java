@@ -3,10 +3,6 @@ package com.project.cms.model;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-/**
- * Represents a Contact entity in the system.
- * Compatible with ContactDaoImpl methods.
- */
 public class Contact {
 
     private int contactId;
@@ -23,10 +19,9 @@ public class Contact {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public Contact() {
-    }
+    public Contact() {}
 
-    // === GETTER METHODS ===
+    // === GETTERS ===
     public int getContactId() { return contactId; }
     public String getFirstName() { return firstName; }
     public String getMiddleName() { return middleName; }
@@ -41,17 +36,18 @@ public class Contact {
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
 
-    // === SETTER METHODS  ===
+    // === SETTERS ===
     public void setContactId(int contactId) { this.contactId = contactId; }
+    public void setFirstName(String firstName) { this.firstName = firstName; }
     public void setMiddleName(String middleName) { this.middleName = middleName; }
+    public void setLastName(String lastName) { this.lastName = lastName; }
     public void setNickname(String nickname) { this.nickname = nickname; }
     public void setCity(String city) { this.city = city; }
-    
-
-    
+    public void setPhonePrimary(String phonePrimary) { this.phonePrimary = phonePrimary; }
     public void setPhoneSecondary(String phoneSecondary) { this.phoneSecondary = phoneSecondary; }
     public void setEmail(String email) { this.email = email; }
     public void setLinkedinUrl(String linkedinUrl) { this.linkedinUrl = linkedinUrl; }
+    public void setBirthDate(LocalDate birthDate) { this.birthDate = birthDate; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 
@@ -59,16 +55,16 @@ public class Contact {
     public String toString() {
         return "Contact {" +
                 "id=" + contactId +
-                ", firstName='" + getFirstName() + '\'' +
+                ", firstName='" + firstName + '\'' +
                 ", middleName='" + middleName + '\'' +
-                ", lastName='" + getLastName() + '\'' +
+                ", lastName='" + lastName + '\'' +
                 ", nickname='" + nickname + '\'' +
                 ", city='" + city + '\'' +
-                ", phone='" + getPhone() + '\'' +
+                ", phonePrimary='" + phonePrimary + '\'' +
                 ", phoneSecondary='" + phoneSecondary + '\'' +
                 ", email='" + email + '\'' +
                 ", linkedinUrl='" + linkedinUrl + '\'' +
-                ", birthDate=" + getBirthDate() +
+                ", birthDate=" + birthDate +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';
