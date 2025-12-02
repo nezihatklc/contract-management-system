@@ -1,77 +1,117 @@
 package com.project.cms.util;
 
-import com.project.cms.exception.ValidationException;
+import com.project.cms.exception.AppExceptions.ValidationException;
 import com.project.cms.model.Contact;
 import com.project.cms.model.User;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.util.regex.Pattern;
 
-/**
- * Utility class for validating data integrity.
- * Ensures that Contacts and Users meet business rules before persistence.
- */
 public class Validator {
 
-    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
-    // Supports formats like: +905551234567, 05551234567, 5551234567
-    private static final Pattern PHONE_PATTERN = Pattern.compile("^(\\+90|0)?5\\d{9}$");
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    /* ------------------------------------------------------
+       CONTACT VALIDATION  
+       ------------------------------------------------------ */
+    public static void validateContact(Contact c) throws ValidationException {
 
-    public static void validateContact(Contact contact) throws ValidationException {
-        if (contact == null) throw new ValidationException("Contact object cannot be null.");
+        if (c == null)
+            throw new ValidationException("Contact cannot be null.");
 
-        if (isEmpty(contact.getFirstName())) throw new ValidationException("First name cannot be empty.");
-        if (isEmpty(contact.getLastName())) throw new ValidationException("Last name cannot be empty.");
-        
-        validatePhone(contact.getPhone());
+        if (isEmpty(c.getFirstName()))
+            throw new ValidationException("First name is required.");
 
-        if (!isEmpty(contact.getEmail())) {
-            validateEmail(contact.getEmail());
-        }
-        
-        if (contact.getBirthDate() != null && contact.getBirthDate().isAfter(LocalDate.now())) {
-             throw new ValidationException("Birth date cannot be in the future.");
-        }
+        if (isEmpty(c.getLastName()))
+            throw new ValidationException("Last name is required.");
+
+        if (isEmpty(c.getNickname()))
+            throw new ValidationException("Nickname is required.");
+
+        if (isEmpty(c.getCity()))
+            throw new ValidationException("City is required.");
+
+        if (isEmpty(c.getPhonePrimary()))
+            throw new ValidationException("Primary phone is required.");
+        validatePhone(c.getPhonePrimary());
+
+        if (isEmpty(c.getEmail()))
+            throw new ValidationException("Email is required.");
+        validateEmail(c.getEmail());
+
+        if (c.getBirthDate() != null &&
+                c.getBirthDate().isAfter(LocalDate.now()))
+            throw new ValidationException("Birth date cannot be in the future.");
     }
 
-    public static void validateUser(User user) throws ValidationException {
-        if (user == null) throw new ValidationException("User object cannot be null.");
+    /* ------------------------------------------------------
+       USER VALIDATION  
+       ------------------------------------------------------ */
+    public static void validateUser(User u) throws ValidationException {
 
-        if (isEmpty(user.getUsername())) throw new ValidationException("Username cannot be empty.");
-        if (isEmpty(user.getName())) throw new ValidationException("Name cannot be empty.");
-        if (isEmpty(user.getSurname())) throw new ValidationException("Surname cannot be empty.");
-        
-        if (user.getRole() == null) throw new ValidationException("User role must be selected.");
+        if (u == null)
+            throw new ValidationException("User cannot be null.");
+
+        if (isEmpty(u.getUsername()))
+            throw new ValidationException("Username is required.");
+
+        if (isEmpty(u.getPasswordHash()))
+            throw new ValidationException("Password hash is required.");
+
+        if (isEmpty(u.getName()))
+            throw new ValidationException("Name is required.");
+
+        if (isEmpty(u.getSurname()))
+            throw new ValidationException("Surname is required.");
+
+        if (u.getRole() == null)
+            throw new ValidationException("User role is required.");
+
+        if (u.getBirthDate() != null &&
+                u.getBirthDate().isAfter(LocalDate.now()))
+            throw new ValidationException("Birth date cannot be in the future.");
     }
 
-    public static void validatePhone(String phone) throws ValidationException {
-        if (isEmpty(phone)) throw new ValidationException("Phone number is mandatory.");
-        // Remove spaces and dashes for validation
-        String cleanPhone = phone.replaceAll("[\\s-]", "");
-        if (!PHONE_PATTERN.matcher(cleanPhone).matches()) {
-            throw new ValidationException("Invalid phone number format. Use +90555xxxxxxx or 0555xxxxxxx.");
-        }
-    }
-
+    /* ------------------------------------------------------
+       EMAIL VALIDATION 
+       ------------------------------------------------------ */
     public static void validateEmail(String email) throws ValidationException {
-        if (!EMAIL_PATTERN.matcher(email).matches()) {
+
+        if (email == null)
+            throw new ValidationException("Email is required.");
+
+        int at = email.indexOf("@");
+
+        // email: something@something
+        if (at <= 0 || at == email.length() - 1)
             throw new ValidationException("Invalid email format.");
-        }
-    }
-    
-    public static boolean isValidDate(String dateStr) {
-        if (dateStr == null || dateStr.trim().isEmpty()) return false;
-        try {
-            LocalDate date = LocalDate.parse(dateStr, DATE_FORMATTER);
-            return !date.isAfter(LocalDate.now());
-        } catch (DateTimeParseException e) {
-            return false;
-        }
     }
 
-    private static boolean isEmpty(String str) {
-        return str == null || str.trim().isEmpty();
+    /* ------------------------------------------------------
+       PHONE VALIDATION 
+       ------------------------------------------------------ */
+    public static void validatePhone(String phone) throws ValidationException {
+
+        if (phone == null || phone.trim().isEmpty())
+            throw new ValidationException("Phone number is required.");
+
+        String p = phone.replaceAll("[\\s-]", "");
+
+        // +90 5xxxxxxxxx → 13 character
+        if (p.startsWith("+90") && p.length() == 13 && p.charAt(3) == '5')
+            return;
+
+        // 0 5xxxxxxxxx → 12 character
+        if (p.startsWith("0") && p.length() == 11 && p.charAt(1) == '5')
+            return;
+
+        // 5xxxxxxxxx → 10 character
+        if (p.length() == 10 && p.charAt(0) == '5')
+            return;
+
+        throw new ValidationException("Invalid phone number format.");
+    }
+
+    /* ------------------------------------------------------
+       HELPER
+       ------------------------------------------------------ */
+    private static boolean isEmpty(String s) {
+        return s == null || s.trim().isEmpty();
     }
 }

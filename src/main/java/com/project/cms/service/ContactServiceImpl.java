@@ -29,7 +29,7 @@ public class ContactServiceImpl implements ContactService {
 
     @Override
     public Contact createContact(Contact contact, User performingUser)
-            throws ValidationException {
+            throws ValidationException, AccessDeniedException {
 
         // Only Senior Dev allowed
         RolePermissions perm = userService.getPermissionsFor(performingUser);
@@ -39,10 +39,11 @@ public class ContactServiceImpl implements ContactService {
             throw new AccessDeniedException("Only Senior Developer can add contacts.");
         }
 
-        if (!Validator.isValidName(contact.getFirstName()))
-            throw new ValidationException("Invalid first name.");
+        // Validate whole contact
+        Validator.validateContact(contact);
 
-        Contact saved = contactDao.save(contact);
+        // Save contact
+        Contact saved = contactDao.;
 
         // Undo record
         UndoAction action = new UndoAction(
@@ -59,7 +60,7 @@ public class ContactServiceImpl implements ContactService {
 
     @Override
     public void updateContact(Contact contact, User performingUser)
-            throws ValidationException, ContactNotFoundException {
+            throws ValidationException, ContactNotFoundException, AccessDeniedException {
 
         // Junior + Senior allowed
         RolePermissions perm = userService.getPermissionsFor(performingUser);
@@ -69,11 +70,15 @@ public class ContactServiceImpl implements ContactService {
             throw new AccessDeniedException("Only Junior/Senior can update contacts.");
         }
 
-        Contact old = contactDao.findById(contact.getId());
+        Contact old = contactDao.findById(contact.getContactId());
         if (old == null)
             throw new ContactNotFoundException("Contact not found.");
 
-        contactDao.update(contact);
+        // Validate updated contact
+        Validator.validateContact(contact);
+
+        // Apply update
+        contactDao.updateContact(contact);;
 
         // Undo record
         UndoAction action = new UndoAction(
@@ -88,7 +93,7 @@ public class ContactServiceImpl implements ContactService {
 
     @Override
     public void deleteContact(int contactId, User performingUser)
-            throws ContactNotFoundException {
+            throws ContactNotFoundException, AccessDeniedException {
 
         // Senior allowed only
         RolePermissions perm = userService.getPermissionsFor(performingUser);
@@ -102,7 +107,7 @@ public class ContactServiceImpl implements ContactService {
         if (old == null)
             throw new ContactNotFoundException("Contact not found.");
 
-        contactDao.delete(contactId);
+        contactDao.deleteContactById(contactId);;
 
         // Undo record
         UndoAction action = new UndoAction(
@@ -126,7 +131,7 @@ public class ContactServiceImpl implements ContactService {
         return contact;
     }
 
-    /*  LIST BY USER */
+     /* LIST BY USER */
 
     @Override
     public List<Contact> getContactsByUser(int userId) {
@@ -137,6 +142,6 @@ public class ContactServiceImpl implements ContactService {
 
     @Override
     public List<Contact> searchContacts(int userId, String keyword) {
-        return contactDao.search(userId, keyword);
+        return contactDao.search(userId, keyword);;
     }
 }
