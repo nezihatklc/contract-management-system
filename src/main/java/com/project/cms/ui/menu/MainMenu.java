@@ -1,13 +1,13 @@
 package com.project.cms.ui.menu;
 
 import com.project.cms.model.User;
-import com.project.cms.model.Role;
+import com.project.cms.model.RoleType;
 import com.project.cms.service.UserService;
 import com.project.cms.service.ContactService;
 import com.project.cms.service.StatisticsService;
+
 import com.project.cms.ui.input.InputHandler;
 import com.project.cms.ui.input.ConsolePrinter;
-import com.project.cms.util.ValidationMessages;
 
 public class MainMenu {
 
@@ -31,29 +31,36 @@ public class MainMenu {
         while (running) {
 
             ConsolePrinter.spacing(1);
-            ConsolePrinter.headline("Login to system ");
-            ConsolePrinter.subTitle("Please enter your user informations: ");
+            ConsolePrinter.headline("Login to System");
+            ConsolePrinter.subTitle("Please enter your user information:");
 
-            ConsolePrinter.menuOption(0, "Exit Application ");
-            ConsolePrinter.menuOption(-1, ""); 
+            ConsolePrinter.menuOption(0, "Exit Application");
+            ConsolePrinter.menuOption(-1, "");
 
+            // ===== USERNAME INPUT =====
             String username = InputHandler.readString("Username", true);
 
-            // Exit option
+            // EXIT OPTION
             if (username.equals("0")) {
                 running = false;
                 ConsolePrinter.info("Exiting the application...");
                 break;
             }
 
-            // Basic username validation
             if (username.trim().isEmpty()) {
-                ConsolePrinter.error(ValidationMessages.INPUT_REQUIRED);
+                ConsolePrinter.error("Input cannot be empty.");
                 continue;
             }
 
+            // ===== PASSWORD INPUT =====
             String password = InputHandler.readPassword("Password");
 
+            if (password == null || password.trim().isEmpty()) {
+                ConsolePrinter.error("Input cannot be empty.");
+                continue;
+            }
+
+            // ===== LOGIN PROCESS =====
             User loggedInUser = null;
 
             try {
@@ -64,22 +71,29 @@ public class MainMenu {
             }
 
             if (loggedInUser == null) {
-                ConsolePrinter.error(ValidationMessages.USER_CREDENTIALS_INVALID);
+                ConsolePrinter.error("Invalid username or password.");
                 continue;
             }
 
-            ConsolePrinter.success("Login Successful, Welcome, " 
-                                    + loggedInUser.getName() 
-                                    + " " 
-                                    + loggedInUser.getSurname());
+            ConsolePrinter.success(
+                    "Login Successful! Welcome, "
+                            + loggedInUser.getName()
+                            + " "
+                            + loggedInUser.getSurname()
+            );
 
             redirectToRoleMenu(loggedInUser);
         }
     }
 
+    // ============================================
+    // ===== ROLE REDIRECTION SECTION ============
+    // ============================================
+
     private void redirectToRoleMenu(User user) {
 
-        Role role = user.getRole();
+        RoleType role = user.getRole();
+
         ConsolePrinter.spacing(1);
         ConsolePrinter.subTitle("Role: " + role.name());
 
@@ -89,11 +103,11 @@ public class MainMenu {
                 new TesterMenu(user, contactService, userService).start();
                 break;
 
-            case JUNIOR_DEV:
+            case JUNIOR_DEVELOPER:
                 new JuniorDevMenu(user, contactService, userService).start();
                 break;
 
-            case SENIOR_DEV:
+            case SENIOR_DEVELOPER:
                 new SeniorDevMenu(user, contactService, userService).start();
                 break;
 
