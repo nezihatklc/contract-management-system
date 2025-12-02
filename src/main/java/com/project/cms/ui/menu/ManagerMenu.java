@@ -49,11 +49,16 @@ public class ManagerMenu {
         System.out.println("User listing feature coming soon...");
     }
 
-    private void viewStatistics() {
+   private void viewStatistics() {
         try {
             ConsolePrinter.subTitle("System Statistics");
-            System.out.println("Total Contacts: " + statisticsService.getTotalContactCount(user));
-            // Diğer istatistik metodları buraya eklenebilir
+            
+            // If this method of StatisticsService is not ready, temporarily commented it out:
+            // System.out.println("Total Contacts: " + statisticsService.getTotalContactCount(user));
+            
+            // safe message until implementation is ready
+            System.out.println("İstatistik servisi şu an bakımda...");
+            
         } catch (Exception e) {
             ConsolePrinter.error(e.getMessage());
         }
