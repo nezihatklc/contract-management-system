@@ -1,23 +1,57 @@
 package com.project.cms.util;
 
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.util.Base64;
 
 public class PasswordHasher {
-    
-    public static String hash(String password) {
+
+    private static final int SALT_LENGTH = 16;
+    private static final String DELIMITER = ":";
+
+    public static String hashPassword(String password) {
         try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] hash = md.digest(password.getBytes());
-            StringBuilder hexString = new StringBuilder();
-            for (byte b : hash) {
-                String hex = Integer.toHexString(0xff & b);
-                if (hex.length() == 1) hexString.append('0');
-                hexString.append(hex);
-            }
-            return hexString.toString();
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("Error hashing password", e);
+            byte[] salt = generateSalt();
+            byte[] hashBytes = sha256(password, salt);
+
+            String hashStr = Base64.getEncoder().encodeToString(hashBytes);
+            String saltStr = Base64.getEncoder().encodeToString(salt);
+
+            return hashStr + DELIMITER + saltStr;
+
+        } catch (Exception e) {
+            throw new RuntimeException("Password hashing failed.", e);
         }
     }
+
+    public static boolean verifyPassword(String password, String stored) {
+        if (stored == null || !stored.contains(DELIMITER)) return false;
+
+        try {
+            String[] parts = stored.split(DELIMITER);
+            String storedHash = parts[0];
+            byte[] salt = Base64.getDecoder().decode(parts[1]);
+
+            byte[] enteredHash = sha256(password, salt);
+            String enteredHashStr = Base64.getEncoder().encodeToString(enteredHash);
+
+            return enteredHashStr.equals(storedHash);
+
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private static byte[] generateSalt() {
+        byte[] salt = new byte[SALT_LENGTH];
+        new SecureRandom().nextBytes(salt);
+        return salt;
+    }
+
+    private static byte[] sha256(String password, byte[] salt) throws Exception {
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        md.update(salt);
+        return md.digest(password.getBytes());
+    }
 }
+
