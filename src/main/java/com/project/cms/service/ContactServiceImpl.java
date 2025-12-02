@@ -8,10 +8,9 @@ import com.project.cms.exception.AppExceptions.ContactNotFoundException;
 import com.project.cms.exception.AppExceptions.ValidationException;
 
 import com.project.cms.model.Contact;
+import com.project.cms.model.UndoAction;
 import com.project.cms.model.User;
 import com.project.cms.model.role.RolePermissions;
-import com.project.cms.model.undo.UndoAction;
-
 import com.project.cms.util.Validator;
 
 import java.util.List;

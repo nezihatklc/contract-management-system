@@ -1,14 +1,12 @@
 package com.project.cms.service;
 
 import com.project.cms.exception.AppExceptions.AccessDeniedException;
+import com.project.cms.exception.AppExceptions.ContactNotFoundException;
 import com.project.cms.exception.AppExceptions.UndoOperationException;
-
+import com.project.cms.exception.AppExceptions.ValidationException;
+import com.project.cms.model.UndoAction;
 import com.project.cms.model.User;
-import com.project.cms.model.undo.UndoAction;
-import com.project.cms.model.undo.UndoAction.ActionType;
-import com.project.cms.model.Contact;
 import com.project.cms.model.role.RolePermissions;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
@@ -30,13 +28,13 @@ public class UndoServiceImpl implements UndoService {
 
     @Override
     public void recordUndoAction(User user, UndoAction action) {
-        undoStacks.computeIfAbsent(user.getId(), id -> new Stack<>()).push(action);
+        undoStacks.computeIfAbsent(user.getUserId(), id -> new Stack<>()).push(action);
     }
 
     /* UNDO OPERATION */
 
     @Override
-    public void undo(User performingUser) throws UndoOperationException {
+    public void undo(User performingUser) throws UndoOperationException, AccessDeniedException, ValidationException, ContactNotFoundException {
 
         // Check role permissions via RolePermissions
         RolePermissions perm = userService.getPermissionsFor(performingUser);
@@ -47,7 +45,7 @@ public class UndoServiceImpl implements UndoService {
         if (!canUndoUpdate && !canUndoCreateDelete)
             throw new AccessDeniedException("You don't have permission to undo.");
 
-        Stack<UndoAction> stack = undoStacks.get(performingUser.getId());
+        Stack<UndoAction> stack = undoStacks.get(performingUser.getUserId());
         if (stack == null || stack.isEmpty())
             throw new UndoOperationException("No actions to undo.");
 
@@ -58,21 +56,37 @@ public class UndoServiceImpl implements UndoService {
             case CREATE -> {
                 if (!canUndoCreateDelete)
                     throw new AccessDeniedException("Only Senior Developer can undo creation.");
-                contactService.deleteContact(action.getNewState().getId(), performingUser);
+
+                // Undo CREATE = Contact'ı sil
+                contactService.deleteContact(
+                        action.getNewState().getContactId(),
+                        performingUser
+                );
             }
 
             case UPDATE -> {
                 if (!canUndoUpdate)
                     throw new AccessDeniedException("Only Junior/Senior can undo updates.");
-                contactService.updateContact(action.getPreviousState(), performingUser);
+
+                // Undo UPDATE = Eski haline geri dön
+                contactService.updateContact(
+                        action.getPreviousState(),
+                        performingUser
+                );
             }
 
             case DELETE -> {
                 if (!canUndoCreateDelete)
                     throw new AccessDeniedException("Only Senior Developer can undo deletions.");
-                contactService.createContact(action.getPreviousState(), performingUser);
+
+                // Undo DELETE = Contact'ı geri oluştur
+                contactService.createContact(
+                        action.getPreviousState(),
+                        performingUser
+                );
             }
         }
+
     }
 
     /*  HELPERS */

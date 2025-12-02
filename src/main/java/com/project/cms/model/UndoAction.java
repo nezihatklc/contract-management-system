@@ -1,18 +1,9 @@
-package com.project.cms.model.undo;
-
-import com.project.cms.model.Contact;
-
+package com.project.cms.model;
 
 /* Stores the details of an action so it can be undone later. */
-/* Keeps action type and previous/new contact states. */
- 
 public class UndoAction {
 
-    public enum ActionType {
-        CREATE,
-        UPDATE,
-        DELETE
-    }
+    public enum ActionType { CREATE, UPDATE, DELETE }
 
     private final ActionType type;
     private final Contact previousState;

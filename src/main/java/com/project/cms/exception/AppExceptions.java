@@ -1,10 +1,9 @@
 package com.project.cms.exception;
 
-
 public class AppExceptions {
 
     /* This file collects all custom exceptions */
-  
+
     public static class ValidationException extends Exception {
         public ValidationException(String message) {
             super(message);
@@ -35,11 +34,9 @@ public class AppExceptions {
         }
     }
 
-     /* Permission-related errors (role does not allow an action) */
     public static class AccessDeniedException extends Exception {
         public AccessDeniedException(String message) {
             super(message);
         }
-   
     }
 }
