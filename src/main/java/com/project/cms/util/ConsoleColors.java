@@ -1,7 +1,6 @@
-package com.project.cms.util;
+package main.java.com.project.cms.util;
 
 public class ConsoleColors {
-    
 
     public static final String RESET = "\u001B[0m";
 
@@ -79,6 +78,7 @@ public class ConsoleColors {
 
     
 }
+
 
 
 
