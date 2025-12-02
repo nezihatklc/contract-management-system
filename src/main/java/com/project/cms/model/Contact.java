@@ -41,7 +41,7 @@ public class Contact {
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
 
-    // === SETTER METHODS (DAO ile Uyumlu) ===
+    // === SETTER METHODS  ===
     public void setContactId(int contactId) { this.contactId = contactId; }
     public void setMiddleName(String middleName) { this.middleName = middleName; }
     public void setNickname(String nickname) { this.nickname = nickname; }

@@ -1,5 +1,6 @@
 package com.project.cms.service;
 
+<<<<<<< HEAD
 import com.project.cms.model.Role;
 import com.project.cms.model.User;
 import com.project.cms.util.DbConnection;
@@ -111,4 +112,34 @@ public class UserService implements BaseService<User> {
         user.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
         return user;
     }
+=======
+import com.project.cms.model.User;
+import com.mysql.cj.x.protobuf.MysqlxCrud.Delete;
+import com.project.cms.exception.InvalidCredentialsException;
+import com.project.cms.exception.UserNotFoundException;
+import com.project.cms.exception.ValidationException;
+
+public interface UserService {
+
+    /* Called when the user tries to log in. */
+    User login(String userName, String passwordPlain)
+            throws InvalidCredentialsException, UserNotFoundException;
+
+    /* The user logged into the system updates own password. */
+    void changePassword(int userId, String oldPlain, String newPlain)
+            throws ValidationException, InvalidCredentialsException;
+
+    /* For Manager: Adding a new user */
+    User createUser(User user) 
+            throws ValidationException;
+
+    /* For Manager: User update */
+    void updateUser(User user) 
+            throws ValidationException, UserNotFoundException;
+
+    /*For Manager: Delete User */
+    void deletUser(int userId) 
+            throws UserNotFoundException;
+    
+>>>>>>> f5718489d5185396536f59de0c762cdc48e8058d
 }
