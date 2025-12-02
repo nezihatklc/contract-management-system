@@ -1,63 +1,108 @@
 package com.project.cms.ui.menu;
 
 import com.project.cms.model.User;
+import com.project.cms.model.Role;
+import com.project.cms.service.UserService;
 import com.project.cms.service.ContactService;
 import com.project.cms.service.StatisticsService;
-import com.project.cms.service.UserService;
-import java.util.Scanner;
+import com.project.cms.ui.input.InputHandler;
+import com.project.cms.ui.input.ConsolePrinter;
+import com.project.cms.util.ValidationMessages;
 
 public class MainMenu {
-    
-    private UserService userService;
-    private ContactService contactService;
-    private StatisticsService statisticsService;
-    private Scanner scanner;
-    
-    public MainMenu(UserService userService, ContactService contactService, StatisticsService statisticsService, Scanner scanner) {
+
+    private final UserService userService;
+    private final ContactService contactService;
+    private final StatisticsService statisticsService;
+
+    public MainMenu(UserService userService,
+                    ContactService contactService,
+                    StatisticsService statisticsService) {
+
         this.userService = userService;
         this.contactService = contactService;
         this.statisticsService = statisticsService;
-        this.scanner = scanner;
     }
 
-    public void show() {
-        System.out.println("Welcome to Contract Management System");
+    public void start() {
 
-        while (true) {
-            System.out.println("\n=== LOGIN ===");
-            System.out.print("Username: ");
-            String username = scanner.nextLine();
-            
-            System.out.print("Password: ");
-            String password = scanner.nextLine();
+        boolean running = true;
 
-            User user = userService.login(username, password);
+        while (running) {
 
-            if (user != null) {
-                System.out.println("Login successful! Welcome, " + user.getName());
-                routeToMenu(user);
-            } else {
-                System.out.println("Invalid credentials. Please try again.");
+            ConsolePrinter.spacing(1);
+            ConsolePrinter.headline("Login to system ");
+            ConsolePrinter.subTitle("Please enter your user informations: ");
+
+            ConsolePrinter.menuOption(0, "Exit Application ");
+            ConsolePrinter.menuOption(-1, ""); 
+
+            String username = InputHandler.readString("Username", true);
+
+            // Exit option
+            if (username.equals("0")) {
+                running = false;
+                ConsolePrinter.info("Exiting the application...");
+                break;
             }
+
+            // Basic username validation
+            if (username.trim().isEmpty()) {
+                ConsolePrinter.error(ValidationMessages.INPUT_REQUIRED);
+                continue;
+            }
+
+            String password = InputHandler.readPassword("Password");
+
+            User loggedInUser = null;
+
+            try {
+                loggedInUser = userService.login(username, password);
+            } catch (Exception e) {
+                ConsolePrinter.error(e.getMessage());
+                continue;
+            }
+
+            if (loggedInUser == null) {
+                ConsolePrinter.error(ValidationMessages.USER_CREDENTIALS_INVALID);
+                continue;
+            }
+
+            ConsolePrinter.success("Login Successful, Welcome, " 
+                                    + loggedInUser.getName() 
+                                    + " " 
+                                    + loggedInUser.getSurname());
+
+            redirectToRoleMenu(loggedInUser);
         }
     }
 
-    private void routeToMenu(User user) {
-        switch (user.getRole()) {
-            case MANAGER:
-                new ManagerMenu(contactService, userService, statisticsService, scanner, user).show();
-                break;
-            case SENIOR_DEV:
-                new SeniorDevMenu(contactService, scanner, user).show();
-                break;
-            case JUNIOR_DEV:
-                new JuniorDevMenu(contactService, scanner, user).show();
-                break;
+    private void redirectToRoleMenu(User user) {
+
+        Role role = user.getRole();
+        ConsolePrinter.spacing(1);
+        ConsolePrinter.subTitle("Role: " + role.name());
+
+        switch (role) {
+
             case TESTER:
-                new TesterMenu(contactService, scanner, user).show();
+                new TesterMenu(user, contactService, userService).start();
                 break;
+
+            case JUNIOR_DEV:
+                new JuniorDevMenu(user, contactService, userService).start();
+                break;
+
+            case SENIOR_DEV:
+                new SeniorDevMenu(user, contactService, userService).start();
+                break;
+
+            case MANAGER:
+                new ManagerMenu(user, contactService, userService, statisticsService).start();
+                break;
+
             default:
-                System.out.println("No menu assigned for this role.");
+                ConsolePrinter.error("Undefined role. Returning to login screen.");
         }
     }
 }
