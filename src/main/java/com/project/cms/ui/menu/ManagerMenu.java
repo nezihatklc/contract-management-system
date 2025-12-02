@@ -1,81 +1,61 @@
 package com.project.cms.ui.menu;
 
-import com.project.cms.model.Contact;
+import com.project.cms.model.User;
 import com.project.cms.service.ContactService;
 import com.project.cms.service.StatisticsService;
 import com.project.cms.service.UserService;
-import java.util.List;
-import java.util.Scanner;
-
-import com.project.cms.model.User;
+import com.project.cms.ui.input.ConsolePrinter;
+import com.project.cms.ui.input.InputHandler;
 
 public class ManagerMenu {
     
-    private ContactService contactService;
-    private UserService userService;
-    private StatisticsService statisticsService;
-    private Scanner scanner;
-    private User user;
+    private final User user;
+    private final ContactService contactService;
+    private final UserService userService;
+    private final StatisticsService statisticsService;
 
-    public ManagerMenu(ContactService contactService, UserService userService, StatisticsService statisticsService, Scanner scanner, User user) {
+    // MainMenu parametre sırasına dikkat!
+    public ManagerMenu(User user, ContactService contactService, UserService userService, StatisticsService statisticsService) {
+        this.user = user;
         this.contactService = contactService;
         this.userService = userService;
         this.statisticsService = statisticsService;
-        this.scanner = scanner;
-        this.user = user;
     }
 
-    public void show() {
+    public void start() {
         while (true) {
-            System.out.println("\n=== MANAGER MENU (" + user.getName() + " " + user.getSurname() + ") ===");
-            System.out.println("1. List All Contacts");
-            System.out.println("2. Search/Sort Contacts");
-            System.out.println("3. Add/Update/Delete Contact");
-            System.out.println("4. List All Users");
-            System.out.println("5. View Statistics");
-            System.out.println("6. Undo Last Operation");
-            System.out.println("0. Logout");
-            System.out.print("Enter choice: ");
+            ConsolePrinter.headline("MANAGER MENU (" + user.getName() + ")");
+            ConsolePrinter.menuOption(1, "Contact Operations (Senior Menu)");
+            ConsolePrinter.menuOption(2, "List All Users");
+            ConsolePrinter.menuOption(3, "View Statistics");
+            ConsolePrinter.menuOption(0, "Logout");
 
-            int choice = -1;
-            try {
-                choice = Integer.parseInt(scanner.nextLine());
-            } catch (NumberFormatException e) {
-                continue;
-            }
+            int choice = InputHandler.readInt("Choice");
 
             switch (choice) {
-                case 1: listContacts(); break;
-                case 2: new SeniorDevMenu(contactService, scanner, user).show(); break; // Reuse Senior menu for advanced ops
-                case 3: new SeniorDevMenu(contactService, scanner, user).show(); break;
-                case 4: listUsers(); break;
-                case 5: viewStatistics(); break;
-                case 6: contactService.undoLast(); break;
-                case 0: return;
-                default: System.out.println("Invalid choice.");
+                // Manager aynı zamanda Senior yetkilerine de sahiptir, direkt o menüyü açabiliriz
+                case 1 -> new SeniorDevMenu(user, contactService, userService).start();
+                case 2 -> listUsers();
+                case 3 -> viewStatistics();
+                case 0 -> { return; }
+                default -> ConsolePrinter.error("Invalid choice.");
             }
         }
     }
 
-    private void listContacts() {
-        contactService.getAllContacts().forEach(System.out::println);
-    }
-
     private void listUsers() {
-        System.out.println("\n--- System Users ---");
-        userService.getAllUsers().forEach(u -> 
-            System.out.println(u.getUserId() + ": " + u.getUsername() + " (" + u.getRole() + ")")
-        );
+        // UserService içinde getAllUsers metodu varsa:
+        // userService.getAllUsers().forEach(u -> System.out.println(u.getUsername() + " - " + u.getRole()));
+        System.out.println("User listing feature coming soon...");
     }
 
     private void viewStatistics() {
-        System.out.println("\n--- System Statistics ---");
-        System.out.println("Total Users: " + statisticsService.getTotalUserCount());
-        System.out.println("Total Contacts: " + statisticsService.getTotalContactCount());
-        
-        statisticsService.printUserCountByRole();
-        statisticsService.printContactCountByCity();
-        statisticsService.printLinkedinStats();
-        statisticsService.printAgeStats();
+        try {
+            ConsolePrinter.subTitle("System Statistics");
+            System.out.println("Total Contacts: " + statisticsService.getTotalContactCount(user));
+            // Diğer istatistik metodları buraya eklenebilir
+        } catch (Exception e) {
+            ConsolePrinter.error(e.getMessage());
+        }
     }
 }
