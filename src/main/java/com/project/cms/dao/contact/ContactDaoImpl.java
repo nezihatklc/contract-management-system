@@ -271,5 +271,221 @@ public class ContactDaoImpl implements ContactDao {
 
         return c;
     }
+
+
+    //             STATISTICS METHODS (MANAGER ONLY)
+    // ===========================================================
+    @Override
+    public int countAllContacts() {
+        String sql = "SELECT COUNT(*) FROM contacts";
+        try (Connection conn = DbConnection.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery()) {
+            return rs.next() ? rs.getInt(1) : 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public int countContactsWithLinkedin() {
+        String sql = "SELECT COUNT(*) FROM contacts WHERE linkedin_url IS NOT NULL AND linkedin_url <> ''";
+        try (Connection conn = DbConnection.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery()) {
+            return rs.next() ? rs.getInt(1) : 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public int countContactsWithoutLinkedin() {
+        String sql = "SELECT COUNT(*) FROM contacts WHERE linkedin_url IS NULL OR linkedin_url = ''";
+        try (Connection conn = DbConnection.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery()) {
+            return rs.next() ? rs.getInt(1) : 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public String findMostCommonFirstName() {
+        String sql = "SELECT first_name, COUNT(*) cnt FROM contacts GROUP BY first_name ORDER BY cnt DESC LIMIT 1";
+        try (Connection conn = DbConnection.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery()) {
+            return rs.next() ? rs.getString("first_name") : null;
+        } catch (SQLException e) { throw new RuntimeException(e); }
+    }
+
+    @Override
+    public String findMostCommonLastName() {
+        String sql = "SELECT last_name, COUNT(*) cnt FROM contacts GROUP BY last_name ORDER BY cnt DESC LIMIT 1";
+        try (Connection conn = DbConnection.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery()) {
+            return rs.next() ? rs.getString("last_name") : null;
+        } catch (SQLException e) { throw new RuntimeException(e); }
+    }
+
+    @Override
+    public Contact findYoungestContact() {
+        String sql = "SELECT * FROM contacts WHERE birth_date IS NOT NULL ORDER BY birth_date DESC LIMIT 1";
+        try (Connection conn = DbConnection.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery()) {
+            return rs.next() ? map(rs) : null;
+        } catch (SQLException e) { throw new RuntimeException(e); }
+    }
+
+    @Override
+    public Contact findOldestContact() {
+        String sql = "SELECT * FROM contacts WHERE birth_date IS NOT NULL ORDER BY birth_date ASC LIMIT 1";
+        try (Connection conn = DbConnection.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery()) {
+            return rs.next() ? map(rs) : null;
+        } catch (SQLException e) { throw new RuntimeException(e); }
+    }
+
+    @Override
+    public double getAverageAge() {
+        String sql = "SELECT AVG(TIMESTAMPDIFF(YEAR, birth_date, CURDATE())) AS avg_age FROM contacts WHERE birth_date IS NOT NULL";
+        try (Connection conn = DbConnection.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery()) {
+            return rs.next() ? rs.getDouble("avg_age") : 0;
+        } catch (SQLException e) { throw new RuntimeException(e); }
+    }
+
+    @Override
+    public List<String[]> getCityDistribution() {
+        List<String[]> list = new ArrayList<>();
+        String sql = "SELECT city, COUNT(*) cnt FROM contacts GROUP BY city ORDER BY cnt DESC";
+
+        try (Connection conn = DbConnection.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                list.add(new String[]{
+                    rs.getString("city"),
+                    String.valueOf(rs.getInt("cnt"))
+                });
+            }
+        } catch (SQLException e) { throw new RuntimeException(e); }
+
+        return list;
+    }
+
+    @Override
+    public List<String[]> getAgeGroupDistribution() {
+        List<String[]> list = new ArrayList<>();
+        String sql = """
+        SELECT 
+            CASE 
+                WHEN TIMESTAMPDIFF(YEAR, birth_date, CURDATE()) BETWEEN 18 AND 25 THEN '18-25'
+                WHEN TIMESTAMPDIFF(YEAR, birth_date, CURDATE()) BETWEEN 26 AND 30 THEN '26-30'
+                WHEN TIMESTAMPDIFF(YEAR, birth_date, CURDATE()) BETWEEN 31 AND 40 THEN '31-40'
+                ELSE '40+' 
+            END AS age_group,
+            COUNT(*) cnt
+        FROM contacts
+        WHERE birth_date IS NOT NULL
+        GROUP BY age_group
+        ORDER BY cnt DESC
+        """;
+
+        try (Connection conn = DbConnection.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                list.add(new String[]{
+                    rs.getString("age_group"),
+                    String.valueOf(rs.getInt("cnt"))
+                });
+            }
+        } catch (SQLException e) { throw new RuntimeException(e); }
+
+        return list;
+    }
+
+    @Override
+    public List<String[]> getTopFirstNames() {
+        List<String[]> list = new ArrayList<>();
+        String sql = "SELECT first_name, COUNT(*) cnt FROM contacts GROUP BY first_name ORDER BY cnt DESC LIMIT 5";
+
+        try (Connection conn = DbConnection.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                list.add(new String[]{
+                    rs.getString("first_name"),
+                    String.valueOf(rs.getInt("cnt"))
+                });
+            }
+
+        } catch (SQLException e) { throw new RuntimeException(e); }
+
+        return list;
+    }
+
+    @Override
+    public List<String[]> getTopLastNames() {
+        List<String[]> list = new ArrayList<>();
+        String sql = "SELECT last_name, COUNT(*) cnt FROM contacts GROUP BY last_name ORDER BY cnt DESC LIMIT 5";
+
+        try (Connection conn = DbConnection.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                list.add(new String[]{
+                    rs.getString("last_name"),
+                    String.valueOf(rs.getInt("cnt"))
+                });
+            }
+
+        } catch (SQLException e) { throw new RuntimeException(e); }
+
+        return list;
+    }
+
+    @Override
+    public List<String[]> getBirthMonthDistribution() {
+        List<String[]> list = new ArrayList<>();
+
+        String sql = """
+            SELECT 
+                MONTH(birth_date) AS month_num,
+                MONTHNAME(birth_date) AS month_name,
+                COUNT(*) AS cnt
+            FROM contacts
+            WHERE birth_date IS NOT NULL
+            GROUP BY month_num, month_name
+            ORDER BY month_num
+        """;
+
+        try (Connection conn = DbConnection.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                list.add(new String[]{
+                    rs.getString("month_name"),
+                    String.valueOf(rs.getInt("cnt"))
+                });
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error generating birth month distribution", e);
+        }
+        return list;
+    }
 }
 

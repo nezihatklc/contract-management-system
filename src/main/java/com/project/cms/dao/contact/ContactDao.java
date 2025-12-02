@@ -28,5 +28,26 @@ public interface ContactDao {
 
     // SORT
     List<Contact> findAllSorted(String field, boolean ascending);
+
+    //             STATISTICS METHODS (MANAGER ONLY)
+    // ===========================================================
+    int countAllContacts();
+    int countContactsWithLinkedin();
+    int countContactsWithoutLinkedin();
+
+    String findMostCommonFirstName();
+    String findMostCommonLastName();
+
+    Contact findYoungestContact();
+    Contact findOldestContact();
+
+    double getAverageAge();
+
+    List<String[]> getCityDistribution();          // (city, count)
+    List<String[]> getAgeGroupDistribution();      // ("18-25", count)
+    List<String[]> getTopFirstNames();             // (firstname, count)
+    List<String[]> getTopLastNames();              // (lastname, count)
+    List<String[]> getBirthMonthDistribution();    // ("January", count)
+
     
 }
