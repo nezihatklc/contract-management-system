@@ -35,10 +35,11 @@ public class AppExceptions {
         }
     }
 
-    /* Permission-related errors (role does not allow an action) */
+     /* Permission-related errors (role does not allow an action) */
     public static class AccessDeniedException extends Exception {
         public AccessDeniedException(String message) {
             super(message);
         }
+   
     }
 }
