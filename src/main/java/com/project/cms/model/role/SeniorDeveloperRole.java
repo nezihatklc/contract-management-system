@@ -13,8 +13,6 @@ public class SeniorDeveloperRole implements RolePermissions {
         // TODO
     }
 
-    /* ---------------- CONTACT OPERATIONS (allowed) ---------------- */
-
     @Override
     public void listAllContacts() {
         // TODO
