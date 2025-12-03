@@ -47,7 +47,7 @@ public interface UserDao {
      * @param userId the ID of the user whose password will be updated
      * @param newPasswordHash the hashed password value
      */
-    void updatePassword(int userId, String newPasswordHash);
+    boolean updatePassword(int userId, String newPasswordHash);
 
     /**
      * Updates all editable fields of a User entity.
@@ -55,7 +55,7 @@ public interface UserDao {
      *
      * @param user the User object containing updated values
      */
-    void updateUser(User user);
+    boolean updateUser(User user);
 
     /**
      * Adds a new user into the system.
@@ -63,13 +63,13 @@ public interface UserDao {
      *
      * @param user the User object to insert into the database
      */
-    void addUser(User user);
+    int addUser(User user);
 
     /**
      * Deletes a user from the system.
-     * Optional depending on project requirement.
+     * Used by Manager for user removal.
      *
      * @param userId the ID of the user to delete
      */
-    void deleteUser(int userId);
+    boolean deleteUser(int userId);
 }

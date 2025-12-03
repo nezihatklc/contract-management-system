@@ -7,17 +7,32 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Implementation of {@link ContactDao} responsible for performing all database
+ * operations related to the {@link Contact} entity.
+ * <p>
+ * This class uses MySQL as the backend and performs CRUD, sorting,
+ * dynamic searching, and statistical queries on the contacts table.
+ * All SQL operations are executed using {@link PreparedStatement}
+ * to ensure safety against SQL injection.
+ */
+
 public class ContactDaoImpl implements ContactDao {
 
     // ADD SINGLE CONTACT
-     @Override
-    public void addContact(Contact c) {
+    @Override
+    public int addContact(Contact c) {
         String sql = "INSERT INTO contacts " +
                 "(first_name, middle_name, last_name, nickname, city, phone_primary, phone_secondary, email, linkedin_url, birth_date) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = DbConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        Connection conn = DbConnection.getConnection();
+        if (conn == null) {
+            System.out.println("❌ Cannot add contact. Database connection failed.");
+            return -1;
+        }
+
+        try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             ps.setString(1, c.getFirstName());
             ps.setString(2, c.getMiddleName());
@@ -35,12 +50,26 @@ public class ContactDaoImpl implements ContactDao {
                 ps.setNull(10, Types.DATE);
             }
 
-            ps.executeUpdate();
+            int affected = ps.executeUpdate();
+
+            if (affected == 0) {
+                return -1; // insert failed
+            }
+
+            try (ResultSet keys = ps.getGeneratedKeys()) {
+                if (keys.next()) {
+                    return keys.getInt(1); // return auto-generated ID
+                }
+            }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Error inserting contact", e);
+            System.out.println("❌ Error inserting contact: " + e.getMessage());
         }
+
+        return -1; // fail
     }
+
+    
     
     // ADD MULTIPLE CONTACTS
     @Override
@@ -55,42 +84,47 @@ public class ContactDaoImpl implements ContactDao {
     public Contact findById(int id) {
         String sql = "SELECT * FROM contacts WHERE contact_id = ?";
 
-        try (Connection conn = DbConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setInt(1, id);
-
-            ResultSet rs = ps.executeQuery();
-
-            if (rs.next()) {
-                return map(rs);
-            }
-
-        } catch (SQLException e) {
-            throw new RuntimeException("Error finding contact", e);
+        Connection conn = DbConnection.getConnection();
+        if (conn == null) {
+            System.out.println("❌ Cannot find contact. DB connection failed.");
+            return null;
         }
 
-        return null;
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+
+            return rs.next() ? map(rs) : null;
+
+        } catch (SQLException e) {
+            System.out.println("❌ Error in findById: " + e.getMessage());
+            return null;
+        }
     }
+
 
     // FIND ALL CONTACTS
     @Override
     public List<Contact> findAll() {
         String sql = "SELECT * FROM contacts ORDER BY contact_id ASC";
-
         List<Contact> list = new ArrayList<>();
 
-        try (Connection conn = DbConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        Connection conn = DbConnection.getConnection();
+        if (conn == null) {
+            System.out.println("❌ Cannot load contacts. DB connection failed.");
+            return list;
+        }
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ResultSet rs = ps.executeQuery();
-
             while (rs.next()) {
                 list.add(map(rs));
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Error listing contacts", e);
+            System.out.println("❌ Error in findAll: " + e.getMessage());
         }
 
         return list;
@@ -98,7 +132,7 @@ public class ContactDaoImpl implements ContactDao {
 
     //UPDATE CONTACT
     @Override
-    public void updateContact(Contact c) {
+    public boolean updateContact(Contact c) {
         String sql = """
                 UPDATE contacts SET
                   first_name=?, middle_name=?, last_name=?, nickname=?, city=?,
@@ -107,8 +141,14 @@ public class ContactDaoImpl implements ContactDao {
                 WHERE contact_id=?
                 """;
 
-        try (Connection conn = DbConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        Connection conn = DbConnection.getConnection();
+        if (conn == null) {
+            System.out.println("❌ Cannot update contact. Database connection failed.");
+            return false;
+        }
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+
 
             ps.setString(1, c.getFirstName());
             ps.setString(2, c.getMiddleName());
@@ -128,30 +168,43 @@ public class ContactDaoImpl implements ContactDao {
 
             ps.setInt(11, c.getContactId());
 
-            ps.executeUpdate();
+            int affected = ps.executeUpdate();
+            System.out.println("updateContact → updated rows = " + affected);
+
+            return affected == 1;
 
         } catch (SQLException e) {
-            throw new RuntimeException("Error updating contact", e);
+            System.out.println("❌ Error in updateContact: " + e.getMessage());
+            return false;
         }
     }
-
     // DELETE CONTACT BY ID
      @Override
-    public void deleteContactById(int id) {
+    public boolean deleteContactById(int id) {
         String sql = "DELETE FROM contacts WHERE contact_id = ?";
 
-        try (Connection conn = DbConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        Connection conn = DbConnection.getConnection();
+        if (conn == null) {
+            System.out.println("❌ Cannot delete contact. Database connection failed.");
+            return false;
+        }
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, id);
-            ps.executeUpdate();
+
+            int affected = ps.executeUpdate();
+            System.out.println("deleteContactById → deleted rows = " + affected);
+
+            return affected == 1;
 
         } catch (SQLException e) {
-            throw new RuntimeException("Error deleting contact", e);
+            System.out.println("❌ Error in deleteContactById: " + e.getMessage());
+            return false;
         }
     }
 
-    // DELETE MULTIPLE (IN clause)
+    // DELETE MULTIPLE 
     @Override
     public void deleteContactsByIds(List<Integer> ids) {
 
@@ -166,8 +219,13 @@ public class ContactDaoImpl implements ContactDao {
 
         String sql = "DELETE FROM contacts WHERE contact_id IN (" + placeholders + ")";
 
-        try (Connection conn = DbConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        Connection conn = DbConnection.getConnection();
+        if (conn == null) {
+            System.out.println("❌ Cannot delete contacts. DB connection failed.");
+            return;
+        }
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
 
             for (int i = 0; i < ids.size(); i++) {
                 ps.setInt(i + 1, ids.get(i));
@@ -176,7 +234,7 @@ public class ContactDaoImpl implements ContactDao {
             ps.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException("Error deleting contacts", e);
+            System.out.println("❌ Error in deleteContactsByIds: " + e.getMessage());
         }
     }
 
@@ -197,17 +255,21 @@ public class ContactDaoImpl implements ContactDao {
 
         List<Contact> list = new ArrayList<>();
 
-        try (Connection conn = DbConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        Connection conn = DbConnection.getConnection();
+        if (conn == null) {
+            System.out.println("❌ Cannot sort contacts. DB connection failed.");
+            return list;
+        }
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ResultSet rs = ps.executeQuery();
-
             while (rs.next()) {
                 list.add(map(rs));
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Error sorting contacts", e);
+            System.out.println("❌ Error in findAllSorted: " + e.getMessage());
         }
 
         return list;
@@ -217,18 +279,34 @@ public class ContactDaoImpl implements ContactDao {
     @Override
     public List<Contact> search(SearchCriteria criteria) {
 
+        List<String> allowedFields = List.of(
+                "first_name", "last_name", "nickname", "city",
+                "email", "phone_primary", "phone_secondary", "linkedin_url"
+        );
+
         StringBuilder sql = new StringBuilder("SELECT * FROM contacts WHERE 1=1 ");
         List<Object> params = new ArrayList<>();
 
         criteria.getCriteria().forEach((field, value) -> {
+
+            if (!allowedFields.contains(field)) {
+                System.out.println("⚠ Skipping invalid search field: " + field);
+                return; 
+            }
+
             sql.append(" AND ").append(field).append(" LIKE ? ");
             params.add("%" + value + "%");
         });
 
         List<Contact> list = new ArrayList<>();
 
-        try (Connection conn = DbConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+        Connection conn = DbConnection.getConnection();
+        if (conn == null) {
+            System.out.println("❌ Cannot search contacts. Database connection failed.");
+            return list;
+        }
+
+        try (PreparedStatement ps = conn.prepareStatement(sql.toString())) {
 
             for (int i = 0; i < params.size(); i++) {
                 ps.setObject(i + 1, params.get(i));
@@ -241,11 +319,12 @@ public class ContactDaoImpl implements ContactDao {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Error searching contacts", e);
+            System.out.println("❌ Error in search: " + e.getMessage());
         }
 
         return list;
     }
+
 
     // MAP RESULTSET → CONTACT OBJECT
     private Contact map(ResultSet rs) throws SQLException {
@@ -269,12 +348,19 @@ public class ContactDaoImpl implements ContactDao {
             c.setBirthDate(birth.toLocalDate());
         }
 
+        c.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+        c.setUpdatedAt(rs.getTimestamp("updated_at") != null 
+                ? rs.getTimestamp("updated_at").toLocalDateTime()
+                : null);
+
         return c;
     }
 
 
     //             STATISTICS METHODS (MANAGER ONLY)
     // ===========================================================
+
+    //  TOTAL CONTACT COUNT
     @Override
     public int countAllContacts() {
         String sql = "SELECT COUNT(*) FROM contacts";
@@ -287,6 +373,7 @@ public class ContactDaoImpl implements ContactDao {
         }
     }
 
+    // CONTACTS WITH LINKEDIN COUNT
     @Override
     public int countContactsWithLinkedin() {
         String sql = "SELECT COUNT(*) FROM contacts WHERE linkedin_url IS NOT NULL AND linkedin_url <> ''";
@@ -299,6 +386,7 @@ public class ContactDaoImpl implements ContactDao {
         }
     }
 
+    // CONTACTS WITHOUT LINKEDIN COUNT
     @Override
     public int countContactsWithoutLinkedin() {
         String sql = "SELECT COUNT(*) FROM contacts WHERE linkedin_url IS NULL OR linkedin_url = ''";
@@ -311,6 +399,7 @@ public class ContactDaoImpl implements ContactDao {
         }
     }
 
+    // MOST COMMON FIRST NAME
     @Override
     public String findMostCommonFirstName() {
         String sql = "SELECT first_name, COUNT(*) cnt FROM contacts GROUP BY first_name ORDER BY cnt DESC LIMIT 1";
@@ -320,7 +409,8 @@ public class ContactDaoImpl implements ContactDao {
             return rs.next() ? rs.getString("first_name") : null;
         } catch (SQLException e) { throw new RuntimeException(e); }
     }
-
+    
+    // MOST COMMON LAST NAME
     @Override
     public String findMostCommonLastName() {
         String sql = "SELECT last_name, COUNT(*) cnt FROM contacts GROUP BY last_name ORDER BY cnt DESC LIMIT 1";
@@ -331,6 +421,7 @@ public class ContactDaoImpl implements ContactDao {
         } catch (SQLException e) { throw new RuntimeException(e); }
     }
 
+    // YOUNGEST CONTACT
     @Override
     public Contact findYoungestContact() {
         String sql = "SELECT * FROM contacts WHERE birth_date IS NOT NULL ORDER BY birth_date DESC LIMIT 1";
@@ -341,6 +432,7 @@ public class ContactDaoImpl implements ContactDao {
         } catch (SQLException e) { throw new RuntimeException(e); }
     }
 
+    // OLDEST CONTACT
     @Override
     public Contact findOldestContact() {
         String sql = "SELECT * FROM contacts WHERE birth_date IS NOT NULL ORDER BY birth_date ASC LIMIT 1";
@@ -351,6 +443,7 @@ public class ContactDaoImpl implements ContactDao {
         } catch (SQLException e) { throw new RuntimeException(e); }
     }
 
+    // AVERAGE AGE OF CONTACTS
     @Override
     public double getAverageAge() {
         String sql = "SELECT AVG(TIMESTAMPDIFF(YEAR, birth_date, CURDATE())) AS avg_age FROM contacts WHERE birth_date IS NOT NULL";
@@ -361,6 +454,7 @@ public class ContactDaoImpl implements ContactDao {
         } catch (SQLException e) { throw new RuntimeException(e); }
     }
 
+    // CITY DISTRIBUTION
     @Override
     public List<String[]> getCityDistribution() {
         List<String[]> list = new ArrayList<>();
@@ -381,6 +475,7 @@ public class ContactDaoImpl implements ContactDao {
         return list;
     }
 
+    // AGE GROUP DISTRIBUTION
     @Override
     public List<String[]> getAgeGroupDistribution() {
         List<String[]> list = new ArrayList<>();
@@ -414,6 +509,7 @@ public class ContactDaoImpl implements ContactDao {
         return list;
     }
 
+    // TOP FIRST NAMES
     @Override
     public List<String[]> getTopFirstNames() {
         List<String[]> list = new ArrayList<>();
@@ -435,6 +531,7 @@ public class ContactDaoImpl implements ContactDao {
         return list;
     }
 
+    // TOP LAST NAMES
     @Override
     public List<String[]> getTopLastNames() {
         List<String[]> list = new ArrayList<>();
@@ -456,6 +553,7 @@ public class ContactDaoImpl implements ContactDao {
         return list;
     }
 
+    // BIRTH MONTH DISTRIBUTION
     @Override
     public List<String[]> getBirthMonthDistribution() {
         List<String[]> list = new ArrayList<>();

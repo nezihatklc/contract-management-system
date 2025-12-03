@@ -2,11 +2,9 @@ package com.project.cms.service;
 
 import com.project.cms.dao.user.UserDao;
 import com.project.cms.dao.user.UserDaoImpl;
-
 import com.project.cms.exception.AppExceptions.InvalidCredentialsException;
 import com.project.cms.exception.AppExceptions.UserNotFoundException;
 import com.project.cms.exception.AppExceptions.ValidationException;
-
 import com.project.cms.model.User;
 import com.project.cms.model.role.RolePermissions;
 import com.project.cms.util.PasswordHasher;
@@ -69,7 +67,8 @@ public class UserServiceImpl implements UserService {
         // Hash password before saving
         user.setPasswordHash(PasswordHasher.hashPassword(user.getPasswordHash()));
         
-        userDao.addUser(user);
+        int id = userDao.addUser(user);
+        user.setUserId(id);
         return user;
      }
 

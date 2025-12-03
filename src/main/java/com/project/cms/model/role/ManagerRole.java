@@ -1,44 +1,50 @@
 package com.project.cms.model.role;
 
+/**
+ * Permission implementation for the Manager role.
+ * <p>
+ * Manager can perform all user-management and statistical operations.
+ * Manager has NO access to contact CRUD operations.
+ */
 public class ManagerRole implements RolePermissions {
 
-    /* ---------------- COMMON ---------------- */
+    /* ---------------- ALLOWED OPERATIONS ---------------- */
+
     @Override
     public void changePassword() {
-        // TODO
+        // allowed
     }
 
     @Override
     public void logout() {
-        // TODO
+        // allowed
     }
-
-    /* ---------------- USER OPERATIONS (allowed) ---------------- */
 
     @Override
     public void showContactsStatisticalInfo() {
-        // TODO
+        // allowed
     }
 
     @Override
     public void listAllUsers() {
-        // TODO
+        // allowed
     }
 
     @Override
     public void updateExistingUser() {
-        // TODO
+        // allowed
     }
 
     @Override
     public void addNewUser() {
-        // TODO
+        // allowed
     }
 
     @Override
     public void deleteExistingUser() {
-        // TODO
+        // allowed
     }
+
 
     /* ---------------- CONTACT OPERATIONS (NOT ALLOWED) ---------------- */
 

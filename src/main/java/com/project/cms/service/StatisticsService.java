@@ -150,7 +150,7 @@ public class StatisticsService {
         // CITY DISTRIBUTION (ANIMATED GRAPH)
         // ------------------------------------------------------------------
         System.out.println(ConsoleColors.PURPLE + "\n------------------------------------------------------------" + ConsoleColors.RESET);
-        System.out.println(ConsoleColors.YELLOW_BOLD + "[ CITY DISTRIBUTION ]" + ConsoleColors.RESET);
+        System.out.println(ConsoleColors.RED + "[ CITY DISTRIBUTION ]" + ConsoleColors.RESET);
 
         List<String[]> cityData = contactDao.getCityDistribution();
 
@@ -186,7 +186,7 @@ public class StatisticsService {
         // ------------------------------------------------------------------
         // BIRTH MONTH DISTRIBUTION (ANIMATED GRAPH)
         // ------------------------------------------------------------------
-        System.out.println(ConsoleColors.PURPLE + "\n------------------------------------------------------------" + ConsoleColors.RESET);
+        System.out.println(ConsoleColors.RED_BOLD + "\n------------------------------------------------------------" + ConsoleColors.RESET);
         System.out.println(ConsoleColors.YELLOW_BOLD + "[ BIRTH MONTH DISTRIBUTION ]" + ConsoleColors.RESET);
 
         List<String[]> birthData = contactDao.getBirthMonthDistribution();

@@ -1,58 +1,71 @@
 package com.project.cms.model.role;
 
+/**
+ * Permission implementation for the Senior Developer role.
+ * <p>
+ * Senior Developer can read, update, add, and delete contacts.
+ * They cannot perform any user-management or statistical operations.
+ */
 public class SeniorDeveloperRole implements RolePermissions {
 
-    /* ---------------- COMMON ---------------- */
+    /* ---------------- ALLOWED OPERATIONS ---------------- */
+
     @Override
     public void changePassword() {
-        // TODO
+        // allowed
     }
 
     @Override
     public void logout() {
-        // TODO
+        // allowed
     }
 
     @Override
     public void listAllContacts() {
-        // TODO
+        // allowed
     }
 
     @Override
     public void searchBySingleField() {
-        // TODO
+        // allowed
     }
 
     @Override
     public void searchByMultipleFields() {
-        // TODO
+        // allowed
     }
 
     @Override
     public void sortContacts() {
-        // TODO
+        // allowed
     }
 
-    /* ---------------- CONTACT EDIT (Junior + Senior) ---------------- */
-
+    /**
+     * Senior Developer can update existing contacts.
+     */
     @Override
     public void updateExistingContact() {
-        // TODO
+        // allowed
     }
 
-    /* ---------------- CONTACT CREATE/DELETE (Senior ek izin) ---------------- */
-
+    /**
+     * Senior Developer can add new contacts.
+     */
     @Override
     public void addNewContactOrContacts() {
-        // TODO
+        // allowed
     }
 
+    /**
+     * Senior Developer can delete existing contacts.
+     */
     @Override
     public void deleteExistingContactOrContacts() {
-        // TODO
+        // allowed
     }
 
-    /* ---------------- NOT ALLOWED ---------------- */
+
+    /* ---------------- NOT ALLOWED OPERATIONS ---------------- */
 
     @Override
     public void showContactsStatisticalInfo() {
@@ -79,4 +92,3 @@ public class SeniorDeveloperRole implements RolePermissions {
         throw new UnsupportedOperationException("Senior Developer cannot delete users.");
     }
 }
-

@@ -1,48 +1,55 @@
 package com.project.cms.model.role;
 
+/**
+ * Permission implementation for the Junior Developer role.
+ * <p>
+ * Junior Developer can read contact data and update existing contacts.
+ * Cannot add/delete contacts or perform any user-management/statistics operations.
+ */
 public class JuniorDeveloperRole implements RolePermissions {
 
-    /* ---------------- COMMON ---------------- */
+    /* ---------------- ALLOWED OPERATIONS ---------------- */
+
     @Override
     public void changePassword() {
-        // TODO
+        // allowed
     }
 
     @Override
     public void logout() {
-        // TODO
+        // allowed
     }
-
-    /* ---------------- CONTACT OPERATIONS (allowed) ---------------- */
 
     @Override
     public void listAllContacts() {
-        // TODO
+        // allowed
     }
 
     @Override
     public void searchBySingleField() {
-        // TODO
+        // allowed
     }
 
     @Override
     public void searchByMultipleFields() {
-        // TODO
+        // allowed
     }
 
     @Override
     public void sortContacts() {
-        // TODO
+        // allowed
     }
 
-    /* ---------------- CONTACT EDIT (Junior ek izin) ---------------- */
-
+    /**
+     * Junior Developer is allowed to update existing contacts.
+     */
     @Override
     public void updateExistingContact() {
-        // TODO: update contact
+        // allowed
     }
 
-    /* ---------------- NOT ALLOWED ---------------- */
+
+    /* ---------------- NOT ALLOWED OPERATIONS ---------------- */
 
     @Override
     public void addNewContactOrContacts() {

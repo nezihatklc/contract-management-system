@@ -1,38 +1,44 @@
 package com.project.cms.model.role;
 
+/**
+ * Permission implementation for the Tester role.
+ * <p>
+ * Tester can only read contact data (list, search, sort) and manage own session.
+ * All modification and user-management operations are prohibited.
+ */
 public class TesterRole implements RolePermissions {
 
     /* ---------------- COMMON ---------------- */
     @Override
     public void changePassword() {
-        // TODO: call password change service
+        // Allowed
     }
 
     @Override
     public void logout() {
-        // TODO: handle logout
+        // Allowed
     }
 
     /* ---------------- CONTACT OPERATIONS (allowed) ---------------- */
 
     @Override
     public void listAllContacts() {
-        // TODO: list contacts
+        // Allowed
     }
 
     @Override
     public void searchBySingleField() {
-        // TODO: search with single field
+        // Allowed
     }
 
     @Override
     public void searchByMultipleFields() {
-        // TODO: multi-field search
+        // Allowed
     }
 
     @Override
     public void sortContacts() {
-        // TODO: sort contacts
+        // Allowed
     }
 
     /* ---------------- NOT ALLOWED ---------------- */
