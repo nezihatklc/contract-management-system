@@ -2,17 +2,14 @@ package com.project.cms.service;
 
 import com.project.cms.dao.contact.ContactDao;
 import com.project.cms.dao.contact.ContactDaoImpl;
-
 import com.project.cms.exception.AppExceptions.AccessDeniedException;
 import com.project.cms.exception.AppExceptions.ContactNotFoundException;
 import com.project.cms.exception.AppExceptions.ValidationException;
-
 import com.project.cms.model.Contact;
+import com.project.cms.model.SearchCriteria;
 import com.project.cms.model.UndoAction;
 import com.project.cms.model.User;
-import com.project.cms.model.SearchCriteria;
 import com.project.cms.util.Validator;
-
 import java.util.List;
 
 public class ContactServiceImpl implements ContactService {
@@ -147,18 +144,22 @@ public class ContactServiceImpl implements ContactService {
        SEARCH (OR LOGIC)
     ========================================================= */
     @Override
-    public List<Contact> searchContacts(String keyword) {
+    public List<Contact> searchContacts(SearchCriteria criteria, User performingUser)
+            throws AccessDeniedException {
 
-        if (keyword == null || keyword.trim().isEmpty())
+        // Role check
+        try {
+            userService.getPermissionsFor(performingUser).searchBySingleField();
+        } catch (UnsupportedOperationException e) {
+            throw new AccessDeniedException("You are not allowed to search contacts.");
+        }
+
+        // if no criteria provided, return all contacts
+        if (criteria == null || !criteria.hasCriteria()) {
             return contactDao.findAll();
-
-        SearchCriteria criteria = new SearchCriteria();
-        criteria.add("first_name", keyword);
-        criteria.add("last_name", keyword);
-        criteria.add("city", keyword);
-        criteria.add("email", keyword);
-        criteria.add("nickname", keyword);
-
+        }
+        
         return contactDao.search(criteria);
     }
+
 }

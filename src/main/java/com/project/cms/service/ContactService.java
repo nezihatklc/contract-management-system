@@ -4,8 +4,8 @@ import com.project.cms.exception.AppExceptions.AccessDeniedException;
 import com.project.cms.exception.AppExceptions.ContactNotFoundException;
 import com.project.cms.exception.AppExceptions.ValidationException;
 import com.project.cms.model.Contact;
+import com.project.cms.model.SearchCriteria;
 import com.project.cms.model.User;
-
 import java.util.List;
 
 /* Defines all business operations for managing contacts. */
@@ -36,5 +36,6 @@ public interface ContactService {
     List<Contact> sortContacts(String field, boolean ascending);
 
     // SEARCH (OR logic)
-    List<Contact> searchContacts(String keyword);
+    public List<Contact> searchContacts(SearchCriteria criteria, User performingUser)
+            throws AccessDeniedException;
 }
