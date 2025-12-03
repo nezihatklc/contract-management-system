@@ -4,6 +4,7 @@ import com.project.cms.model.Contact;
 import com.project.cms.model.SearchCriteria;
 import com.project.cms.model.User;
 import com.project.cms.service.ContactService;
+import com.project.cms.service.UndoService;
 import com.project.cms.service.UserService;
 import com.project.cms.ui.input.ConsolePrinter;
 import com.project.cms.ui.input.InputHandler;
@@ -15,11 +16,13 @@ public class SeniorDevMenu {
     private final User user;
     private final ContactService contactService;
     private final UserService userService;
+    private final UndoService undoService;
 
-    public SeniorDevMenu(User user, ContactService contactService, UserService userService) {
+    public SeniorDevMenu(User user, ContactService contactService, UserService userService, UndoService undoService) {
         this.user = user;
         this.contactService = contactService;
         this.userService = userService;
+        this.undoService = undoService;
     }
 
     public void start() {
@@ -86,7 +89,7 @@ public class SeniorDevMenu {
         }
 
         try {
-            List<Contact> results = contactService.searchAdvanced(criteria, null, true);
+            List<Contact> results = contactService.searchContacts(criteria, user);
             if (results.isEmpty()) {
                 ConsolePrinter.info("No matching contacts found.");
             } else {
@@ -120,7 +123,7 @@ public class SeniorDevMenu {
         boolean isAscending = InputHandler.readInt("Order") == 1;
 
         try {
-            List<Contact> sortedList = contactService.searchAdvanced(null, field, isAscending);
+            List<Contact> sortedList = contactService.sortContacts(field, isAscending);
             sortedList.forEach(System.out::println);
         } catch (Exception e) {
             ConsolePrinter.error("Sort failed: " + e.getMessage());
@@ -194,7 +197,7 @@ public class SeniorDevMenu {
 
     private void undoLastAction() {
         try {
-            contactService.undoLast();
+            undoService.undo(user);
             ConsolePrinter.success("Last operation undone successfully.");
         } catch (Exception e) {
             ConsolePrinter.error("Undo failed: " + e.getMessage());

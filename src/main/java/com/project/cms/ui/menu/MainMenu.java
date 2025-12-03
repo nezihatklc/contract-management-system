@@ -1,16 +1,13 @@
 package com.project.cms.ui.menu;
 
-import com.project.cms.model.User;
 import com.project.cms.model.RoleType;
-
-import com.project.cms.service.UserService;
+import com.project.cms.model.User;
 import com.project.cms.service.ContactService;
 import com.project.cms.service.StatisticsService;
 import com.project.cms.service.UndoService;
-
-
-import com.project.cms.ui.input.InputHandler;
+import com.project.cms.service.UserService;
 import com.project.cms.ui.input.ConsolePrinter;
+import com.project.cms.ui.input.InputHandler;
 
 public class MainMenu {
 
@@ -112,8 +109,9 @@ public class MainMenu {
                         user,
                         contactService,
                         userService,
-                        statisticsService,
-                        undoService
+                        undoService,
+                        statisticsService
+                        
                 ).start();
                 break;
 

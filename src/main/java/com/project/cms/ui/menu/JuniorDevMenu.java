@@ -4,6 +4,7 @@ import com.project.cms.model.Contact;
 import com.project.cms.model.SearchCriteria;
 import com.project.cms.model.User;
 import com.project.cms.service.ContactService;
+import com.project.cms.service.UndoService;
 import com.project.cms.service.UserService;
 import com.project.cms.ui.input.ConsolePrinter;
 import com.project.cms.ui.input.InputHandler;
@@ -15,12 +16,14 @@ public class JuniorDevMenu {
     private final User user;
     private final ContactService contactService;
     private final UserService userService;
+    private final UndoService undoService;
 
-    public JuniorDevMenu(User user, ContactService contactService, UserService userService) {
+    public JuniorDevMenu(User user, ContactService contactService, UserService userService, UndoService undoService) {
         this.user = user;
         this.contactService = contactService;
         this.userService = userService;
-    }
+        this.undoService = undoService;
+    }   
 
     public void start() {
         while (true) {
@@ -82,7 +85,7 @@ public class JuniorDevMenu {
         }
 
         try {
-            List<Contact> results = contactService.searchAdvanced(criteria, null, true);
+            List<Contact> results = contactService.searchContacts(criteria, user);
             if (results.isEmpty()) {
                 ConsolePrinter.info("No matching contacts found.");
             } else {
@@ -99,7 +102,7 @@ public class JuniorDevMenu {
         System.out.println("Select field to sort by:");
         System.out.println("1. First Name");
         System.out.println("2. Last Name");
-        System.out.println("3. Phone");
+        System.out.println("3. Phone_primary");
         
         int fieldChoice = InputHandler.readInt("Field");
         String field = switch (fieldChoice) {
@@ -116,7 +119,7 @@ public class JuniorDevMenu {
         boolean isAscending = InputHandler.readInt("Order") == 1;
 
         try {
-            List<Contact> sortedList = contactService.searchAdvanced(null, field, isAscending);
+            List<Contact> sortedList = contactService.sortContacts(field, isAscending);
             sortedList.forEach(System.out::println);
         } catch (Exception e) {
             ConsolePrinter.error("Sort failed: " + e.getMessage());
@@ -159,7 +162,7 @@ public class JuniorDevMenu {
 
     private void undoLastAction() {
         try {
-            contactService.undoLast();
+            undoService.undo(user);
             ConsolePrinter.success("Last operation undone successfully.");
         } catch (Exception e) {
             ConsolePrinter.error("Undo failed: " + e.getMessage());

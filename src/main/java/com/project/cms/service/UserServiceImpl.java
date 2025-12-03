@@ -11,6 +11,7 @@ import com.project.cms.model.User;
 import com.project.cms.model.role.RolePermissions;
 import com.project.cms.util.PasswordHasher;
 import com.project.cms.util.Validator;
+import java.util.List;
 
 public class UserServiceImpl implements UserService {
 
@@ -42,6 +43,8 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+
+    
     /* ===================== CHANGE PASSWORD ===================== */
 
     @Override
@@ -157,4 +160,11 @@ public class UserServiceImpl implements UserService {
         undoService.recordUndoAction(performingUser,
                 UndoAction.forUserDelete(oldUser));
     }
+
+    @Override
+        public List<User> getAllUsers() {
+        return userDao.getAllUsers();
+    }
+
+    
 }

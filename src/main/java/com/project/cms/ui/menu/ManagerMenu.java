@@ -4,12 +4,11 @@ import com.project.cms.model.RoleType;
 import com.project.cms.model.User;
 import com.project.cms.service.ContactService;
 import com.project.cms.service.StatisticsService;
+import com.project.cms.service.UndoService;
 import com.project.cms.service.UserService;
 import com.project.cms.ui.input.ConsolePrinter;
 import com.project.cms.ui.input.InputHandler;
 import com.project.cms.util.DateUtils;
-import com.project.cms.util.Validator;
-
 import java.time.LocalDate;
 import java.util.List;
 
@@ -19,40 +18,35 @@ public class ManagerMenu {
     private final ContactService contactService;
     private final UserService userService;
     private final StatisticsService statisticsService;
+    private final UndoService undoService;
 
    
-    public ManagerMenu(User user, ContactService contactService, UserService userService, StatisticsService statisticsService) {
+    public ManagerMenu(User user, ContactService contactService, UserService userService, UndoService undoService , StatisticsService statisticsService) {
         this.user = user;
         this.contactService = contactService;
         this.userService = userService;
         this.statisticsService = statisticsService;
+        this.undoService = undoService;
     }
 
-    public void start() {
+     public void start() {
         while (true) {
-            ConsolePrinter.headline("MANAGER MENU (" + user.getName() + " " + user.getSurname() + ")");
-            
-            ConsolePrinter.menuOption(1, "Contact Operations (Go to Senior Menu)");
-            ConsolePrinter.menuOption(2, "User Management (List/Add/Delete Users)");
-            ConsolePrinter.menuOption(3, "View System Statistics");
-            ConsolePrinter.menuOption(4, "Change Password");
-            ConsolePrinter.menuOption(5, "Undo Last Operation");
+            ConsolePrinter.headline("MANAGER MENU (" + user.getName() + ")");
+
+            ConsolePrinter.menuOption(1, "View Contact Statistics");
+            ConsolePrinter.menuOption(2, "User Management");
+            ConsolePrinter.menuOption(3, "Change Password");
+            ConsolePrinter.menuOption(4, "Undo Last Operation");
             ConsolePrinter.menuOption(0, "Logout");
 
             int choice = InputHandler.readInt("Choice");
 
             switch (choice) {
-               
-                case 1 -> new SeniorDevMenu(user, contactService, userService).start();
-                
+                case 1 -> viewStatistics();
                 case 2 -> handleUserManagement();
-                case 3 -> viewStatistics();
-                case 4 -> changePassword();
-                case 5 -> undoLastAction();
-                case 0 -> { 
-                    ConsolePrinter.info("Logging out...");
-                    return; 
-                }
+                case 3 -> changePassword();
+                case 4 -> undoLastAction();
+                case 0 -> { return; }
                 default -> ConsolePrinter.error("Invalid choice.");
             }
         }
@@ -147,17 +141,13 @@ public class ManagerMenu {
 
    
     private void viewStatistics() {
-      
         try {
-           
-            ConsolePrinter.headline("SYSTEM STATISTICS");
-            System.out.println("Total Contacts: " + statisticsService.getTotalContactCount(user));
-           
-            
+            statisticsService.showStatistics();
         } catch (Exception e) {
             ConsolePrinter.error(e.getMessage());
         }
     }
+
 
     private void changePassword() {
         ConsolePrinter.subTitle("Change Password");
@@ -173,13 +163,12 @@ public class ManagerMenu {
     }
 
     private void undoLastAction() {
-      
         try {
-            
-            
-            ConsolePrinter.info("Undo operation triggered.");
+            undoService.undo(user);
+            ConsolePrinter.success("Last operation undone successfully.");
         } catch (Exception e) {
             ConsolePrinter.error("Undo failed: " + e.getMessage());
         }
     }
+
 }

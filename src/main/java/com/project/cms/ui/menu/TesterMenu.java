@@ -4,6 +4,7 @@ import com.project.cms.model.Contact;
 import com.project.cms.model.SearchCriteria;
 import com.project.cms.model.User;
 import com.project.cms.service.ContactService;
+import com.project.cms.service.UndoService;
 import com.project.cms.service.UserService;
 import com.project.cms.ui.input.ConsolePrinter;
 import com.project.cms.ui.input.InputHandler;
@@ -14,11 +15,13 @@ public class TesterMenu {
     private final User user;
     private final ContactService contactService;
     private final UserService userService;
+    private final UndoService undoService;
 
-    public TesterMenu(User user, ContactService contactService, UserService userService) {
+    public TesterMenu(User user, ContactService contactService, UserService userService, UndoService undoService) {
         this.user = user;
         this.contactService = contactService;
         this.userService = userService;
+        this.undoService = undoService;
     }
 
     public void start() {
@@ -29,6 +32,7 @@ public class TesterMenu {
             ConsolePrinter.menuOption(2, "Search Contacts");
             ConsolePrinter.menuOption(3, "Sort Contacts");
             ConsolePrinter.menuOption(4, "Change Password");
+            ConsolePrinter.menuOption(5, "Undo Last Operation");
             ConsolePrinter.menuOption(0, "Logout");
 
             int choice = InputHandler.readInt("Choice");
@@ -38,6 +42,7 @@ public class TesterMenu {
                 case 2 -> searchContacts();
                 case 3 -> sortContacts();
                 case 4 -> changePassword();
+                case 5 -> undoLastAction();
                 case 0 -> { 
                     ConsolePrinter.info("Logging out...");
                     return; 
@@ -80,7 +85,7 @@ public class TesterMenu {
         }
 
         try {
-            List<Contact> results = contactService.searchAdvanced(criteria, null, true);
+            List<Contact> results = contactService.searchContacts(criteria, user);
             
             if (results.isEmpty()) {
                 ConsolePrinter.info("No matching contacts found.");
@@ -116,10 +121,20 @@ public class TesterMenu {
         boolean isAscending = InputHandler.readInt("Order") == 1;
 
         try {
-            List<Contact> sortedList = contactService.searchAdvanced(null, field, isAscending);
+            List<Contact> sortedList = contactService.sortContacts(field, isAscending);
             sortedList.forEach(System.out::println);
         } catch (Exception e) {
             ConsolePrinter.error("Sort failed: " + e.getMessage());
+        }
+    }
+
+    private void undoLastAction() {
+        ConsolePrinter.subTitle("Undo Last Operation");
+        try {
+            undoService.undo(user);
+            ConsolePrinter.success("Last operation undone successfully.");
+        } catch (Exception e) {
+            ConsolePrinter.error("Undo failed: " + e.getMessage());
         }
     }
 
