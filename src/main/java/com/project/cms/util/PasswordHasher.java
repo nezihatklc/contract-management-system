@@ -1,5 +1,6 @@
 package com.project.cms.util;
 
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.util.Base64;
@@ -10,6 +11,12 @@ public class PasswordHasher {
     private static final String DELIMITER = ":";
 
     public static String hashPassword(String password) {
+
+        
+        if (password == null) {
+            return null;
+        }
+
         try {
             byte[] salt = generateSalt();
             byte[] hashBytes = sha256(password, salt);
@@ -25,10 +32,15 @@ public class PasswordHasher {
     }
 
     public static boolean verifyPassword(String password, String stored) {
-        if (stored == null || !stored.contains(DELIMITER)) return false;
+
+        if (password == null || stored == null || !stored.contains(DELIMITER)) {
+            return false;
+        }
 
         try {
             String[] parts = stored.split(DELIMITER);
+            if (parts.length != 2) return false;
+
             String storedHash = parts[0];
             byte[] salt = Base64.getDecoder().decode(parts[1]);
 
@@ -51,7 +63,10 @@ public class PasswordHasher {
     private static byte[] sha256(String password, byte[] salt) throws Exception {
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         md.update(salt);
-        return md.digest(password.getBytes());
+        return md.digest(password.getBytes(StandardCharsets.UTF_8));
     }
 }
+
+
+
 
