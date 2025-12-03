@@ -9,33 +9,37 @@ import java.util.Scanner;
 
 public class InputHandler {
 
-    private static Scanner scanner = new Scanner(System.in);
+    private static final Scanner scanner = new Scanner(System.in);
 
     private static final String DATE_FORMAT = "dd/MM/yyyy";
     private static final DateTimeFormatter DATE_FORMATTER =
             DateTimeFormatter.ofPattern(DATE_FORMAT);
 
-    public static void closeScanner() {
-        if (scanner != null) {
-            scanner.close();
-        }
+    // ---------------------- INTEGER ----------------------
+    public static int readInt(String prompt) {
+        return readInt(prompt, Integer.MIN_VALUE, Integer.MAX_VALUE);
     }
 
-
-    public static int readInt(String prompt) {
+    public static int readInt(String prompt, int min, int max) {
         while (true) {
-            ConsolePrinter.prompt(prompt);
+            ConsolePrinter.prompt(prompt + " (" + min + "-" + max + ")");
             try {
                 int value = scanner.nextInt();
-                scanner.nextLine();
-                return value;
+                scanner.nextLine(); 
+
+                if (value >= min && value <= max) {
+                    return value;
+                } else {
+                    ConsolePrinter.error("Please enter a value between " + min + " and " + max + ".");
+                }
             } catch (InputMismatchException e) {
-                ConsolePrinter.error("ınvalid entry. Please enter only integers.");
-                scanner.nextLine();
+                ConsolePrinter.error("Invalid entry. Please enter only integers.");
+                scanner.nextLine(); 
             }
         }
     }
 
+    // ---------------------- DOUBLE ----------------------
     public static double readDouble(String prompt) {
         while (true) {
             ConsolePrinter.prompt(prompt);
@@ -44,47 +48,60 @@ public class InputHandler {
                 scanner.nextLine();
                 return value;
             } catch (InputMismatchException e) {
-                ConsolePrinter.error("Please enter a valid decimal number. ");
+                ConsolePrinter.error("Please enter a valid decimal number.");
                 scanner.nextLine();
             }
         }
     }
 
-
+    // ---------------------- STRING ----------------------
     public static String readString(String prompt, boolean isMandatory) {
         while (true) {
             ConsolePrinter.prompt(prompt);
-            String input = scanner.nextLine().trim();
+            String input = scanner.nextLine();
 
-            if (isMandatory && input.isEmpty()) {
+            if (input == null) {
+                input = "";
+            }
+
+            if (isMandatory && input.trim().isEmpty()) {
                 ConsolePrinter.error("This field cannot be left blank.");
             } else {
-                return input;
+                return input.trim();
             }
         }
     }
 
+    // ---------------------- PASSWORD ----------------------
     public static String readPassword(String prompt) {
-        return readString(prompt, true);
+        return readString(prompt + " (Your input will be visible)", true);
     }
 
-    
-
-    public static LocalDate readDate(String prompt) {
+    // ---------------------- DATE ----------------------
+    public static LocalDate readDate(String prompt, boolean isMandatory) {
         while (true) {
             ConsolePrinter.prompt(prompt + " (" + DATE_FORMAT + ")");
             String dateString = scanner.nextLine().trim();
+
+            if (dateString.isEmpty()) {
+                if (isMandatory) {
+                    ConsolePrinter.error("This field cannot be left blank.");
+                    continue;
+                } else {
+                    return null;
+                }
+            }
+
             try {
                 return LocalDate.parse(dateString, DATE_FORMATTER);
             } catch (DateTimeParseException e) {
-                ConsolePrinter.error("Incorrect date format.");
+                ConsolePrinter.error("Incorrect date format. Please use " + DATE_FORMAT + ".");
             }
         }
     }
 
-    
-
-    public static void waitEnter() {
+    // ---------------------- WAIT ENTER ----------------------
+    public static void WaitEnter() {
         ConsolePrinter.blank();
         ConsolePrinter.promptInline(
                 ConsoleColors.PURPLE + "Press ENTER to continue..." + ConsoleColors.RESET
@@ -93,6 +110,4 @@ public class InputHandler {
         ConsolePrinter.blank();
     }
 }
-
-
 
