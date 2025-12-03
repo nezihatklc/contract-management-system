@@ -14,7 +14,7 @@ public class ManagerMenu {
     private final UserService userService;
     private final StatisticsService statisticsService;
 
-    // MainMenu parametre sırasına dikkat!
+   
     public ManagerMenu(User user, ContactService contactService, UserService userService, StatisticsService statisticsService) {
         this.user = user;
         this.contactService = contactService;
@@ -33,7 +33,7 @@ public class ManagerMenu {
             int choice = InputHandler.readInt("Choice");
 
             switch (choice) {
-                // Manager aynı zamanda Senior yetkilerine de sahiptir, direkt o menüyü açabiliriz
+               
                 case 1 -> new SeniorDevMenu(user, contactService, userService).start();
                 case 2 -> listUsers();
                 case 3 -> viewStatistics();
@@ -44,7 +44,7 @@ public class ManagerMenu {
     }
 
     private void listUsers() {
-        // UserService içinde getAllUsers metodu varsa:
+      
         // userService.getAllUsers().forEach(u -> System.out.println(u.getUsername() + " - " + u.getRole()));
         System.out.println("User listing feature coming soon...");
     }

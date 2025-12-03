@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 public class Contact {
 
     private int contactId;
+    private int userId;
     private String firstName;
     private String middleName;
     private String lastName;
@@ -23,6 +24,7 @@ public class Contact {
 
     // === GETTERS ===
     public int getContactId() { return contactId; }
+    public int getUserId() { return userId; }
     public String getFirstName() { return firstName; }
     public String getMiddleName() { return middleName; }
     public String getLastName() { return lastName; }
@@ -38,6 +40,7 @@ public class Contact {
 
     // === SETTERS ===
     public void setContactId(int contactId) { this.contactId = contactId; }
+    public void setUserId(int userId) { this.userId = userId; }
     public void setFirstName(String firstName) { this.firstName = firstName; }
     public void setMiddleName(String middleName) { this.middleName = middleName; }
     public void setLastName(String lastName) { this.lastName = lastName; }

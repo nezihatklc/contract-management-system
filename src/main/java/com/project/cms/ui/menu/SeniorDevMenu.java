@@ -9,6 +9,7 @@ import com.project.cms.ui.input.ConsolePrinter;
 import com.project.cms.ui.input.InputHandler;
 import com.project.cms.util.Validator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SeniorDevMenu {
     
@@ -39,11 +40,10 @@ public class SeniorDevMenu {
             switch (choice) {
                 case 1 -> listContacts();
                 case 2 -> searchContacts();
-                case 3 -> System.out.println("Sort feature coming soon...");
+                case 3 -> sortContacts();
                 case 4 -> addContact();
-                case 5 -> updateContact(); // Junior menüsündeki gibi implemente edilebilir
+                case 5 -> updateContact();
                 case 6 -> deleteContact();
-                // case 7 -> contactService.undoLast(user); 
                 case 0 -> { return; }
                 default -> ConsolePrinter.error("Invalid choice.");
             }
@@ -51,13 +51,36 @@ public class SeniorDevMenu {
     }
 
     private void listContacts() {
-        contactService.getContactsByUser(user.getUserId()).forEach(System.out::println);
+        List<Contact> all = contactService.getAllContacts();
+        List<Contact> userContacts = all.stream()
+            .filter(c -> c.getUserId() == user.getUserId())
+            .collect(Collectors.toList());
+        
+        if (userContacts.isEmpty()) {
+            ConsolePrinter.info("No contacts found.");
+        } else {
+            userContacts.forEach(System.out::println);
+        }
     }
 
     private void searchContacts() {
-        String keyword = InputHandler.readString("Enter search keyword", true);
-        List<Contact> results = contactService.searchContacts(user.getUserId(), keyword);
-        results.forEach(System.out::println);
+        String firstName = InputHandler.readString("First Name (leave empty to skip)", false);
+        String lastName = InputHandler.readString("Last Name (leave empty to skip)", false);
+        String city = InputHandler.readString("City (leave empty to skip)", false);
+
+        List<Contact> all = contactService.getAllContacts();
+        List<Contact> results = all.stream()
+            .filter(c -> c.getUserId() == user.getUserId())
+            .filter(c -> firstName.isEmpty() || c.getFirstName().toLowerCase().contains(firstName.toLowerCase()))
+            .filter(c -> lastName.isEmpty() || c.getLastName().toLowerCase().contains(lastName.toLowerCase()))
+            .filter(c -> city.isEmpty() || c.getCity().toLowerCase().contains(city.toLowerCase()))
+            .collect(Collectors.toList());
+        
+        if (results.isEmpty()) {
+            ConsolePrinter.info("No contacts found matching your criteria.");
+        } else {
+            results.forEach(System.out::println);
+        }
     }
 
     private void addContact() {
@@ -78,8 +101,47 @@ public class SeniorDevMenu {
     }
 
     private void updateContact() {
-        // JuniorDevMenu'deki mantığın aynısı
-        System.out.println("Update logic here..."); 
+        int id = InputHandler.readInt("Enter Contact ID to update");
+        try {
+            Contact contact = contactService.getContactById(id);
+            if (contact == null) {
+                ConsolePrinter.error("Contact not found.");
+                return;
+            }
+            
+            String phone = InputHandler.readString("New Phone (Enter to keep " + contact.getPhonePrimary() + ")", false);
+            if (!phone.isEmpty()) {
+                Validator.validatePhone(phone);
+                contact.setPhonePrimary(phone);
+            }
+            
+            contactService.updateContact(contact, user);
+            ConsolePrinter.success("Contact updated successfully.");
+            
+        } catch (Exception e) {
+            ConsolePrinter.error(e.getMessage());
+        }
+    }
+
+    private void sortContacts() {
+        String field = InputHandler.readString("Sort by field (first_name/last_name/city)", true);
+        String orderInput = InputHandler.readString("Sort order (asc/desc)", true);
+        boolean ascending = orderInput.trim().equalsIgnoreCase("asc");
+
+        try {
+            List<Contact> sorted = contactService.sortContacts(field, ascending);
+            List<Contact> userContacts = sorted.stream()
+                .filter(c -> c.getUserId() == user.getUserId())
+                .collect(Collectors.toList());
+            
+            if (userContacts.isEmpty()) {
+                ConsolePrinter.info("No contacts to display.");
+            } else {
+                userContacts.forEach(System.out::println);
+            }
+        } catch (Exception e) {
+            ConsolePrinter.error("Sort error: " + e.getMessage());
+        }
     }
 
     private void deleteContact() {
