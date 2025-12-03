@@ -85,7 +85,7 @@ public class MainMenu {
                         user,
                         contactService,
                         userService,
-                        undoService,
+                        undoService
                 ).start();
                 break;
 

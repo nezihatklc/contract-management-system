@@ -16,11 +16,15 @@ public class UserServiceImpl implements UserService {
 
     private final UserDao userDao = new UserDaoImpl();
 
-    private final UndoService undoService;
+    private  UndoService undoService;
 
     public UserServiceImpl(UndoService undoService) {
         this.undoService = undoService;
     }
+
+    public void setUndoService(UndoService undoService) {
+        this.undoService = undoService;
+    }    
 
     /* ===================== LOGIN ===================== */
 
