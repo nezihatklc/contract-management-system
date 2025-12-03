@@ -11,10 +11,9 @@ import java.util.List;
 
 public class TesterMenu {
     
-    
-    protected final User user;
-    protected final ContactService contactService;
-    protected final UserService userService;
+    private final User user;
+    private final ContactService contactService;
+    private final UserService userService;
 
     public TesterMenu(User user, ContactService contactService, UserService userService) {
         this.user = user;
@@ -25,6 +24,7 @@ public class TesterMenu {
     public void start() {
         while (true) {
             ConsolePrinter.headline("TESTER MENU (" + user.getName() + " " + user.getSurname() + ")");
+            
             ConsolePrinter.menuOption(1, "List All Contacts");
             ConsolePrinter.menuOption(2, "Search Contacts");
             ConsolePrinter.menuOption(3, "Sort Contacts");
@@ -38,64 +38,102 @@ public class TesterMenu {
                 case 2 -> searchContacts();
                 case 3 -> sortContacts();
                 case 4 -> changePassword();
-                case 0 -> { return; }
-                default -> ConsolePrinter.error("Invalid choice.");
+                case 0 -> { 
+                    ConsolePrinter.info("Logging out...");
+                    return; 
+                }
+                default -> ConsolePrinter.error("Invalid choice. Please try again.");
             }
         }
     }
 
-
-    protected void listContacts() {
-      
-        contactService.getAllContacts().forEach(System.out::println);
+    private void listContacts() {
+        ConsolePrinter.subTitle("All Contacts");
+        
+        List<Contact> contacts = contactService.getAllContacts();
+        
+        if (contacts.isEmpty()) {
+            ConsolePrinter.info("No contacts found.");
+        } else {
+            contacts.forEach(System.out::println);
+        }
     }
 
-    protected void searchContacts() {
-        SearchCriteria criteria = new SearchCriteria();
+    private void searchContacts() {
         ConsolePrinter.subTitle("Search Contacts");
-        
-        String fn = InputHandler.readString("First Name (Empty to skip)", false);
-        if (!fn.isEmpty()) criteria.add("first_name", fn);
-        
-        String ln = InputHandler.readString("Last Name (Empty to skip)", false);
-        if (!ln.isEmpty()) criteria.add("last_name", ln);
+        SearchCriteria criteria = new SearchCriteria();
 
+        System.out.println("Enter search values (leave empty to skip):");
         
-        
+        String firstName = InputHandler.readString("First Name", false);
+        if (!firstName.isEmpty()) criteria.add("first_name", firstName);
+
+        String lastName = InputHandler.readString("Last Name", false);
+        if (!lastName.isEmpty()) criteria.add("last_name", lastName);
+
+        String phone = InputHandler.readString("Phone", false);
+        if (!phone.isEmpty()) criteria.add("phone_primary", phone);
+
+        if (!criteria.hasCriteria()) {
+            ConsolePrinter.error("No search criteria provided.");
+            return;
+        }
+
         try {
+            List<Contact> results = contactService.searchAdvanced(criteria, null, true);
             
-           List<Contact> results = contactService.searchContacts(fn);
             if (results.isEmpty()) {
-                ConsolePrinter.info("No contacts found.");
+                ConsolePrinter.info("No matching contacts found.");
             } else {
+                ConsolePrinter.success(results.size() + " contact(s) found:");
                 results.forEach(System.out::println);
             }
         } catch (Exception e) {
-            ConsolePrinter.error(e.getMessage());
-        }
-    }
-    
-    protected void sortContacts() {
-        String field = InputHandler.readString("Sort by field (first_name/last_name/city)", true);
-        String orderInput = InputHandler.readString("Sort order (asc/desc)", true);
-        boolean ascending = orderInput.trim().equalsIgnoreCase("asc");
-        
-        try {
-            List<Contact> results = contactService.sortContacts(field, ascending);
-            results.forEach(System.out::println);
-        } catch (Exception e) {
-            ConsolePrinter.error(e.getMessage());
+            ConsolePrinter.error("Search failed: " + e.getMessage());
         }
     }
 
-    protected void changePassword() {
+    private void sortContacts() {
+        ConsolePrinter.subTitle("Sort Contacts");
+        
+        System.out.println("Select field to sort by:");
+        System.out.println("1. First Name");
+        System.out.println("2. Last Name");
+        System.out.println("3. Phone");
+        
+        int fieldChoice = InputHandler.readInt("Field");
+        String field = switch (fieldChoice) {
+            case 1 -> "first_name";
+            case 2 -> "last_name";
+            case 3 -> "phone_primary";
+            default -> "first_name";
+        };
+
+        System.out.println("Select order:");
+        System.out.println("1. Ascending (A-Z)");
+        System.out.println("2. Descending (Z-A)");
+        
+        boolean isAscending = InputHandler.readInt("Order") == 1;
+
         try {
-            String oldPass = InputHandler.readPassword("Old Password");
-            String newPass = InputHandler.readPassword("New Password");
-            userService.changePassword(user.getUserId(), oldPass, newPass);
-            ConsolePrinter.success("Password changed successfully.");
+            List<Contact> sortedList = contactService.searchAdvanced(null, field, isAscending);
+            sortedList.forEach(System.out::println);
         } catch (Exception e) {
-            ConsolePrinter.error(e.getMessage());
+            ConsolePrinter.error("Sort failed: " + e.getMessage());
+        }
+    }
+
+    private void changePassword() {
+        ConsolePrinter.subTitle("Change Password");
+        
+        String oldPass = InputHandler.readPassword("Old Password");
+        String newPass = InputHandler.readPassword("New Password");
+
+        try {
+            userService.changePassword(user.getUserId(), oldPass, newPass);
+            ConsolePrinter.success("Password changed successfully!");
+        } catch (Exception e) {
+            ConsolePrinter.error("Failed to change password: " + e.getMessage());
         }
     }
 }

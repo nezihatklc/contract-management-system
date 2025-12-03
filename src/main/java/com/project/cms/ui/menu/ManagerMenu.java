@@ -1,13 +1,17 @@
 package com.project.cms.ui.menu;
 
-import com.project.cms.model.User;
 import com.project.cms.model.RoleType;
+import com.project.cms.model.User;
 import com.project.cms.service.ContactService;
 import com.project.cms.service.StatisticsService;
 import com.project.cms.service.UserService;
 import com.project.cms.ui.input.ConsolePrinter;
 import com.project.cms.ui.input.InputHandler;
+import com.project.cms.util.DateUtils;
 import com.project.cms.util.Validator;
+
+import java.time.LocalDate;
+import java.util.List;
 
 public class ManagerMenu {
     
@@ -16,6 +20,7 @@ public class ManagerMenu {
     private final UserService userService;
     private final StatisticsService statisticsService;
 
+   
     public ManagerMenu(User user, ContactService contactService, UserService userService, StatisticsService statisticsService) {
         this.user = user;
         this.contactService = contactService;
@@ -25,34 +30,64 @@ public class ManagerMenu {
 
     public void start() {
         while (true) {
-            ConsolePrinter.headline("MANAGER MENU (" + user.getName() + ")");
-            ConsolePrinter.menuOption(1, "Contact Operations (Senior Menu)");
-            ConsolePrinter.menuOption(2, "List All Users");
-            ConsolePrinter.menuOption(3, "Add New User");
-            ConsolePrinter.menuOption(4, "Delete User");
-            ConsolePrinter.menuOption(5, "View Statistics");
+            ConsolePrinter.headline("MANAGER MENU (" + user.getName() + " " + user.getSurname() + ")");
+            
+            ConsolePrinter.menuOption(1, "Contact Operations (Go to Senior Menu)");
+            ConsolePrinter.menuOption(2, "User Management (List/Add/Delete Users)");
+            ConsolePrinter.menuOption(3, "View System Statistics");
+            ConsolePrinter.menuOption(4, "Change Password");
+            ConsolePrinter.menuOption(5, "Undo Last Operation");
             ConsolePrinter.menuOption(0, "Logout");
 
             int choice = InputHandler.readInt("Choice");
 
             switch (choice) {
+               
                 case 1 -> new SeniorDevMenu(user, contactService, userService).start();
-                case 2 -> listUsers();
-                case 3 -> addUser();
+                
+                case 2 -> handleUserManagement();
+                case 3 -> viewStatistics();
+                case 4 -> changePassword();
+                case 5 -> undoLastAction();
+                case 0 -> { 
+                    ConsolePrinter.info("Logging out...");
+                    return; 
+                }
+                default -> ConsolePrinter.error("Invalid choice.");
+            }
+        }
+    }
+
+    // --- USER MANAGEMENT SUB-MENU ---
+    private void handleUserManagement() {
+        boolean back = false;
+        while (!back) {
+            ConsolePrinter.subTitle("User Management");
+            ConsolePrinter.menuOption(1, "List All Users");
+            ConsolePrinter.menuOption(2, "Add New User");
+            ConsolePrinter.menuOption(3, "Update User");
+            ConsolePrinter.menuOption(4, "Delete User");
+            ConsolePrinter.menuOption(0, "Back to Main Menu");
+
+            int choice = InputHandler.readInt("User Op");
+
+            switch (choice) {
+                case 1 -> listUsers();
+                case 2 -> addUser();
+                case 3 -> updateUser();
                 case 4 -> deleteUser();
-                case 5 -> viewStatistics();
-                case 0 -> { return; }
+                case 0 -> back = true;
                 default -> ConsolePrinter.error("Invalid choice.");
             }
         }
     }
 
     private void listUsers() {
-        System.out.println("\n--- System Users ---");
-        //If getAllUsers is not present in the UserService, it will throw an error; if it is, it will work.
-       // If you receive an error, comment this data.
-// userService.getAllUsers().forEach(u -> System.out.println(u.getUsername()));
-        System.out.println("User listing logic here...");
+        ConsolePrinter.subTitle("All System Users");
+        List<User> users = userService.getAllUsers();
+        for (User u : users) {
+            System.out.println("ID: " + u.getUserId() + " | " + u.getUsername() + " | " + u.getName() + " " + u.getSurname() + " (" + u.getRole() + ")");
+        }
     }
 
     private void addUser() {
@@ -60,55 +95,91 @@ public class ManagerMenu {
             ConsolePrinter.subTitle("Add New User");
             User newUser = new User();
             newUser.setUsername(InputHandler.readString("Username", true));
-            newUser.setPasswordHash(InputHandler.readString("Password", true)); 
+            newUser.setPasswordHash(InputHandler.readPassword("Password"));
             newUser.setName(InputHandler.readString("First Name", true));
             newUser.setSurname(InputHandler.readString("Last Name", true));
             newUser.setPhone(InputHandler.readString("Phone", true));
             
-            System.out.println("Select Role: 1.TESTER 2.JUNIOR 3.SENIOR 4.MANAGER");
-            int roleChoice = InputHandler.readInt("Role ID");
-            switch(roleChoice) {
+           
+            String dob = InputHandler.readString("Birth Date (dd/MM/yyyy)", false);
+            if (!dob.isEmpty()) {
+                LocalDate date = DateUtils.stringToDate(dob);
+                if (date != null) newUser.setBirthDate(date);
+                else ConsolePrinter.error("Invalid date format. Skipped.");
+            }
+
+            // Rol Seçimi
+            System.out.println("Select Role: 1.Tester 2.Junior 3.Senior 4.Manager");
+            int roleChoice = InputHandler.readInt("Role");
+            switch (roleChoice) {
                 case 1 -> newUser.setRole(RoleType.TESTER);
                 case 2 -> newUser.setRole(RoleType.JUNIOR_DEVELOPER);
                 case 3 -> newUser.setRole(RoleType.SENIOR_DEVELOPER);
                 case 4 -> newUser.setRole(RoleType.MANAGER);
-                default -> { ConsolePrinter.error("Invalid role."); return; }
+                default -> {
+                    ConsolePrinter.error("Invalid role. Operation cancelled.");
+                    return;
+                }
             }
 
-            Validator.validateUser(newUser);
-            userService.createUser(newUser, user); // user = manager (performing user)
-            ConsolePrinter.success("User added successfully.");
+           
+            userService.createUser(newUser, user);
+            ConsolePrinter.success("User added successfully: " + newUser.getUsername());
+
         } catch (Exception e) {
-            ConsolePrinter.error(e.getMessage());
+            ConsolePrinter.error("Failed to add user: " + e.getMessage());
         }
     }
+
+    private void updateUser() {
+        ConsolePrinter.info("Update User feature coming soon...");
+       }
 
     private void deleteUser() {
-        ConsolePrinter.subTitle("Delete User");
         int id = InputHandler.readInt("Enter User ID to delete");
-
-        if (id == user.getUserId()) {
-            ConsolePrinter.error("SECURITY ALERT: You cannot delete your own account!");
-            return;
-        }
-
         try {
-            
-            userService.deleteUser(id, user); 
+            userService.deleteUser(id, user);
             ConsolePrinter.success("User deleted successfully.");
+        } catch (Exception e) {
+            ConsolePrinter.error("Delete failed: " + e.getMessage());
+        }
+    }
+
+   
+    private void viewStatistics() {
+      
+        try {
+           
+            ConsolePrinter.headline("SYSTEM STATISTICS");
+            System.out.println("Total Contacts: " + statisticsService.getTotalContactCount(user));
+           
+            
         } catch (Exception e) {
             ConsolePrinter.error(e.getMessage());
         }
     }
 
-    private void viewStatistics() {
+    private void changePassword() {
+        ConsolePrinter.subTitle("Change Password");
+        String oldPass = InputHandler.readPassword("Old Password");
+        String newPass = InputHandler.readPassword("New Password");
+
         try {
-            ConsolePrinter.subTitle("System Statistics");
-            // StatisticsService metods
-           
-            System.out.println("Statistics module is under maintenance...");
+            userService.changePassword(user.getUserId(), oldPass, newPass);
+            ConsolePrinter.success("Password changed successfully!");
         } catch (Exception e) {
-            ConsolePrinter.error(e.getMessage());
+            ConsolePrinter.error("Failed to change password: " + e.getMessage());
+        }
+    }
+
+    private void undoLastAction() {
+      
+        try {
+            
+            
+            ConsolePrinter.info("Undo operation triggered.");
+        } catch (Exception e) {
+            ConsolePrinter.error("Undo failed: " + e.getMessage());
         }
     }
 }
