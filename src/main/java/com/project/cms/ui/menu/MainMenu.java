@@ -100,7 +100,7 @@ public class MainMenu {
         switch (role) {
 
             case TESTER:
-                new TesterMenu(user, contactService).start();
+                new TesterMenu(user, contactService, userService).start(); 
                 break;
 
             case JUNIOR_DEVELOPER:
