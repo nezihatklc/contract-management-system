@@ -10,9 +10,8 @@ import com.project.cms.exception.AppExceptions.ValidationException;
 import com.project.cms.model.Contact;
 import com.project.cms.model.UndoAction;
 import com.project.cms.model.User;
-import com.project.cms.model.role.RolePermissions;
-import com.project.cms.util.Validator;
 import com.project.cms.model.SearchCriteria;
+import com.project.cms.util.Validator;
 
 import java.util.List;
 
@@ -22,71 +21,79 @@ public class ContactServiceImpl implements ContactService {
     private final UserService userService = new UserServiceImpl();
     private final UndoService undoService = new UndoServiceImpl();
 
-    /* CREATE CONTACT (Senior Only) */
+    /* =========================================================
+       CREATE CONTACT  (Senior Only)
+    ========================================================= */
     @Override
     public Contact createContact(Contact contact, User performingUser)
             throws ValidationException, AccessDeniedException {
 
-        RolePermissions perm = userService.getPermissionsFor(performingUser);
+        // Role check
         try {
-            perm.addNewContactOrContacts();
+            userService.getPermissionsFor(performingUser).addNewContactOrContacts();
         } catch (UnsupportedOperationException e) {
-            throw new AccessDeniedException("Only Senior Developer can add contacts.");
+            throw new AccessDeniedException("Only Senior Developer can create contacts.");
         }
 
+        // Validate
         Validator.validateContact(contact);
 
-        contactDao.addContact(contact);
+        // Insert → returns new ID
+        int newId = contactDao.addContact(contact);
+        Contact saved = contactDao.findById(newId);
 
-        List<Contact> all = contactDao.findAll();
-        Contact saved = all.get(all.size() - 1);
-
-        UndoAction action = new UndoAction(
-                UndoAction.ActionType.CREATE,
-                null,
-                saved
+        // Undo: CREATE → undo = DELETE
+        undoService.recordUndoAction(
+                performingUser,
+                UndoAction.forContactCreate(saved)
         );
-        undoService.recordUndoAction(performingUser, action);
 
         return saved;
     }
 
-    /* UPDATE CONTACT (Junior + Senior) */
+    /* =========================================================
+       UPDATE CONTACT (Junior + Senior)
+    ========================================================= */
     @Override
-    public void updateContact(Contact contact, User performingUser)
+    public void updateContact(Contact updated, User performingUser)
             throws ValidationException, ContactNotFoundException, AccessDeniedException {
 
-        RolePermissions perm = userService.getPermissionsFor(performingUser);
+        // Role check
         try {
-            perm.updateExistingContact();
+            userService.getPermissionsFor(performingUser).updateExistingContact();
         } catch (UnsupportedOperationException e) {
             throw new AccessDeniedException("Only Junior/Senior can update contacts.");
         }
 
-        Contact old = contactDao.findById(contact.getContactId());
+        // Find old contact
+        Contact old = contactDao.findById(updated.getContactId());
         if (old == null)
             throw new ContactNotFoundException("Contact not found.");
 
-        Validator.validateContact(contact);
+        // Validate new version
+        Validator.validateContact(updated);
 
-        contactDao.updateContact(contact);
+        boolean ok = contactDao.updateContact(updated);
+        if (!ok)
+            throw new ContactNotFoundException("Update failed.");
 
-        UndoAction action = new UndoAction(
-                UndoAction.ActionType.UPDATE,
-                old,
-                contact
+        // Undo: UPDATE → restore old version
+        undoService.recordUndoAction(
+                performingUser,
+                UndoAction.forContactUpdate(old, updated)
         );
-        undoService.recordUndoAction(performingUser, action);
     }
 
-    /* DELETE CONTACT (Senior Only) */
+    /* =========================================================
+       DELETE CONTACT (Senior Only)
+    ========================================================= */
     @Override
     public void deleteContact(int contactId, User performingUser)
             throws ContactNotFoundException, AccessDeniedException {
 
-        RolePermissions perm = userService.getPermissionsFor(performingUser);
+        // Role check
         try {
-            perm.deleteExistingContactOrContacts();
+            userService.getPermissionsFor(performingUser).deleteExistingContactOrContacts();
         } catch (UnsupportedOperationException e) {
             throw new AccessDeniedException("Only Senior Developer can delete contacts.");
         }
@@ -95,17 +102,20 @@ public class ContactServiceImpl implements ContactService {
         if (old == null)
             throw new ContactNotFoundException("Contact not found.");
 
-        contactDao.deleteContactById(contactId);
+        boolean ok = contactDao.deleteContactById(contactId);
+        if (!ok)
+            throw new ContactNotFoundException("Delete failed.");
 
-        UndoAction action = new UndoAction(
-                UndoAction.ActionType.DELETE,
-                old,
-                null
+        // Undo: DELETE → recreate old contact
+        undoService.recordUndoAction(
+                performingUser,
+                UndoAction.forContactDelete(old)
         );
-        undoService.recordUndoAction(performingUser, action);
     }
 
-    /* GET CONTACT */
+    /* =========================================================
+       GET CONTACT BY ID
+    ========================================================= */
     @Override
     public Contact getContactById(int contactId)
             throws ContactNotFoundException {
@@ -117,21 +127,37 @@ public class ContactServiceImpl implements ContactService {
         return c;
     }
 
-    /* LIST ALL CONTACTS  */
+    /* =========================================================
+       GET ALL CONTACTS
+    ========================================================= */
     @Override
-    public List<Contact> getContactsByUser(int userId) {
+    public List<Contact> getAllContacts() {
         return contactDao.findAll();
     }
 
-    /* SEARCH USING SearchCriteria  */
+    /* =========================================================
+       SORT CONTACTS
+    ========================================================= */
     @Override
-    public List<Contact> searchContacts(int userId, String keyword) {
+    public List<Contact> sortContacts(String field, boolean ascending) {
+        return contactDao.findAllSorted(field, ascending);
+    }
+
+    /* =========================================================
+       SEARCH (OR LOGIC)
+    ========================================================= */
+    @Override
+    public List<Contact> searchContacts(String keyword) {
+
+        if (keyword == null || keyword.trim().isEmpty())
+            return contactDao.findAll();
 
         SearchCriteria criteria = new SearchCriteria();
         criteria.add("first_name", keyword);
         criteria.add("last_name", keyword);
         criteria.add("city", keyword);
         criteria.add("email", keyword);
+        criteria.add("nickname", keyword);
 
         return contactDao.search(criteria);
     }
