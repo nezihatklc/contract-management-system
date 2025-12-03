@@ -12,11 +12,19 @@ import com.project.cms.model.User;
 import com.project.cms.util.Validator;
 import java.util.List;
 
+
+
 public class ContactServiceImpl implements ContactService {
 
     private final ContactDao contactDao = new ContactDaoImpl();
-    private final UserService userService = new UserServiceImpl();
-    private final UndoService undoService = new UndoServiceImpl();
+    private final UndoService undoService;
+    private final UserService userService;
+
+    public ContactServiceImpl(UndoService undoService, UserService userService) {
+        this.undoService = undoService;
+        this.userService = userService;
+    }
+
 
     /* =========================================================
        CREATE CONTACT  (Senior Only)

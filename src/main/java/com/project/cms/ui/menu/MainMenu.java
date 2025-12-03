@@ -6,6 +6,8 @@ import com.project.cms.model.RoleType;
 import com.project.cms.service.UserService;
 import com.project.cms.service.ContactService;
 import com.project.cms.service.StatisticsService;
+import com.project.cms.service.UndoService;
+
 
 import com.project.cms.ui.input.InputHandler;
 import com.project.cms.ui.input.ConsolePrinter;
@@ -15,14 +17,18 @@ public class MainMenu {
     private final UserService userService;
     private final ContactService contactService;
     private final StatisticsService statisticsService;
+    private final UndoService undoService;
+
 
     public MainMenu(UserService userService,
                     ContactService contactService,
-                    StatisticsService statisticsService) {
+                    StatisticsService statisticsService, 
+                    UndoService undoService) {
 
         this.userService = userService;
         this.contactService = contactService;
         this.statisticsService = statisticsService;
+        this.undoService = undoService;
     }
 
     
@@ -78,7 +84,8 @@ public class MainMenu {
                 new TesterMenu(
                         user,
                         contactService,
-                        userService
+                        userService,
+                        undoService,
                 ).start();
                 break;
 
@@ -86,7 +93,8 @@ public class MainMenu {
                 new JuniorDevMenu(
                         user,
                         contactService,
-                        userService
+                        userService,
+                        undoService
                 ).start();
                 break;
 
@@ -94,7 +102,8 @@ public class MainMenu {
                 new SeniorDevMenu(
                         user,
                         contactService,
-                        userService
+                        userService,
+                        undoService
                 ).start();
                 break;
 
@@ -103,7 +112,8 @@ public class MainMenu {
                         user,
                         contactService,
                         userService,
-                        statisticsService
+                        statisticsService,
+                        undoService
                 ).start();
                 break;
 

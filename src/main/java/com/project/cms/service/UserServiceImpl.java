@@ -2,12 +2,10 @@ package com.project.cms.service;
 
 import com.project.cms.dao.user.UserDao;
 import com.project.cms.dao.user.UserDaoImpl;
-
 import com.project.cms.exception.AppExceptions.AccessDeniedException;
 import com.project.cms.exception.AppExceptions.InvalidCredentialsException;
 import com.project.cms.exception.AppExceptions.UserNotFoundException;
 import com.project.cms.exception.AppExceptions.ValidationException;
-
 import com.project.cms.model.UndoAction;
 import com.project.cms.model.User;
 import com.project.cms.model.role.RolePermissions;
@@ -17,7 +15,12 @@ import com.project.cms.util.Validator;
 public class UserServiceImpl implements UserService {
 
     private final UserDao userDao = new UserDaoImpl();
-    private final UndoService undoService = new UndoServiceImpl();
+
+    private final UndoService undoService;
+
+    public UserServiceImpl(UndoService undoService) {
+        this.undoService = undoService;
+    }
 
     /* ===================== LOGIN ===================== */
 
