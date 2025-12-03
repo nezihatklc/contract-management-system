@@ -4,10 +4,9 @@ import com.project.cms.exception.AppExceptions.AccessDeniedException;
 import com.project.cms.exception.AppExceptions.ContactNotFoundException;
 import com.project.cms.exception.AppExceptions.UndoOperationException;
 import com.project.cms.exception.AppExceptions.ValidationException;
-import com.project.cms.model.UndoAction;
 import com.project.cms.model.Contact;
+import com.project.cms.model.UndoAction;
 import com.project.cms.model.User;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
@@ -16,8 +15,13 @@ public class UndoServiceImpl implements UndoService {
 
     private final Map<Integer, Stack<UndoAction>> undoStacks = new HashMap<>();
 
-    private final ContactService contactService = new ContactServiceImpl();
-    private final UserService userService = new UserServiceImpl();
+    private final ContactService contactService;
+    private final UserService userService;
+
+    public UndoServiceImpl(ContactService contactService, UserService userService) {
+        this.contactService = contactService;
+        this.userService = userService;
+    }
 
     /* ============================================
        RECORD UNDO ACTION

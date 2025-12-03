@@ -17,14 +17,16 @@ import java.util.List;
 public class ContactServiceImpl implements ContactService {
 
     private final ContactDao contactDao = new ContactDaoImpl();
-    private final UndoService undoService;
+    private  UndoService undoService;
     private final UserService userService;
 
     public ContactServiceImpl(UndoService undoService, UserService userService) {
         this.undoService = undoService;
         this.userService = userService;
     }
-
+    public void setUndoService(UndoService undoService) {
+        this.undoService = undoService;
+    }
 
     /* =========================================================
        CREATE CONTACT  (Senior Only)
@@ -169,5 +171,6 @@ public class ContactServiceImpl implements ContactService {
         
         return contactDao.search(criteria);
     }
+    
 
 }
