@@ -2,6 +2,7 @@ package com.project.cms.ui.menu;
 
 import com.project.cms.model.User;
 import com.project.cms.model.RoleType;
+
 import com.project.cms.service.UserService;
 import com.project.cms.service.ContactService;
 import com.project.cms.service.StatisticsService;
@@ -24,44 +25,24 @@ public class MainMenu {
         this.statisticsService = statisticsService;
     }
 
+    
     public void start() {
 
-        boolean running = true;
-
-        while (running) {
+        while (true) {
 
             ConsolePrinter.spacing(1);
             ConsolePrinter.headline("Login to System");
             ConsolePrinter.subTitle("Please enter your user information:");
 
-            ConsolePrinter.menuOption(0, "Exit Application");
-            ConsolePrinter.menuOption(-1, "");
-
-            // ===== USERNAME INPUT =====
             String username = InputHandler.readString("Username", true);
-
-            // EXIT OPTION
-            if (username.equals("0")) {
-                running = false;
-                ConsolePrinter.info("Exiting the application...");
-                break;
-            }
-
-            if (username.trim().isEmpty()) {
-                ConsolePrinter.error("Input cannot be empty.");
-                continue;
-            }
-
-            // ===== PASSWORD INPUT =====
             String password = InputHandler.readPassword("Password");
 
-            if (password == null || password.trim().isEmpty()) {
-                ConsolePrinter.error("Input cannot be empty.");
+            if (username.trim().isEmpty() || password.trim().isEmpty()) {
+                ConsolePrinter.error("Fields cannot be empty.");
                 continue;
             }
 
-            // ===== LOGIN PROCESS =====
-            User loggedInUser = null;
+            User loggedInUser;
 
             try {
                 loggedInUser = userService.login(username, password);
@@ -77,18 +58,12 @@ public class MainMenu {
 
             ConsolePrinter.success(
                     "Login Successful! Welcome, "
-                            + loggedInUser.getName()
-                            + " "
-                            + loggedInUser.getSurname()
+                    + loggedInUser.getName() + " " + loggedInUser.getSurname()
             );
 
             redirectToRoleMenu(loggedInUser);
         }
     }
-
-    // ============================================
-    // ===== ROLE REDIRECTION SECTION ============
-    // ============================================
 
     private void redirectToRoleMenu(User user) {
 
@@ -100,19 +75,36 @@ public class MainMenu {
         switch (role) {
 
             case TESTER:
-                new TesterMenu(user, contactService, userService).start(); 
+                new TesterMenu(
+                        user,
+                        contactService,
+                        userService
+                ).start();
                 break;
 
             case JUNIOR_DEVELOPER:
-                new JuniorDevMenu(user, contactService, userService).start();
+                new JuniorDevMenu(
+                        user,
+                        contactService,
+                        userService
+                ).start();
                 break;
 
             case SENIOR_DEVELOPER:
-                new SeniorDevMenu(user, contactService, userService).start();
+                new SeniorDevMenu(
+                        user,
+                        contactService,
+                        userService
+                ).start();
                 break;
 
             case MANAGER:
-                new ManagerMenu(user, contactService, userService, statisticsService).start();
+                new ManagerMenu(
+                        user,
+                        contactService,
+                        userService,
+                        statisticsService
+                ).start();
                 break;
 
             default:
