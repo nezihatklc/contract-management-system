@@ -16,8 +16,8 @@ public class ConsoleColors {
     // Bright Colors
     public static final String BLUE_BRIGHT = "\u001B[94m";
     public static final String CYAN_BRIGHT = "\u001B[96m";
-    public static final String WHITE_BRIGHT = "\u001B[97m";    // ➕ eklendi
-    public static final String YELLOW_BRIGHT = "\u001B[93m";  // ➕ eklendi
+    public static final String WHITE_BRIGHT = "\u001B[97m";    
+    public static final String YELLOW_BRIGHT = "\u001B[93m"; 
 
     // Bold Colors
     public static final String RED_BOLD = "\u001B[1;31m";
