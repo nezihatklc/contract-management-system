@@ -26,42 +26,41 @@ public class ContactDaoImpl implements ContactDao {
                 "(first_name, middle_name, last_name, nickname, city, phone_primary, phone_secondary, email, linkedin_url, birth_date) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        Connection conn = DbConnection.getConnection();
-        if (conn == null) {
-            System.out.println("❌ Cannot add contact. Database connection failed.");
-            return -1;
-        }
-
-        try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-
-            ps.setString(1, c.getFirstName());
-            ps.setString(2, c.getMiddleName());
-            ps.setString(3, c.getLastName());
-            ps.setString(4, c.getNickname());
-            ps.setString(5, c.getCity());
-            ps.setString(6, c.getPhonePrimary());
-            ps.setString(7, c.getPhoneSecondary());
-            ps.setString(8, c.getEmail());
-            ps.setString(9, c.getLinkedinUrl());
-
-            if (c.getBirthDate() != null) {
-                ps.setDate(10, Date.valueOf(c.getBirthDate()));
-            } else {
-                ps.setNull(10, Types.DATE);
+        try (Connection conn = DbConnection.getConnection()) {
+            if (conn == null) {
+                System.out.println("❌ Cannot add contact. Database connection failed.");
+                return -1;
             }
 
-            int affected = ps.executeUpdate();
+            try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                ps.setString(1, c.getFirstName());
+                ps.setString(2, c.getMiddleName());
+                ps.setString(3, c.getLastName());
+                ps.setString(4, c.getNickname());
+                ps.setString(5, c.getCity());
+                ps.setString(6, c.getPhonePrimary());
+                ps.setString(7, c.getPhoneSecondary());
+                ps.setString(8, c.getEmail());
+                ps.setString(9, c.getLinkedinUrl());
 
-            if (affected == 0) {
-                return -1; // insert failed
-            }
+                if (c.getBirthDate() != null) {
+                    ps.setDate(10, Date.valueOf(c.getBirthDate()));
+                } else {
+                    ps.setNull(10, Types.DATE);
+                }
 
-            try (ResultSet keys = ps.getGeneratedKeys()) {
-                if (keys.next()) {
-                    return keys.getInt(1); // return auto-generated ID
+                int affected = ps.executeUpdate();
+
+                if (affected == 0) {
+                    return -1; // insert failed
+                }
+
+                try (ResultSet keys = ps.getGeneratedKeys()) {
+                    if (keys.next()) {
+                        return keys.getInt(1); // return auto-generated ID
+                    }
                 }
             }
-
         } catch (SQLException e) {
             System.out.println("❌ Error inserting contact: " + e.getMessage());
         }
@@ -84,19 +83,18 @@ public class ContactDaoImpl implements ContactDao {
     public Contact findById(int id) {
         String sql = "SELECT * FROM contacts WHERE contact_id = ?";
 
-        Connection conn = DbConnection.getConnection();
-        if (conn == null) {
-            System.out.println("❌ Cannot find contact. DB connection failed.");
-            return null;
-        }
+        try (Connection conn = DbConnection.getConnection()) {
+            if (conn == null) {
+                System.out.println("❌ Cannot find contact. DB connection failed.");
+                return null;
+            }
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setInt(1, id);
+                ResultSet rs = ps.executeQuery();
 
-            ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
-
-            return rs.next() ? map(rs) : null;
-
+                return rs.next() ? map(rs) : null;
+            }
         } catch (SQLException e) {
             System.out.println("❌ Error in findById: " + e.getMessage());
             return null;
@@ -110,19 +108,18 @@ public class ContactDaoImpl implements ContactDao {
         String sql = "SELECT * FROM contacts ORDER BY contact_id ASC";
         List<Contact> list = new ArrayList<>();
 
-        Connection conn = DbConnection.getConnection();
-        if (conn == null) {
-            System.out.println("❌ Cannot load contacts. DB connection failed.");
-            return list;
-        }
-
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                list.add(map(rs));
+        try (Connection conn = DbConnection.getConnection()) {
+            if (conn == null) {
+                System.out.println("❌ Cannot load contacts. DB connection failed.");
+                return list;
             }
 
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    list.add(map(rs));
+                }
+            }
         } catch (SQLException e) {
             System.out.println("❌ Error in findAll: " + e.getMessage());
         }
@@ -141,38 +138,36 @@ public class ContactDaoImpl implements ContactDao {
                 WHERE contact_id=?
                 """;
 
-        Connection conn = DbConnection.getConnection();
-        if (conn == null) {
-            System.out.println("❌ Cannot update contact. Database connection failed.");
-            return false;
-        }
-
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-
-
-            ps.setString(1, c.getFirstName());
-            ps.setString(2, c.getMiddleName());
-            ps.setString(3, c.getLastName());
-            ps.setString(4, c.getNickname());
-            ps.setString(5, c.getCity());
-            ps.setString(6, c.getPhonePrimary());
-            ps.setString(7, c.getPhoneSecondary());
-            ps.setString(8, c.getEmail());
-            ps.setString(9, c.getLinkedinUrl());
-
-            if (c.getBirthDate() != null) {
-                ps.setDate(10, Date.valueOf(c.getBirthDate()));
-            } else {
-                ps.setNull(10, Types.DATE);
+        try (Connection conn = DbConnection.getConnection()) {
+            if (conn == null) {
+                System.out.println("❌ Cannot update contact. Database connection failed.");
+                return false;
             }
 
-            ps.setInt(11, c.getContactId());
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setString(1, c.getFirstName());
+                ps.setString(2, c.getMiddleName());
+                ps.setString(3, c.getLastName());
+                ps.setString(4, c.getNickname());
+                ps.setString(5, c.getCity());
+                ps.setString(6, c.getPhonePrimary());
+                ps.setString(7, c.getPhoneSecondary());
+                ps.setString(8, c.getEmail());
+                ps.setString(9, c.getLinkedinUrl());
 
-            int affected = ps.executeUpdate();
-            System.out.println("updateContact → updated rows = " + affected);
+                if (c.getBirthDate() != null) {
+                    ps.setDate(10, Date.valueOf(c.getBirthDate()));
+                } else {
+                    ps.setNull(10, Types.DATE);
+                }
 
-            return affected == 1;
+                ps.setInt(11, c.getContactId());
 
+                int affected = ps.executeUpdate();
+                System.out.println("updateContact → updated rows = " + affected);
+
+                return affected == 1;
+            }
         } catch (SQLException e) {
             System.out.println("❌ Error in updateContact: " + e.getMessage());
             return false;
@@ -183,21 +178,20 @@ public class ContactDaoImpl implements ContactDao {
     public boolean deleteContactById(int id) {
         String sql = "DELETE FROM contacts WHERE contact_id = ?";
 
-        Connection conn = DbConnection.getConnection();
-        if (conn == null) {
-            System.out.println("❌ Cannot delete contact. Database connection failed.");
-            return false;
-        }
+        try (Connection conn = DbConnection.getConnection()) {
+            if (conn == null) {
+                System.out.println("❌ Cannot delete contact. Database connection failed.");
+                return false;
+            }
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setInt(1, id);
 
-            ps.setInt(1, id);
+                int affected = ps.executeUpdate();
+                System.out.println("deleteContactById → deleted rows = " + affected);
 
-            int affected = ps.executeUpdate();
-            System.out.println("deleteContactById → deleted rows = " + affected);
-
-            return affected == 1;
-
+                return affected == 1;
+            }
         } catch (SQLException e) {
             System.out.println("❌ Error in deleteContactById: " + e.getMessage());
             return false;
@@ -219,20 +213,19 @@ public class ContactDaoImpl implements ContactDao {
 
         String sql = "DELETE FROM contacts WHERE contact_id IN (" + placeholders + ")";
 
-        Connection conn = DbConnection.getConnection();
-        if (conn == null) {
-            System.out.println("❌ Cannot delete contacts. DB connection failed.");
-            return;
-        }
-
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            for (int i = 0; i < ids.size(); i++) {
-                ps.setInt(i + 1, ids.get(i));
+        try (Connection conn = DbConnection.getConnection()) {
+            if (conn == null) {
+                System.out.println("❌ Cannot delete contacts. DB connection failed.");
+                return;
             }
 
-            ps.executeUpdate();
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                for (int i = 0; i < ids.size(); i++) {
+                    ps.setInt(i + 1, ids.get(i));
+                }
 
+                ps.executeUpdate();
+            }
         } catch (SQLException e) {
             System.out.println("❌ Error in deleteContactsByIds: " + e.getMessage());
         }
@@ -255,19 +248,18 @@ public class ContactDaoImpl implements ContactDao {
 
         List<Contact> list = new ArrayList<>();
 
-        Connection conn = DbConnection.getConnection();
-        if (conn == null) {
-            System.out.println("❌ Cannot sort contacts. DB connection failed.");
-            return list;
-        }
-
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                list.add(map(rs));
+        try (Connection conn = DbConnection.getConnection()) {
+            if (conn == null) {
+                System.out.println("❌ Cannot sort contacts. DB connection failed.");
+                return list;
             }
 
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    list.add(map(rs));
+                }
+            }
         } catch (SQLException e) {
             System.out.println("❌ Error in findAllSorted: " + e.getMessage());
         }
@@ -300,24 +292,23 @@ public class ContactDaoImpl implements ContactDao {
 
         List<Contact> list = new ArrayList<>();
 
-        Connection conn = DbConnection.getConnection();
-        if (conn == null) {
-            System.out.println("❌ Cannot search contacts. Database connection failed.");
-            return list;
-        }
-
-        try (PreparedStatement ps = conn.prepareStatement(sql.toString())) {
-
-            for (int i = 0; i < params.size(); i++) {
-                ps.setObject(i + 1, params.get(i));
+        try (Connection conn = DbConnection.getConnection()) {
+            if (conn == null) {
+                System.out.println("❌ Cannot search contacts. Database connection failed.");
+                return list;
             }
 
-            ResultSet rs = ps.executeQuery();
+            try (PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+                for (int i = 0; i < params.size(); i++) {
+                    ps.setObject(i + 1, params.get(i));
+                }
 
-            while (rs.next()) {
-                list.add(map(rs));
+                ResultSet rs = ps.executeQuery();
+
+                while (rs.next()) {
+                    list.add(map(rs));
+                }
             }
-
         } catch (SQLException e) {
             System.out.println("❌ Error in search: " + e.getMessage());
         }
@@ -586,4 +577,3 @@ public class ContactDaoImpl implements ContactDao {
         return list;
     }
 }
-

@@ -25,22 +25,22 @@ public class UserDaoImpl implements UserDao{
     public User findByUsername (String username){
         String sql = "SELECT * FROM users WHERE username = ?";
 
-        Connection conn = DbConnection.getConnection();
-        if (conn == null) {
-            System.out.println("❌ Cannot fetch user. Database connection failed.");
-            return null;
-        }
-
-    try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, username); // set the username parameter
-            ResultSet rs = ps.executeQuery(); // execute the query
-
-            if (rs.next()) {
-                return mapRowToUser(rs);
+        try (Connection conn = DbConnection.getConnection()) {
+            if (conn == null) {
+                System.out.println("❌ Cannot fetch user. Database connection failed.");
+                return null;
             }
 
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setString(1, username); // set the username parameter
+                ResultSet rs = ps.executeQuery(); // execute the query
+
+                if (rs.next()) {
+                    return mapRowToUser(rs);
+                }
+            }
         } catch (SQLException e) {
-            System.out.println("❌ Error in findByUsername \" + e.getMessage()");
+            System.out.println("❌ Error in findByUsername: " + e.getMessage());
         }
         return null;
     }
@@ -50,27 +50,26 @@ public class UserDaoImpl implements UserDao{
     public User getUserById(int userId) {
         String sql = "SELECT * FROM users WHERE user_id = ?";
 
-        Connection conn = DbConnection.getConnection();
-        if (conn == null) {
-            System.out.println("❌ Cannot fetch user by ID. Database connection failed.");
-            return null;
-        }
-
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setInt(1, userId);
-            ResultSet rs = ps.executeQuery();
-
-            if (rs.next()) {
-                return mapRowToUser(rs);
+        try (Connection conn = DbConnection.getConnection()) {
+            if (conn == null) {
+                System.out.println("❌ Cannot fetch user by ID. Database connection failed.");
+                return null;
             }
 
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setInt(1, userId);
+                ResultSet rs = ps.executeQuery();
+
+                if (rs.next()) {
+                    return mapRowToUser(rs);
+                }
+            }
         } catch (SQLException e) {
             System.out.println("❌ Error in getUserById: " + e.getMessage());
         }
 
-    return null;
-}
+        return null;
+    }
 
      //  LIST ALL USERS
     @Override
@@ -78,19 +77,19 @@ public class UserDaoImpl implements UserDao{
         List<User> list = new ArrayList<>();
         String sql = "SELECT * FROM users ORDER BY user_id";
 
-        Connection conn = DbConnection.getConnection();
-        if (conn == null) {
-            System.out.println("❌ Cannot load users. Database connection failed.");
-            return list; 
-        }
-
-        try (PreparedStatement ps = conn.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery()) {
-
-            while (rs.next()) {
-                list.add(mapRowToUser(rs));
+        try (Connection conn = DbConnection.getConnection()) {
+            if (conn == null) {
+                System.out.println("❌ Cannot load users. Database connection failed.");
+                return list; 
             }
 
+            try (PreparedStatement ps = conn.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
+
+                while (rs.next()) {
+                    list.add(mapRowToUser(rs));
+                }
+            }
         } catch (SQLException e) {
             System.out.println("❌ Error in getAllUsers: " + e.getMessage());
         }
@@ -104,21 +103,20 @@ public class UserDaoImpl implements UserDao{
     public boolean updatePassword(int userId, String newPasswordHash) {
         String sql = "UPDATE users SET password_hash = ? WHERE user_id = ?";
 
-        Connection conn = DbConnection.getConnection();
-        if (conn == null) {
-            System.out.println("❌ Cannot update password. Database connection failed.");
-            return false;
-        }
+        try (Connection conn = DbConnection.getConnection()) {
+            if (conn == null) {
+                System.out.println("❌ Cannot update password. Database connection failed.");
+                return false;
+            }
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setString(1, newPasswordHash);
+                ps.setInt(2, userId);
 
-            ps.setString(1, newPasswordHash);
-            ps.setInt(2, userId);
-
-            int affected = ps.executeUpdate();
-            System.out.println("updatePassword → updated rows = " + affected);
-            return affected == 1;
-
+                int affected = ps.executeUpdate();
+                System.out.println("updatePassword → updated rows = " + affected);
+                return affected == 1;
+            }
         } catch (SQLException e) {
             System.out.println("❌ Error in updatePassword: " + e.getMessage());
             return false;
@@ -131,31 +129,32 @@ public class UserDaoImpl implements UserDao{
         String sql =
                 "UPDATE users SET name = ?, surname = ?, phone = ?, birth_date = ?, role = ? " +
                 "WHERE user_id = ?";
-        Connection conn = DbConnection.getConnection();
-        if (conn == null) {
-            System.out.println("❌ Cannot update user. Database connection failed.");
-            return false;
-        }
-
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, user.getName());
-            ps.setString(2, user.getSurname());
-            ps.setString(3, user.getPhone());
-
-            if (user.getBirthDate() != null) {
-                ps.setDate(4, Date.valueOf(user.getBirthDate()));
-            } else {
-                ps.setNull(4, Types.DATE);
+        
+        try (Connection conn = DbConnection.getConnection()) {
+            if (conn == null) {
+                System.out.println("❌ Cannot update user. Database connection failed.");
+                return false;
             }
 
-            ps.setString(5, user.getRole().name());
-            ps.setInt(6, user.getUserId());
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setString(1, user.getName());
+                ps.setString(2, user.getSurname());
+                ps.setString(3, user.getPhone());
 
-            int affected = ps.executeUpdate();
-            System.out.println("updateUser → updated rows = " + affected);
+                if (user.getBirthDate() != null) {
+                    ps.setDate(4, Date.valueOf(user.getBirthDate()));
+                } else {
+                    ps.setNull(4, Types.DATE);
+                }
 
-            return affected == 1;
+                ps.setString(5, user.getRole().name());
+                ps.setInt(6, user.getUserId());
 
+                int affected = ps.executeUpdate();
+                System.out.println("updateUser → updated rows = " + affected);
+
+                return affected == 1;
+            }
         } catch (SQLException e) {
              System.out.println("❌ Error in updateUser: " + e.getMessage());
             return false;
@@ -169,41 +168,40 @@ public class UserDaoImpl implements UserDao{
             "INSERT INTO users (username, password_hash, name, surname, phone, birth_date, role) " +
             "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-        Connection conn = DbConnection.getConnection();
-        if (conn == null) {
-            System.out.println("❌ Cannot add user. Database connection failed.");
-            return -1;
-        }
-
-        try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-
-            ps.setString(1, user.getUsername());
-            ps.setString(2, user.getPasswordHash());
-            ps.setString(3, user.getName());
-            ps.setString(4, user.getSurname());
-            ps.setString(5, user.getPhone());
-
-            if (user.getBirthDate() != null) {
-                ps.setDate(6, Date.valueOf(user.getBirthDate()));
-            } else {
-                ps.setNull(6, Types.DATE);
-            }
-
-            ps.setString(7, user.getRole().name());
-
-            int affected = ps.executeUpdate();
-            System.out.println("addUser → inserted rows = " + affected);
-
-            if (affected == 0) {
+        try (Connection conn = DbConnection.getConnection()) {
+            if (conn == null) {
+                System.out.println("❌ Cannot add user. Database connection failed.");
                 return -1;
             }
 
-            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    return generatedKeys.getInt(1);  // ✔ new user_id
+            try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                ps.setString(1, user.getUsername());
+                ps.setString(2, user.getPasswordHash());
+                ps.setString(3, user.getName());
+                ps.setString(4, user.getSurname());
+                ps.setString(5, user.getPhone());
+
+                if (user.getBirthDate() != null) {
+                    ps.setDate(6, Date.valueOf(user.getBirthDate()));
+                } else {
+                    ps.setNull(6, Types.DATE);
+                }
+
+                ps.setString(7, user.getRole().name());
+
+                int affected = ps.executeUpdate();
+                System.out.println("addUser → inserted rows = " + affected);
+
+                if (affected == 0) {
+                    return -1;
+                }
+
+                try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        return generatedKeys.getInt(1);  // ✔ new user_id
+                    }
                 }
             }
-
         } catch (SQLException e) {
             System.out.println("❌ Error in addUser: " + e.getMessage());
         }
@@ -218,21 +216,20 @@ public class UserDaoImpl implements UserDao{
     public boolean deleteUser(int userId) {
         String sql = "DELETE FROM users WHERE user_id = ?";
 
-        Connection conn = DbConnection.getConnection();
-        if (conn == null) {
-            System.out.println("❌ Cannot delete user. Database connection failed.");
-            return false;
-        }
+        try (Connection conn = DbConnection.getConnection()) {
+            if (conn == null) {
+                System.out.println("❌ Cannot delete user. Database connection failed.");
+                return false;
+            }
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setInt(1, userId);
 
-            ps.setInt(1, userId);
+                int affected = ps.executeUpdate();
+                System.out.println("deleteUser → deleted rows = " + affected);
 
-            int affected = ps.executeUpdate();
-            System.out.println("deleteUser → deleted rows = " + affected);
-
-            return affected == 1;
-
+                return affected == 1;
+            }
         } catch (SQLException e) {
             System.out.println("❌ Error in deleteUser: " + e.getMessage());
             return false;

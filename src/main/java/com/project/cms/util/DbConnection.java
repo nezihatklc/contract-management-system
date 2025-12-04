@@ -48,7 +48,9 @@ public class DbConnection {
      */
       public static Connection getConnection() {
         try {
-            return DriverManager.getConnection(URL, USER, PASSWORD);
+            Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+            conn.setAutoCommit(true); // Ensure auto-commit is on
+            return conn;
         } catch (SQLException e) {
             System.out.println("❌ Database connection error: " + e.getMessage());
             return null; 
