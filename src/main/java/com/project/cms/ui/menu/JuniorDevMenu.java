@@ -69,15 +69,31 @@ public class JuniorDevMenu {
         SearchCriteria criteria = new SearchCriteria();
 
         System.out.println("Enter search values (leave empty to skip):");
-        
+
         String fn = InputHandler.readString("First Name", false);
         if (!fn.isEmpty()) criteria.add("first_name", fn);
 
         String ln = InputHandler.readString("Last Name", false);
         if (!ln.isEmpty()) criteria.add("last_name", ln);
 
-        String phone = InputHandler.readString("Phone", false);
-        if (!phone.isEmpty()) criteria.add("phone_primary", phone);
+        String nick = InputHandler.readString("Nickname", false);
+        if (!nick.isEmpty()) criteria.add("nickname", nick);
+
+        String city = InputHandler.readString("City", false);
+        if (!city.isEmpty()) criteria.add("city", city);
+
+        String email = InputHandler.readString("Email", false);
+        if (!email.isEmpty()) criteria.add("email", email);
+
+        String phone1 = InputHandler.readString("Phone (Primary)", false);
+        if (!phone1.isEmpty()) criteria.add("phone_primary", phone1);
+
+        String phone2 = InputHandler.readString("Phone (Secondary)", false);
+        if (!phone2.isEmpty()) criteria.add("phone_secondary", phone2);
+
+        String linkedin = InputHandler.readString("LinkedIn URL", false);
+        if (!linkedin.isEmpty()) criteria.add("linkedin_url", linkedin);
+
 
         if (!criteria.hasCriteria()) {
             ConsolePrinter.error("No search criteria provided.");
@@ -102,13 +118,24 @@ public class JuniorDevMenu {
         System.out.println("Select field to sort by:");
         System.out.println("1. First Name");
         System.out.println("2. Last Name");
-        System.out.println("3. Phone_primary");
+        System.out.println("3. Nickname");
+        System.out.println("4. City");
+        System.out.println("5. Phone (primary)");
+        System.out.println("6. Email");
+        System.out.println("7. Birth Date");
+        System.out.println("8. Created At");
+
         
         int fieldChoice = InputHandler.readInt("Field");
         String field = switch (fieldChoice) {
             case 1 -> "first_name";
             case 2 -> "last_name";
-            case 3 -> "phone_primary";
+            case 3 -> "nickname";
+            case 4 -> "city";
+            case 5 -> "phone_primary";
+            case 6 -> "email";
+            case 7 -> "birth_date";
+            case 8 -> "created_at";
             default -> "first_name";
         };
 
