@@ -57,11 +57,7 @@ public class JuniorDevMenu {
     private void listContacts() {
         ConsolePrinter.subTitle("All Contacts");
         List<Contact> contacts = contactService.getAllContacts();
-        if (contacts.isEmpty()) {
-            ConsolePrinter.info("No contacts found.");
-        } else {
-            contacts.forEach(System.out::println);
-        }
+        ConsolePrinter.printContactList(contacts);
     }
 
     private void searchContacts() {
@@ -106,7 +102,7 @@ public class JuniorDevMenu {
                 ConsolePrinter.info("No matching contacts found.");
             } else {
                 ConsolePrinter.success(results.size() + " contact(s) found:");
-                results.forEach(System.out::println);
+                ConsolePrinter.printContactList(results);
             }
         } catch (Exception e) {
             ConsolePrinter.error("Search failed: " + e.getMessage());
@@ -147,7 +143,7 @@ public class JuniorDevMenu {
 
         try {
             List<Contact> sortedList = contactService.sortContacts(field, isAscending);
-            sortedList.forEach(System.out::println);
+            ConsolePrinter.printContactList(sortedList);
         } catch (Exception e) {
             ConsolePrinter.error("Sort failed: " + e.getMessage());
         }

@@ -71,5 +71,75 @@ public class ConsolePrinter {
     public static void menuExit() {
         System.out.println(ConsoleColors.CYAN_BOLD + "0) " + ConsoleColors.WHITE + "Logout" + ConsoleColors.RESET);
     }
-    
+
+    public static void clearScreen() {
+        try {
+            if (System.getProperty("os.name").contains("Windows")) {
+                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            } else {
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+            }
+        } catch (Exception e) {
+            // Fallback if command execution fails
+            spacing(50);
+        }
+    }
+
+    public static void printContactList(java.util.List<com.project.cms.model.Contact> contacts) {
+        if (contacts.isEmpty()) {
+            info("No contacts to display.");
+            return;
+        }
+
+        java.util.List<String> headers = java.util.List.of(
+            "ID", "First Name", "Middle Name", "Last Name", "Nickname", 
+            "City", "Phone 1", "Phone 2", "Email", "LinkedIn", "Birth Date"
+        );
+        java.util.List<java.util.List<String>> rows = new java.util.ArrayList<>();
+
+        for (com.project.cms.model.Contact c : contacts) {
+            rows.add(java.util.List.of(
+                String.valueOf(c.getContactId()),
+                c.getFirstName(),
+                c.getMiddleName() == null ? "" : c.getMiddleName(),
+                c.getLastName(),
+                c.getNickname() == null ? "" : c.getNickname(),
+                c.getCity() == null ? "" : c.getCity(),
+                c.getPhonePrimary(),
+                c.getPhoneSecondary() == null ? "" : c.getPhoneSecondary(),
+                c.getEmail() == null ? "" : c.getEmail(),
+                c.getLinkedinUrl() == null ? "" : c.getLinkedinUrl(),
+                c.getBirthDate() == null ? "" : c.getBirthDate().toString()
+            ));
+        }
+
+        com.project.cms.util.ConsoleTable.printTable(headers, rows);
+    }
+
+    public static void printUserList(java.util.List<com.project.cms.model.User> users) {
+        if (users.isEmpty()) {
+            info("No users to display.");
+            return;
+        }
+
+        java.util.List<String> headers = java.util.List.of(
+            "ID", "Username", "Name", "Surname", "Role", "Phone", "Birth Date"
+        );
+        java.util.List<java.util.List<String>> rows = new java.util.ArrayList<>();
+
+        for (com.project.cms.model.User u : users) {
+            rows.add(java.util.List.of(
+                String.valueOf(u.getUserId()),
+                u.getUsername(),
+                u.getName(),
+                u.getSurname(),
+                u.getRole().name(),
+                u.getPhone() == null ? "" : u.getPhone(),
+                u.getBirthDate() == null ? "" : u.getBirthDate().toString()
+            ));
+        }
+
+        com.project.cms.util.ConsoleTable.printTable(headers, rows);
+    }
 }

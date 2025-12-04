@@ -32,7 +32,7 @@ public class MainMenu {
     public void start() {
 
         while (true) {
-
+            ConsolePrinter.clearScreen();
             ConsolePrinter.spacing(1);
             ConsolePrinter.headline("Logın to System");
             ConsolePrinter.subTitle("Please enter your user information:");
@@ -65,6 +65,11 @@ public class MainMenu {
             );
 
             redirectToRoleMenu(loggedInUser);
+
+            String choice = InputHandler.readString("Do you want to login again? (y/n)", true);
+            if (!choice.equalsIgnoreCase("y")) {
+                return;
+            }
         }
     }
 

@@ -79,9 +79,7 @@ public class ManagerMenu {
     private void listUsers() {
         ConsolePrinter.subTitle("All System Users");
         List<User> users = userService.getAllUsers();
-        for (User u : users) {
-            System.out.println("ID: " + u.getUserId() + " | " + u.getUsername() + " | " + u.getName() + " " + u.getSurname() + " (" + u.getRole() + ")");
-        }
+        ConsolePrinter.printUserList(users);
     }
 
     private void addUser() {
