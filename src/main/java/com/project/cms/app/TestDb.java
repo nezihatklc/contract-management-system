@@ -1,25 +1,13 @@
 package com.project.cms.app;
 
 
-import com.project.cms.dao.contact.ContactDao;
-import com.project.cms.dao.contact.ContactDaoImpl;
-import com.project.cms.service.StatisticsService;
+import com.project.cms.util.PasswordHasher;
 
-public class TestDb{
-
+public class TestDb {
     public static void main(String[] args) {
-
-        // DAO oluştur
-        ContactDao contactDao = new ContactDaoImpl();
-
-        // Servisi oluştur
-        StatisticsService service = new StatisticsService(contactDao);
-
-        // Test başlıyor
-        System.out.println("\n====== TEST DB STATISTICS TEST ======\n");
-
-        service.showStatistics();
-
-        System.out.println("\n====== END OF TEST ======\n");
+        System.out.println("tt  = " + PasswordHasher.hashPassword("tt"));
+        System.out.println("jd  = " + PasswordHasher.hashPassword("jd"));
+        System.out.println("sd  = " + PasswordHasher.hashPassword("sd"));
+        System.out.println("man = " + PasswordHasher.hashPassword("man"));
     }
 }

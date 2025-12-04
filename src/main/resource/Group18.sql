@@ -129,4 +129,18 @@ VALUES
 
 
 
-  
+UPDATE users 
+SET password_hash = '63fVi4XgA8Z/Qu7gFXmzXC8eLSbgz1aPS1Vqyl1+f0A=:zQ+105ZbfEWBC4ZzVhMdUA=='
+WHERE username = 'tt';
+
+UPDATE users 
+SET password_hash = '1SEyaD4T3hOJKC6GprcNFgv59RI63Uv3sSNq2bVDJ1I=:ESqKxhWaj831hm7GaXeoLg=='
+WHERE username = 'jd';
+
+UPDATE users 
+SET password_hash = '1gsk4Z9iB7ePlnP2YpJETFZpxTB2uQDvLIWqIJ7UpjA=:kHlr9n5p8b18faBtWZyFyQ=='
+WHERE username = 'sd';
+
+UPDATE users 
+SET password_hash = 'ORQoC32DpxWzoQ7W2U3d/DHN7ndX9JNcjsJ12XXJUJ0=:8bAAMfLnEGEp+FR9igTx5A=='
+WHERE username = 'man';

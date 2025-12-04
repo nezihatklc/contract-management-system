@@ -19,6 +19,7 @@ public class User {
     private LocalDate birthDate;
     private RoleType role;
     private LocalDateTime createdAt;
+    private String plainPassword;
 
     public User() {}
 
@@ -32,6 +33,8 @@ public class User {
     public LocalDate getBirthDate() { return birthDate; }
     public RoleType getRole() { return role; }
     public LocalDateTime getCreatedAt() { return createdAt; }
+    public String getPlainPassword() { return plainPassword; }
+
 
     // === SETTER METHODS ===
     public void setUserId(int userId) { this.userId = userId; }
@@ -43,4 +46,18 @@ public class User {
     public void setBirthDate(LocalDate birthDate) { this.birthDate = birthDate; }
     public void setRole(RoleType role) { this.role = role; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public void setPlainPassword(String plainPassword) { this.plainPassword = plainPassword; }
+
+    public User(User u) {
+        this.userId = u.userId;
+        this.username = u.username;
+        this.passwordHash = u.passwordHash;   
+        this.name = u.name;
+        this.surname = u.surname;
+        this.phone = u.phone;
+        this.birthDate = u.birthDate;
+        this.role = u.role;
+        this.createdAt = u.createdAt;
+    }
+
 }

@@ -79,8 +79,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(User newUser, User performingUser)
-        throws ValidationException, AccessDeniedException {
+            throws ValidationException, AccessDeniedException {
 
+        // Permission check
         RolePermissions perm = getPermissionsFor(performingUser);
         try {
             perm.addNewUser();
@@ -88,21 +89,34 @@ public class UserServiceImpl implements UserService {
             throw new AccessDeniedException("Only Manager can create users.");
         }
 
-        // Validate user fields
+        // Validate non-password fields (name, surname, phone, etc.)
         Validator.validateUser(newUser);
 
-        // Hash password before storing
-        newUser.setPasswordHash(PasswordHasher.hashPassword(newUser.getPasswordHash()));
+        // Validate plaintext password
+        if (newUser.getPlainPassword() == null || newUser.getPlainPassword().isEmpty()) {
+            throw new ValidationException("Password cannot be empty.");
+        }
 
+        // Hash the plaintext password
+        String hashed = PasswordHasher.hashPassword(newUser.getPlainPassword());
+        newUser.setPasswordHash(hashed);
+
+        // Clear plaintext password from memory (security best practice)
+        newUser.setPlainPassword(null);
+
+        // Save to DB
         int newId = userDao.addUser(newUser);
         newUser.setUserId(newId);
 
-        // Undo: CREATE USER → undo = delete user
-        undoService.recordUndoAction(performingUser,
-                UndoAction.forUserCreate(newUser));
+        // Undo support
+        undoService.recordUndoAction(
+                performingUser,
+                UndoAction.forUserCreate(newUser)
+        );
 
         return newUser;
     }
+
 
     /* ===================== UPDATE USER (Manager) ===================== */
 
@@ -150,16 +164,24 @@ public class UserServiceImpl implements UserService {
         if (performingUser.getUserId() == targetUserId)
             throw new AccessDeniedException("You cannot delete your own account.");
 
-        User oldUser = userDao.getUserById(targetUserId);
-        if (oldUser == null)
+        
+        User oldUserDb = userDao.getUserById(targetUserId);
+        if (oldUserDb == null)
             throw new UserNotFoundException("User not found.");
 
+        // 2) Create copy of old User for undo
+        User oldUserCopy = new User(oldUserDb);
+
+        // 3) delete user
         userDao.deleteUser(targetUserId);
 
-        // Undo: DELETE USER → undo = recreate user
-        undoService.recordUndoAction(performingUser,
-                UndoAction.forUserDelete(oldUser));
+    
+        undoService.recordUndoAction(
+                performingUser,
+                UndoAction.forUserDelete(oldUserCopy)
+        );
     }
+
 
     @Override
         public List<User> getAllUsers() {
