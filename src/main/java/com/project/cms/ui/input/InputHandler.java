@@ -100,6 +100,33 @@ public class InputHandler {
         }
     }
 
+    // ---------------------- PHONE ----------------------
+public static String readPhone(String prompt, boolean isMandatory) {
+
+    while (true) {
+        ConsolePrinter.prompt(prompt);
+        String phone = scanner.nextLine().trim();
+
+        if (phone.isEmpty()) {
+            if (isMandatory) {
+                ConsolePrinter.error("This field cannot be left blank.");
+                continue;
+            } else {
+                return null; 
+            }
+        }
+
+        
+        if (!phone.matches("\\d{10,13}")) {
+            ConsolePrinter.error("Phone number must contain only digits (10-13 digits).");
+            continue;
+        }
+
+        return phone;
+    }
+}
+
+
     // ---------------------- WAIT ENTER ----------------------
     public static void WaitEnter() {
         ConsolePrinter.blank();
