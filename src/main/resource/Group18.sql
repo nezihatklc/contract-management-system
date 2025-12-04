@@ -21,10 +21,10 @@ CREATE TABLE users (
 
 INSERT INTO users (username, password_hash, name, surname, phone, birth_date, role)
 VALUES
-('tt',  'tt',  'Test',    'User',     '+905551112233', '1998-04-10', 'TESTER'),
-('jd',  'jd',  'Junior',  'Dev',      '+905552223344', '2000-01-15', 'JUNIOR_DEVELOPER'),
-('sd',  'sd',  'Senior',  'Dev',      '+905553334455', '1995-07-22', 'SENIOR_DEVELOPER'),
-('man', 'man', 'Project', 'Manager',  '+905554445566', '1990-03-05', 'MANAGER');
+('tt',  'tt',  'Nezihat',    'Kılıç',     '+905551112233', '1998-04-10', 'TESTER'),
+('jd',  'jd',  'Simay',  'Mutlu',      '+905552223344', '2000-01-15', 'JUNIOR_DEVELOPER'),
+('sd',  'sd',  'Sıla',  'Şimşek',      '+905553334455', '1995-07-22', 'SENIOR_DEVELOPER'),
+('man', 'man', 'Pelin', 'Cömertler',  '+905554445566', '1990-03-05', 'MANAGER');
 
 -- Updated user names (Team Sync)
 UPDATE users SET name='Nezihat', surname='Kılıç' WHERE user_id=1;
