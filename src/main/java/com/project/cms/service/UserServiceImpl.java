@@ -80,6 +80,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public User createUser(User newUser, User performingUser)
             throws ValidationException, AccessDeniedException {
+        return createUser(newUser, performingUser, true);
+    }
+
+    @Override
+    public User createUser(User newUser, User performingUser, boolean recordUndo)
+            throws ValidationException, AccessDeniedException {
 
         // Permission check
         RolePermissions perm = getPermissionsFor(performingUser);
@@ -97,6 +103,10 @@ public class UserServiceImpl implements UserService {
             throw new ValidationException("Password cannot be empty.");
         }
 
+        if (!Validator.isValidPassword(newUser.getPlainPassword())) {
+             throw new ValidationException("Weak password. Must be at least 8 chars, contain a digit and an uppercase letter.");
+        }
+
         // Hash the plaintext password
         String hashed = PasswordHasher.hashPassword(newUser.getPlainPassword());
         newUser.setPasswordHash(hashed);
@@ -109,10 +119,12 @@ public class UserServiceImpl implements UserService {
         newUser.setUserId(newId);
 
         // Undo support
-        undoService.recordUndoAction(
-                performingUser,
-                UndoAction.forUserCreate(newUser)
-        );
+        if (recordUndo) {
+            undoService.recordUndoAction(
+                    performingUser,
+                    UndoAction.forUserCreate(newUser)
+            );
+        }
 
         return newUser;
     }
@@ -122,6 +134,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateUser(User updatedUser, User performingUser)
+            throws ValidationException, UserNotFoundException, AccessDeniedException {
+        updateUser(updatedUser, performingUser, true);
+    }
+
+    @Override
+    public void updateUser(User updatedUser, User performingUser, boolean recordUndo)
             throws ValidationException, UserNotFoundException, AccessDeniedException {
 
         RolePermissions perm = getPermissionsFor(performingUser);
@@ -143,14 +161,22 @@ public class UserServiceImpl implements UserService {
         userDao.updateUser(updatedUser);
 
         // Undo: UPDATE USER → undo = restore old user
-        undoService.recordUndoAction(performingUser,
-                UndoAction.forUserUpdate(oldUser, updatedUser));
+        if (recordUndo) {
+            undoService.recordUndoAction(performingUser,
+                    UndoAction.forUserUpdate(oldUser, updatedUser));
+        }
     }
 
     /* ===================== DELETE USER (Manager) ===================== */
 
     @Override
     public void deleteUser(int targetUserId, User performingUser)
+            throws UserNotFoundException, AccessDeniedException {
+        deleteUser(targetUserId, performingUser, true);
+    }
+
+    @Override
+    public void deleteUser(int targetUserId, User performingUser, boolean recordUndo)
             throws UserNotFoundException, AccessDeniedException {
 
         RolePermissions perm = getPermissionsFor(performingUser);
@@ -176,10 +202,12 @@ public class UserServiceImpl implements UserService {
         userDao.deleteUser(targetUserId);
 
     
-        undoService.recordUndoAction(
-                performingUser,
-                UndoAction.forUserDelete(oldUserCopy)
-        );
+        if (recordUndo) {
+            undoService.recordUndoAction(
+                    performingUser,
+                    UndoAction.forUserDelete(oldUserCopy)
+            );
+        }
     }
 
 

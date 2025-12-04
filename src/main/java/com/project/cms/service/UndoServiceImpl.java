@@ -72,7 +72,7 @@ public class UndoServiceImpl implements UndoService {
                     User created = action.getNewUser();
                     if (created == null)
                         throw new UndoOperationException("Invalid undo data.");
-                    userService.deleteUser(created.getUserId(), performingUser);
+                    userService.deleteUser(created.getUserId(), performingUser, false);
                 } catch (Exception e) {
                     throw new UndoOperationException("Cannot undo user creation: " + e.getMessage());
                 }
@@ -83,7 +83,7 @@ public class UndoServiceImpl implements UndoService {
                     User oldUser = action.getOldUser();
                     if (oldUser == null)
                         throw new UndoOperationException("Invalid undo data.");
-                    userService.updateUser(oldUser, performingUser);
+                    userService.updateUser(oldUser, performingUser, false);
                 } catch (Exception e) {
                     throw new UndoOperationException("Cannot undo user update: " + e.getMessage());
                 }
@@ -94,7 +94,7 @@ public class UndoServiceImpl implements UndoService {
                     User deletedUser = action.getOldUser();
                     if (deletedUser == null)
                         throw new UndoOperationException("Invalid undo data.");
-                    userService.createUser(deletedUser, performingUser);
+                    userService.createUser(deletedUser, performingUser, false);
                 } catch (Exception e) {
                     throw new UndoOperationException("Cannot undo user deletion: " + e.getMessage());
                 }

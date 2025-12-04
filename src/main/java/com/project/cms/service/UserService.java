@@ -25,12 +25,21 @@ public interface UserService {
         User createUser(User newUser, User performingUser)
                 throws ValidationException, AccessDeniedException;
 
+        User createUser(User newUser, User performingUser, boolean recordUndo)
+                throws ValidationException, AccessDeniedException;
+
         // MANAGER: UPDATE USER
         void updateUser(User updatedUser, User performingUser)
                 throws ValidationException, UserNotFoundException, AccessDeniedException;
 
+        void updateUser(User updatedUser, User performingUser, boolean recordUndo)
+                throws ValidationException, UserNotFoundException, AccessDeniedException;
+
         // MANAGER: DELETE USER
         void deleteUser(int targetUserId, User performingUser)
+                throws UserNotFoundException, AccessDeniedException;
+
+        void deleteUser(int targetUserId, User performingUser, boolean recordUndo)
                 throws UserNotFoundException, AccessDeniedException;
 
         List<User> getAllUsers();

@@ -89,7 +89,7 @@ public class ManagerMenu {
             ConsolePrinter.subTitle("Add New User");
             User newUser = new User();
             newUser.setUsername(InputHandler.readString("Username", true));
-            newUser.setPasswordHash(InputHandler.readPassword("Password"));
+            newUser.setPlainPassword(InputHandler.readPassword("Password"));
             newUser.setName(InputHandler.readString("First Name", true));
             newUser.setSurname(InputHandler.readString("Last Name", true));
             newUser.setPhone(InputHandler.readString("Phone", true));

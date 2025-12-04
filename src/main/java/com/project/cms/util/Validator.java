@@ -52,8 +52,8 @@ public class Validator {
         if (isEmpty(u.getUsername()))
             throw new ValidationException("Username is required.");
 
-        if (isEmpty(u.getPasswordHash()))
-            throw new ValidationException("Password hash is required.");
+        // Password hash check removed to allow new user creation flow where hash is generated after validation.
+        // Service layer ensures password presence.
 
         if (isEmpty(u.getName()))
             throw new ValidationException("Name is required.");
