@@ -34,7 +34,7 @@ public class MainMenu {
         while (true) {
 
             ConsolePrinter.spacing(1);
-            ConsolePrinter.headline("Login to System");
+            ConsolePrinter.headline("Logın to System");
             ConsolePrinter.subTitle("Please enter your user information:");
 
             String username = InputHandler.readString("Username", true);
