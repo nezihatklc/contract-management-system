@@ -19,7 +19,6 @@ public class ManagerMenu {
     private final UserService userService;
     private final StatisticsService statisticsService;
     private final UndoService undoService;
-
    
     public ManagerMenu(User user, ContactService contactService, UserService userService, UndoService undoService , StatisticsService statisticsService) {
         this.user = user;
@@ -31,6 +30,7 @@ public class ManagerMenu {
 
      public void start() {
         while (true) {
+            ConsolePrinter.clearScreen();
             ConsolePrinter.headline("MANAGER MENU (" + user.getName() + ")");
 
             ConsolePrinter.menuOption(1, "View Contact Statistics");
@@ -49,6 +49,7 @@ public class ManagerMenu {
                 case 0 -> { return; }
                 default -> ConsolePrinter.error("Invalid choice.");
             }
+            InputHandler.WaitEnter();
         }
     }
 
@@ -56,6 +57,7 @@ public class ManagerMenu {
     private void handleUserManagement() {
         boolean back = false;
         while (!back) {
+            ConsolePrinter.clearScreen();
             ConsolePrinter.subTitle("User Management");
             ConsolePrinter.menuOption(1, "List All Users");
             ConsolePrinter.menuOption(2, "Add New User");
@@ -72,6 +74,9 @@ public class ManagerMenu {
                 case 4 -> deleteUser();
                 case 0 -> back = true;
                 default -> ConsolePrinter.error("Invalid choice.");
+            }
+            if (!back) {
+                InputHandler.WaitEnter();
             }
         }
     }
@@ -113,7 +118,6 @@ public class ManagerMenu {
                     return;
                 }
             }
-
            
             userService.createUser(newUser, user);
             ConsolePrinter.success("User added successfully: " + newUser.getUsername());
@@ -136,7 +140,6 @@ public class ManagerMenu {
             ConsolePrinter.error("Delete failed: " + e.getMessage());
         }
     }
-
    
     private void viewStatistics() {
         try {
@@ -145,7 +148,6 @@ public class ManagerMenu {
             ConsolePrinter.error(e.getMessage());
         }
     }
-
 
     private void changePassword() {
         ConsolePrinter.subTitle("Change Password");

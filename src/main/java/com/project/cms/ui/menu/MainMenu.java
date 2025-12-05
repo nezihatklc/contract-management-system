@@ -42,6 +42,7 @@ public class MainMenu {
 
             if (username.trim().isEmpty() || password.trim().isEmpty()) {
                 ConsolePrinter.error("Fields cannot be empty.");
+                InputHandler.WaitEnter();
                 continue;
             }
 
@@ -51,11 +52,13 @@ public class MainMenu {
                 loggedInUser = userService.login(username, password);
             } catch (Exception e) {
                 ConsolePrinter.error(e.getMessage());
+                InputHandler.WaitEnter();
                 continue;
             }
 
             if (loggedInUser == null) {
                 ConsolePrinter.error("Invalid username or password.");
+                InputHandler.WaitEnter();
                 continue;
             }
 

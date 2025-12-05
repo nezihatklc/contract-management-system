@@ -26,6 +26,7 @@ public class TesterMenu {
 
     public void start() {
         while (true) {
+            ConsolePrinter.clearScreen();
             ConsolePrinter.headline("TESTER MENU (" + user.getName() + " " + user.getSurname() + ")");
             
             ConsolePrinter.menuOption(1, "List All Contacts");
@@ -49,6 +50,7 @@ public class TesterMenu {
                 }
                 default -> ConsolePrinter.error("Invalid choice. Please try again.");
             }
+            InputHandler.WaitEnter();
         }
     }
 

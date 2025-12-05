@@ -27,6 +27,7 @@ public class JuniorDevMenu {
 
     public void start() {
         while (true) {
+            ConsolePrinter.clearScreen();
             ConsolePrinter.headline("JUNIOR DEV MENU (" + user.getName() + " " + user.getSurname() + ")");
             ConsolePrinter.menuOption(1, "List All Contacts");
             ConsolePrinter.menuOption(2, "Search Contacts");
@@ -51,6 +52,7 @@ public class JuniorDevMenu {
                 }
                 default -> ConsolePrinter.error("Invalid choice. Please try again.");
             }
+            InputHandler.WaitEnter();
         }
     }
 
