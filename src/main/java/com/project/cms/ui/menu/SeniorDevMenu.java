@@ -160,18 +160,18 @@ public class SeniorDevMenu {
         try {
             Contact contact = new Contact();
             contact.setFirstName(InputHandler.readString("First Name", true));
-            contact.setMiddleName(InputHandler.readString("Middle Name", false));
+            contact.setMiddleName(InputHandler.readString("Middle Name (optional)", false));
             contact.setLastName(InputHandler.readString("Last Name", true));
             contact.setNickname(InputHandler.readString("Nickname", true));
             contact.setPhonePrimary(InputHandler.readString("Primary Phone (+90...)", true));
             
-            String phone2 = InputHandler.readString("Secondary Phone (+90...)", false);
+            String phone2 = InputHandler.readString("Secondary Phone (+90...)(optional)", false);
             if (!phone2.isEmpty()) {
                 Validator.validatePhone(phone2);
                 contact.setPhoneSecondary(phone2);
             }
 
-            contact.setEmail(InputHandler.readString("Email (example@mail.com)", true));
+            contact.setEmail(InputHandler.readString("Email (example@mail.com)(optional)", true));
             contact.setCity(InputHandler.readString("City", true));
             contact.setLinkedinUrl(InputHandler.readString("LinkedIn URL", false));
             

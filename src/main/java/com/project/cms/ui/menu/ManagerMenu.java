@@ -96,10 +96,10 @@ public class ManagerMenu {
             newUser.setPlainPassword(InputHandler.readPassword("Password"));
             newUser.setName(InputHandler.readString("First Name", true));
             newUser.setSurname(InputHandler.readString("Last Name", true));
-            newUser.setPhone(InputHandler.readString("Phone (+905xxxxxxxxx)", true));
+            newUser.setPhone(InputHandler.readString("Phone (+905xxxxxxxxx)(optional)", false));
             
            
-            String dob = InputHandler.readString("Birth Date (dd/MM/yyyy)", false);
+            String dob = InputHandler.readString("Birth Date (dd/MM/yyyy)(optional)", false);
             if (!dob.isEmpty()) {
                 LocalDate date = DateUtils.stringToDate(dob);
                 if (date != null) newUser.setBirthDate(date);
