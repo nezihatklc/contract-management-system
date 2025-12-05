@@ -5,6 +5,7 @@ package com.project.cms.model.role;
  * <p>
  * Tester can only read contact data (list, search, sort) and manage own session.
  * All modification and user-management operations are prohibited.
+ * @author Nezihat Kılıç
  */
 public class TesterRole implements RolePermissions {
 

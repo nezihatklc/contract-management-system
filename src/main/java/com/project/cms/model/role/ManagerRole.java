@@ -5,6 +5,7 @@ package com.project.cms.model.role;
  * <p>
  * Manager can perform all user-management and statistical operations.
  * Manager has NO access to contact CRUD operations.
+ * @author Nezihat Kılıç
  */
 public class ManagerRole implements RolePermissions {
 

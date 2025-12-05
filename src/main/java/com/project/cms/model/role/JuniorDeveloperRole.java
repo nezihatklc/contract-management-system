@@ -5,6 +5,7 @@ package com.project.cms.model.role;
  * <p>
  * Junior Developer can read contact data and update existing contacts.
  * Cannot add/delete contacts or perform any user-management/statistics operations.
+ * @author Nezihat Kılıç
  */
 public class JuniorDeveloperRole implements RolePermissions {
 

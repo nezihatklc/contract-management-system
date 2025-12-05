@@ -15,6 +15,7 @@ import java.util.List;
  * dynamic searching, and statistical queries on the contacts table.
  * All SQL operations are executed using {@link PreparedStatement}
  * to ensure safety against SQL injection.
+ * @author Nezihat Kılıç
  */
 
 public class ContactDaoImpl implements ContactDao {

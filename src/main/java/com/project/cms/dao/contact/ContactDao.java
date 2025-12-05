@@ -13,6 +13,7 @@ import java.util.List;
  * <p>
  * All methods in this interface operate directly on the database layer and do not
  * contain business logic. Business validation must be performed in the Service layer.
+ * @author Nezihat Kılıç
  */
 public interface ContactDao {
 

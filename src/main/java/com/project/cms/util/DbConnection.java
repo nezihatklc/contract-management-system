@@ -20,7 +20,7 @@ import java.sql.SQLException;
  * <b>User:</b> myuser<br>
  * <b>Password:</b> 1234</p>
  *
- * @author Group
+ * @author Nezihat Kılıç
  * @version 1.0
  */
 public class DbConnection {

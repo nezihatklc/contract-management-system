@@ -6,6 +6,7 @@ package com.project.cms.model.role;
  * only the methods they are allowed to perform.
  *
  * ALL METHODS ARE EMPTY SIGNATURES — implementation is done in role classes.
+ * @author Nezihat Kılıç
  */
 public interface RolePermissions {
 

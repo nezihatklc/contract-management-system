@@ -5,6 +5,7 @@ package com.project.cms.model.role;
  * <p>
  * Senior Developer can read, update, add, and delete contacts.
  * They cannot perform any user-management or statistical operations.
+ * @author Nezihat Kılıç
  */
 public class SeniorDeveloperRole implements RolePermissions {
 

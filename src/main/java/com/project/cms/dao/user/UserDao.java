@@ -12,6 +12,7 @@ import java.util.List;
  * - Authentication (find by username)
  * - Password update
  * - Full user management for Manager (CRUD operations)
+ * @author Nezihat Kılıç
  */
 public interface UserDao {
 

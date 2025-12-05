@@ -16,6 +16,7 @@ import java.util.List;
  * <p>
  * Uses JDBC and {@link PreparedStatement} for safe SQL execution.
  * Contains no business logic; validations are handled in the Service layer.
+ * @author Nezihat Kılıç
  */
 
 public class UserDaoImpl implements UserDao{
