@@ -22,7 +22,11 @@ public class InputHandler {
 
     public static int readInt(String prompt, int min, int max) {
         while (true) {
-            ConsolePrinter.prompt(prompt + " (" + min + "-" + max + ")");
+            if (min == Integer.MIN_VALUE && max == Integer.MAX_VALUE) {
+                ConsolePrinter.prompt(prompt);
+            } else {
+                ConsolePrinter.prompt(prompt + " (" + min + "-" + max + ")");
+            }
             try {
                 int value = scanner.nextInt();
                 scanner.nextLine(); 

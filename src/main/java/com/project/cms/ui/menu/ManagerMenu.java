@@ -39,7 +39,7 @@ public class ManagerMenu {
             ConsolePrinter.menuOption(4, "Undo Last Operation");
             ConsolePrinter.menuOption(0, "Logout");
 
-            int choice = InputHandler.readInt("Choice");
+            int choice = InputHandler.readInt("Choice", 0, 4);
 
             switch (choice) {
                 case 1 -> viewStatistics();
@@ -63,7 +63,7 @@ public class ManagerMenu {
             ConsolePrinter.menuOption(4, "Delete User");
             ConsolePrinter.menuOption(0, "Back to Main Menu");
 
-            int choice = InputHandler.readInt("User Op");
+            int choice = InputHandler.readInt("User Op", 0, 4);
 
             switch (choice) {
                 case 1 -> listUsers();
@@ -102,7 +102,7 @@ public class ManagerMenu {
 
             // Rol Seçimi
             System.out.println("Select Role: 1.Tester 2.Junior 3.Senior 4.Manager");
-            int roleChoice = InputHandler.readInt("Role");
+            int roleChoice = InputHandler.readInt("Role", 1, 4);
             switch (roleChoice) {
                 case 1 -> newUser.setRole(RoleType.TESTER);
                 case 2 -> newUser.setRole(RoleType.JUNIOR_DEVELOPER);

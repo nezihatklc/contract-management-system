@@ -36,7 +36,7 @@ public class JuniorDevMenu {
             ConsolePrinter.menuOption(6, "Change Password");
             ConsolePrinter.menuOption(0, "Logout");
 
-            int choice = InputHandler.readInt("Choice");
+            int choice = InputHandler.readInt("Choice", 0, 6);
 
             switch (choice) {
                 case 1 -> listContacts();
@@ -122,7 +122,7 @@ public class JuniorDevMenu {
         System.out.println("8. Created At");
 
         
-        int fieldChoice = InputHandler.readInt("Field");
+        int fieldChoice = InputHandler.readInt("Field", 1, 8);
         String field = switch (fieldChoice) {
             case 1 -> "first_name";
             case 2 -> "last_name";
@@ -139,7 +139,7 @@ public class JuniorDevMenu {
         System.out.println("1. Ascending (A-Z)");
         System.out.println("2. Descending (Z-A)");
         
-        boolean isAscending = InputHandler.readInt("Order") == 1;
+        boolean isAscending = InputHandler.readInt("Order", 1, 2) == 1;
 
         try {
             List<Contact> sortedList = contactService.sortContacts(field, isAscending);
