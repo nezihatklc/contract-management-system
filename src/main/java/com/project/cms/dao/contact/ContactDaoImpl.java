@@ -68,6 +68,43 @@ public class ContactDaoImpl implements ContactDao {
         return -1; // fail
     }
 
+    // ADD CONTACT WITH SPECIFIC ID (FOR UNDO)
+    @Override
+    public int addContactWithId(Contact c) {
+        String sql = "INSERT INTO contacts " +
+                "(contact_id, first_name, middle_name, last_name, nickname, city, phone_primary, phone_secondary, email, linkedin_url, birth_date) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = DbConnection.getConnection()) {
+            if (conn == null) return -1;
+
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setInt(1, c.getContactId());
+                ps.setString(2, c.getFirstName());
+                ps.setString(3, c.getMiddleName());
+                ps.setString(4, c.getLastName());
+                ps.setString(5, c.getNickname());
+                ps.setString(6, c.getCity());
+                ps.setString(7, c.getPhonePrimary());
+                ps.setString(8, c.getPhoneSecondary());
+                ps.setString(9, c.getEmail());
+                ps.setString(10, c.getLinkedinUrl());
+
+                if (c.getBirthDate() != null) {
+                    ps.setDate(11, Date.valueOf(c.getBirthDate()));
+                } else {
+                    ps.setNull(11, Types.DATE);
+                }
+
+                int affected = ps.executeUpdate();
+                return affected > 0 ? c.getContactId() : -1;
+            }
+        } catch (SQLException e) {
+            System.out.println("❌ Error restoring contact: " + e.getMessage());
+            return -1;
+        }
+    }
+
     
     
     // ADD MULTIPLE CONTACTS

@@ -61,7 +61,7 @@ public class UndoServiceImpl implements UndoService {
             }
 
             case CONTACT_DELETE -> {
-                contactService.createContact(action.getOldContact(), performingUser);
+                contactService.restoreContact(action.getOldContact(), performingUser);
             }
 
             /* ===========================

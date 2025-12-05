@@ -46,8 +46,18 @@ public class ContactServiceImpl implements ContactService {
         Validator.validateContact(contact);
 
         // Insert → returns new ID
+        // Insert → returns new ID
         int newId = contactDao.addContact(contact);
+        
+        if (newId == -1) {
+            throw new RuntimeException("Database error: Failed to create contact.");
+        }
+
         Contact saved = contactDao.findById(newId);
+        
+        if (saved == null) {
+            throw new RuntimeException("Database error: Contact created but could not be retrieved.");
+        }
 
         // Undo: CREATE → undo = DELETE
         undoService.recordUndoAction(
@@ -55,6 +65,40 @@ public class ContactServiceImpl implements ContactService {
                 UndoAction.forContactCreate(saved)
         );
 
+        return saved;
+    }
+
+    /* =========================================================
+       RESTORE CONTACT (For Undo - Preserves ID)
+    ========================================================= */
+    @Override
+    public Contact restoreContact(Contact contact, User performingUser)
+            throws ValidationException, AccessDeniedException {
+
+        // Role check (same as create)
+        try {
+            userService.getPermissionsFor(performingUser).addNewContactOrContacts();
+        } catch (UnsupportedOperationException e) {
+            throw new AccessDeniedException("Only Senior Developer can restore contacts.");
+        }
+
+        // Validate
+        Validator.validateContact(contact);
+
+        // Insert with specific ID
+        int restoredId = contactDao.addContactWithId(contact);
+        
+        if (restoredId == -1) {
+            throw new RuntimeException("Database error: Failed to restore contact.");
+        }
+
+        Contact saved = contactDao.findById(restoredId);
+        
+        if (saved == null) {
+            throw new RuntimeException("Database error: Contact restored but could not be retrieved.");
+        }
+
+        // No new undo record here to avoid infinite loops or complex undo stacks
         return saved;
     }
 

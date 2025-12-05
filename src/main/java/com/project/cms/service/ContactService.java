@@ -17,6 +17,10 @@ public interface ContactService {
     Contact createContact(Contact contact, User performingUser)
             throws ValidationException, AccessDeniedException;
 
+    // RESTORE (For Undo - preserves ID)
+    Contact restoreContact(Contact contact, User performingUser)
+            throws ValidationException, AccessDeniedException;
+
     // UPDATE (Junior + Senior)
     void updateContact(Contact updated, User performingUser)
             throws ValidationException, ContactNotFoundException, AccessDeniedException;

@@ -34,6 +34,12 @@ public interface ContactDao {
      */
     void addContacts(List<Contact> contacts);
 
+    /**
+     * Inserts a contact with a specific ID (used for Undo).
+     * @param contact the contact to restore
+     */
+    int addContactWithId(Contact contact);
+
     // ===========================================================
     // READ
     // ===========================================================

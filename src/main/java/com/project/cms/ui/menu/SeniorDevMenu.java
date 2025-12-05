@@ -162,6 +162,7 @@ public class SeniorDevMenu {
             Contact contact = new Contact();
             contact.setFirstName(InputHandler.readString("First Name", true));
             contact.setLastName(InputHandler.readString("Last Name", true));
+            contact.setNickname(InputHandler.readString("Nickname", true));
             contact.setPhonePrimary(InputHandler.readString("Primary Phone", true));
             
             contact.setEmail(InputHandler.readString("Email", false));
