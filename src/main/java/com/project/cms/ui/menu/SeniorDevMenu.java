@@ -10,21 +10,41 @@ import com.project.cms.ui.input.ConsolePrinter;
 import com.project.cms.ui.input.InputHandler;
 import com.project.cms.util.Validator;
 import java.util.List;
-
+/**
+ * Menu interface for the Senior Developer role.
+ * <p>
+ * Senior Developers have advanced permissions including:
+ * <ul>
+ * <li>All Junior capabilities (Read, Update, Undo, Password Change).</li>
+ * <li><b>Create:</b> Can add new contacts to the system.</li>
+ * <li><b>Delete:</b> Can remove existing contacts.</li>
+ * <li><b>Undo:</b> Can undo create, update, and delete operations.</li>
+ * </ul>
+ */
 public class SeniorDevMenu {
     
     private final User user;
     private final ContactService contactService;
     private final UserService userService;
     private final UndoService undoService;
-
+/**
+     * Constructs a new SeniorDevMenu with all required services.
+     *
+     * @param user           The currently logged-in Senior Developer.
+     * @param contactService Service for handling contact operations.
+     * @param userService    Service for handling user operations.
+     * @param undoService    Service for handling undo operations.
+     */
     public SeniorDevMenu(User user, ContactService contactService, UserService userService, UndoService undoService) {
         this.user = user;
         this.contactService = contactService;
         this.userService = userService;
         this.undoService = undoService;
     }
-
+/**
+     * Starts the Senior Developer menu loop.
+     * Displays advanced options and processes user input until logout.
+     */
     public void start() {
         while (true) {
             ConsolePrinter.clearScreen();
@@ -60,13 +80,17 @@ public class SeniorDevMenu {
             InputHandler.WaitEnter();
         }
     }
-
+/**
+     * Lists all contacts available in the system.
+     */
     private void listContacts() {
         ConsolePrinter.subTitle("All Contacts");
         List<Contact> contacts = contactService.getAllContacts();
         ConsolePrinter.printContactList(contacts);
     }
-
+/**
+     * Performs a multi-field search on contacts.
+     */
     private void searchContacts() {
         ConsolePrinter.subTitle("Search Contacts");
         SearchCriteria criteria = new SearchCriteria();
@@ -114,7 +138,9 @@ public class SeniorDevMenu {
             ConsolePrinter.error("Search failed: " + e.getMessage());
         }
     }
-
+/**
+     * Sorts contacts based on a selected field and order.
+     */
     private void sortContacts() {
         ConsolePrinter.subTitle("Sort Contacts");
         System.out.println("Select field to sort by:");
@@ -154,7 +180,10 @@ public class SeniorDevMenu {
             ConsolePrinter.error("Sort failed: " + e.getMessage());
         }
     }
-
+/**
+     * Adds a new contact to the system.
+     * Validates input before saving.
+     */
     private void addContact() {
         ConsolePrinter.subTitle("Add New Contact");
         try {
@@ -192,7 +221,9 @@ public class SeniorDevMenu {
             ConsolePrinter.error("Add failed: " + e.getMessage());
         }
     }
-
+/**
+     * Updates an existing contact's information.
+     */
     private void updateContact() {
         ConsolePrinter.subTitle("Update Contact");
         int id = InputHandler.readInt("Enter Contact ID to update");
@@ -257,7 +288,9 @@ public class SeniorDevMenu {
             ConsolePrinter.error("Update failed: " + e.getMessage());
         }
     }
-
+/**
+     * Deletes a contact from the system.
+     */
     private void deleteContact() {
         ConsolePrinter.subTitle("Delete Contact");
         int id = InputHandler.readInt("Enter Contact ID to delete");
@@ -268,7 +301,9 @@ public class SeniorDevMenu {
             ConsolePrinter.error("Delete failed: " + e.getMessage());
         }
     }
-
+/**
+     * Reverts the last create, update, or delete operation.
+     */
     private void undoLastAction() {
         try {
             undoService.undo(user);
@@ -277,7 +312,9 @@ public class SeniorDevMenu {
             ConsolePrinter.error("Undo failed: " + e.getMessage());
         }
     }
-
+/**
+     * Allows the user to change their own password.
+     */
     private void changePassword() {
         ConsolePrinter.subTitle("Change Password");
         String oldPass = InputHandler.readPassword("Old Password");
