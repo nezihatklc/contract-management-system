@@ -60,6 +60,10 @@ public class Validator {
 
         if (isEmpty(u.getSurname()))
             throw new ValidationException("Surname is required.");
+            
+        if (isEmpty(u.getPhone()))
+            throw new ValidationException("Phone is required.");
+        validatePhone(u.getPhone());
 
         if (u.getRole() == null)
             throw new ValidationException("User role is required.");
@@ -111,23 +115,13 @@ public class Validator {
 
         String p = phone.replaceAll("[\\s-]", "");
 
-        if (!p.matches("^\\+?[0-9]+$")) {
-            throw new ValidationException("Phone number cannot contain letters or special characters.");
+        // Only allow +90 followed by 10 digits
+        // +90 5xxxxxxxxx -> 13 chars total
+        if (p.startsWith("+90") && p.length() == 13 && p.matches("^\\+90[0-9]{10}$")) {
+             return;
         }
 
-        // +90 5xxxxxxxxx → 13 character
-        if (p.startsWith("+90") && p.length() == 13 && p.charAt(3) == '5')
-            return;
-
-        // 0 5xxxxxxxxx → 12 character
-        if (p.startsWith("0") && p.length() == 11 && p.charAt(1) == '5')
-            return;
-
-        // 5xxxxxxxxx → 10 character
-        if (p.length() == 10 && p.charAt(0) == '5')
-            return;
-
-        throw new ValidationException("Invalid phone number format.");
+        throw new ValidationException("Invalid phone number format. Must start with +90 and be 13 characters long.");
     }
 
     /* ------------------------------------------------------
