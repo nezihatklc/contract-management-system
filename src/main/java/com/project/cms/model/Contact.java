@@ -91,7 +91,10 @@ public class Contact {
      * @return The birth date as a LocalDate.
      */
     public LocalDate getBirthDate() { return birthDate; }
-
+/**
+     * Gets the timestamp when the contact was created.
+     * @return The creation timestamp.
+     */
     public LocalDateTime getCreatedAt() { return createdAt; }
     /**
      * Gets the timestamp when the contact was last updated.
@@ -165,7 +168,10 @@ public class Contact {
      * @param createdAt The timestamp.
      */
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
-
+/**
+     * Sets the last update timestamp.
+     * @param updatedAt The timestamp.
+     */
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
     /**
      * Returns a string representation of the contact object.

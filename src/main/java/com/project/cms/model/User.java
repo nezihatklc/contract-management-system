@@ -1,187 +1,190 @@
 package com.project.cms.model;
 
+
+
 import java.time.LocalDate;
+
 import java.time.LocalDateTime;
 
+
+
 /**
- * Represents a system user entity (e.g., Manager, Senior Developer) in the Contact Management System.
- * <p>
- * This class maps to the 'users' table in the database. It manages authentication details
- * (username, password hash) and authorization via the {@link RoleType} enum.
- * <p>
- * Unlike the {@link Contact} class, this class handles system access and permissions.
+
+ * Represents a system user (e.g., Manager, Developer).
+
+ * Includes authentication details like username, password hash, and role.
+
+ * This version DOES NOT extend Person (because DB structure does not use Person).
+
  */
+
 public class User {
 
-    private int userId;
-    private String username;
-    private String passwordHash; // Stored in database (Encrypted)
-    private String name;
-    private String surname;
-    private String phone;
-    private LocalDate birthDate;
-    private RoleType role;       // Determines user permissions
-    private LocalDateTime createdAt;
-    
-    // Transient field: Used only during login/registration input, not stored in DB directly
-    private String plainPassword; 
 
-    /**
-     * Default constructor for creating an empty User object.
+
+    private int userId;
+
+    private String username;
+
+    private String passwordHash;
+
+    private String name;
+
+    private String surname;
+
+    private String phone;
+
+    private LocalDate birthDate;
+
+    private RoleType role;
+
+    private LocalDateTime createdAt;
+// Field to hold raw password input temporarily (not stored in DB)
+    private String plainPassword;
+
+/**
+     * Default constructor.
      */
+
     public User() {}
 
-    /**
-     * Copy constructor.
-     * Creates a new User instance with the same values as the provided User object.
-     * * @param u The User object to copy.
-     */
-    public User(User u) {
-        this.userId = u.userId;
-        this.username = u.username;
-        this.passwordHash = u.passwordHash;   
-        this.name = u.name;
-        this.surname = u.surname;
-        this.phone = u.phone;
-        this.birthDate = u.birthDate;
-        this.role = u.role;
-        this.createdAt = u.createdAt;
-        // plainPassword is typically not copied for security reasons, or can be if needed
-    }
 
-    // ==========================
-    //      GETTER METHODS
-    // ==========================
 
-    /**
-     * Gets the unique identifier of the user.
+    // === GETTER METHODS ===
+/**
+     * Gets the unique user ID.
      * @return The user ID.
      */
     public int getUserId() { return userId; }
-
-    /**
-     * Gets the username used for login.
+/**
+     * Gets the username.
      * @return The username string.
      */
     public String getUsername() { return username; }
-
-    /**
-     * Gets the hashed version of the password.
-     * This is the value stored in the database for security.
-     * @return The password hash.
+/**
+     * Gets the hashed password string.
+     * @return The encrypted password.
      */
     public String getPasswordHash() { return passwordHash; }
-
-    /**
-     * Gets the first name of the user.
+/**
+     * Gets the user's first name.
      * @return The first name.
      */
     public String getName() { return name; }
-
-    /**
-     * Gets the last name (surname) of the user.
+/**
+     * Gets the user's last name.
      * @return The surname.
      */
     public String getSurname() { return surname; }
-
-    /**
-     * Gets the phone number of the user.
-     * @return The phone number.
+/**
+     * Gets the user's phone number.
+     * @return The phone number string.
      */
     public String getPhone() { return phone; }
-
-    /**
-     * Gets the birth date of the user.
-     * @return The birth date as a LocalDate.
+/**
+     * Gets the user's birth date.
+     * @return The birth date as LocalDate.
      */
     public LocalDate getBirthDate() { return birthDate; }
-
-    /**
-     * Gets the role of the user (e.g., MANAGER, TESTER).
-     * This determines the permissions within the application.
+/**
+     * Gets the assigned role of the user.
      * @return The RoleType enum.
      */
     public RoleType getRole() { return role; }
 
-    /**
-     * Gets the timestamp when the user account was created.
-     * @return The creation timestamp.
-     */
     public LocalDateTime getCreatedAt() { return createdAt; }
-
-    /**
-     * Gets the raw (plain text) password.
-     * <p>
-     * <b>Note:</b> This is typically used only during the registration or login process
-     * before the password is hashed. It is not stored in the database.
-     * @return The plain text password.
+/**
+     * Gets the plain text password (used during login/update).
+     * @return The raw password.
      */
     public String getPlainPassword() { return plainPassword; }
 
 
-    // ==========================
-    //      SETTER METHODS
-    // ==========================
 
-    /**
-     * Sets the unique identifier for the user.
-     * @param userId The user ID.
+
+
+    // === SETTER METHODS ===
+/**
+     * Sets the user ID.
+     * @param userId The unique ID.
      */
     public void setUserId(int userId) { this.userId = userId; }
-
-    /**
-     * Sets the username for login.
+/**
+     * Sets the username.
      * @param username The unique username.
      */
     public void setUsername(String username) { this.username = username; }
-
-    /**
+/**
      * Sets the hashed password.
-     * This method should be called after hashing the plain password.
-     * @param passwordHash The encrypted password string.
+     * @param passwordHash The encrypted string.
      */
     public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
-
-    /**
-     * Sets the first name of the user.
+/**
+     * Sets the first name.
      * @param name The first name.
      */
     public void setName(String name) { this.name = name; }
-
-    /**
-     * Sets the last name of the user.
+/**
+     * Sets the last name.
      * @param surname The surname.
      */
     public void setSurname(String surname) { this.surname = surname; }
-
-    /**
-     * Sets the phone number of the user.
+/**
+     * Sets the phone number.
      * @param phone The phone number.
      */
     public void setPhone(String phone) { this.phone = phone; }
-
-    /**
-     * Sets the birth date of the user.
+/**
+     * Sets the birth date.
      * @param birthDate The birth date.
      */
     public void setBirthDate(LocalDate birthDate) { this.birthDate = birthDate; }
-
-    /**
+/**
      * Assigns a role to the user.
-     * @param role The RoleType (e.g., SENIOR_DEVELOPER).
+     * @param role The RoleType enum.
      */
     public void setRole(RoleType role) { this.role = role; }
-
-    /**
-     * Sets the account creation timestamp.
+/**
+     * Sets the creation timestamp.
      * @param createdAt The timestamp.
      */
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
-
-    /**
-     * Sets the plain text password.
-     * Used for temporary storage before hashing.
+/**
+     * Sets the plain text password for processing.
      * @param plainPassword The raw password input.
      */
     public void setPlainPassword(String plainPassword) { this.plainPassword = plainPassword; }
+/**
+     * Copy constructor.
+     * Creates a new User object by copying fields from an existing one.
+     * Useful for update operations where original data needs to be preserved or modified safely.
+     *
+     * @param u The source User object to copy.
+     */
+
+
+    public User(User u) {
+
+        this.userId = u.userId;
+
+        this.username = u.username;
+
+        this.passwordHash = u.passwordHash;  
+
+        this.name = u.name;
+
+        this.surname = u.surname;
+
+        this.phone = u.phone;
+
+        this.birthDate = u.birthDate;
+
+        this.role = u.role;
+
+        this.createdAt = u.createdAt;
+
+    }
+
+
+
 }
