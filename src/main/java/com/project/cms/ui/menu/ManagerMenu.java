@@ -145,7 +145,7 @@ public class ManagerMenu {
             System.out.println("(Press Enter to keep current value)");
 
             String username = InputHandler.readString("Username (" + existing.getUsername() + ")", false);
-            String password = InputHandler.readPassword("Password (leave empty to keep)");
+
             String name = InputHandler.readString("First Name (" + existing.getName() + ")", false);
             String surname = InputHandler.readString("Last Name (" + existing.getSurname() + ")", false);
             String phone = InputHandler.readString("Phone (" + existing.getPhone() + ")", false);
@@ -159,7 +159,7 @@ public class ManagerMenu {
             User updated = new User(existing);
 
             if (!username.isEmpty()) updated.setUsername(username);
-            if (!password.isEmpty()) updated.setPlainPassword(password);
+
             if (!name.isEmpty()) updated.setName(name);
             if (!surname.isEmpty()) updated.setSurname(surname);
             if (!phone.isEmpty()) {
