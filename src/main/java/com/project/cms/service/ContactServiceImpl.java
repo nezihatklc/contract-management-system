@@ -12,7 +12,12 @@ import com.project.cms.model.User;
 import com.project.cms.util.Validator;
 import java.util.List;
 
-
+/**
+ * Implementation of ContactService.
+ * Handles role checks, validation, undo actions, and communication with the DAO layer.
+ *
+ * @author Simay
+ */
 
 public class ContactServiceImpl implements ContactService {
 
@@ -20,10 +25,20 @@ public class ContactServiceImpl implements ContactService {
     private  UndoService undoService;
     private final UserService userService;
 
+    /**
+     * 
+     * @param undoService - the undo service used to record undo actions
+     * @param userService - the user service used for role permission checks
+     */
     public ContactServiceImpl(UndoService undoService, UserService userService) {
         this.undoService = undoService;
         this.userService = userService;
     }
+
+    /**
+     * 
+     * @param undoService - the undo service to use
+     */
     public void setUndoService(UndoService undoService) {
         this.undoService = undoService;
     }
