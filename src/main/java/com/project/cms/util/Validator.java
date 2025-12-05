@@ -79,7 +79,7 @@ public class Validator {
             return false;
 
     // Minimum 4 characters
-         if (password.length() < 4)
+         if (password.length() <= 2)
             return false;
 
     
