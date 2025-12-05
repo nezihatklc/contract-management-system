@@ -160,22 +160,22 @@ public class SeniorDevMenu {
         try {
             Contact contact = new Contact();
             contact.setFirstName(InputHandler.readString("First Name", true));
-            contact.setMiddleName(InputHandler.readString("Middle Name (optional)", false));
+            contact.setMiddleName(InputHandler.readString("Middle Name /optional", false));
             contact.setLastName(InputHandler.readString("Last Name", true));
             contact.setNickname(InputHandler.readString("Nickname", true));
-            contact.setPhonePrimary(InputHandler.readString("Primary Phone (+90...)", true));
+            contact.setPhonePrimary(InputHandler.readString("Primary Phone (+905xxxxxxxxx)", true));
             
-            String phone2 = InputHandler.readString("Secondary Phone (+90...)(optional)", false);
+            String phone2 = InputHandler.readString("Secondary Phone (+905xxxxxxxxx) / optional", false);
             if (!phone2.isEmpty()) {
                 Validator.validatePhone(phone2);
                 contact.setPhoneSecondary(phone2);
             }
 
-            contact.setEmail(InputHandler.readString("Email (example@mail.com)(optional)", true));
+            contact.setEmail(InputHandler.readString("Email (example@mail.com)", true));
             contact.setCity(InputHandler.readString("City", true));
-            contact.setLinkedinUrl(InputHandler.readString("LinkedIn URL", false));
+            contact.setLinkedinUrl(InputHandler.readString("LinkedIn URL / optional", false));
             
-            String dob = InputHandler.readString("Birth Date (dd/MM/yyyy)", false);
+            String dob = InputHandler.readString("Birth Date (dd/MM/yyyy) / optional", false);
             if (!dob.isEmpty()) {
                 java.time.LocalDate date = com.project.cms.util.DateUtils.stringToDate(dob);
                 if (date != null) contact.setBirthDate(date);
