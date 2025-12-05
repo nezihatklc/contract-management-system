@@ -21,16 +21,11 @@ CREATE TABLE users (
 
 INSERT INTO users (username, password_hash, name, surname, phone, birth_date, role)
 VALUES
-('tt',  'tt',  'Nezihat',    'Kılıç',     '+905551112233', '1998-04-10', 'TESTER'),
-('jd',  'jd',  'Simay',  'Mutlu',      '+905552223344', '2000-01-15', 'JUNIOR_DEVELOPER'),
-('sd',  'sd',  'Sıla',  'Şimşek',      '+905553334455', '1995-07-22', 'SENIOR_DEVELOPER'),
-('man', 'man', 'Pelin', 'Cömertler',  '+905554445566', '1990-03-05', 'MANAGER');
+('tt',  '63fVi4XgA8Z/Qu7gFXmzXC8eLSbgz1aPS1Vqyl1+f0A=:zQ+105ZbfEWBC4ZzVhMdUA==',  'Nezihat',    'Kılıç',     '+905551112233', '1998-04-10', 'TESTER'),
+('jd',  '1SEyaD4T3hOJKC6GprcNFgv59RI63Uv3sSNq2bVDJ1I=:ESqKxhWaj831hm7GaXeoLg==',  'Simay',  'Mutlu',      '+905552223344', '2000-01-15', 'JUNIOR_DEVELOPER'),
+('sd',  '1gsk4Z9iB7ePlnP2YpJETFZpxTB2uQDvLIWqIJ7UpjA=:kHlr9n5p8b18faBtWZyFyQ==',  'Sıla',  'Şimşek',      '+905553334455', '1995-07-22', 'SENIOR_DEVELOPER'),
+('man', 'ORQoC32DpxWzoQ7W2U3d/DHN7ndX9JNcjsJ12XXJUJ0=:8bAAMfLnEGEp+FR9igTx5A==', 'Pelin', 'Cömertler',  '+905554445566', '1990-03-05', 'MANAGER');
 
--- Updated user names (Team Sync)
-UPDATE users SET name='Nezihat', surname='Kılıç' WHERE user_id=1;
-UPDATE users SET name='Pelin', surname='Cömertler' WHERE user_id=2;
-UPDATE users SET name='Simay', surname='Mutlu' WHERE user_id=3;
-UPDATE users SET name='Sıla', surname='Şimşek' WHERE user_id=4;
 
 CREATE TABLE contacts (
     contact_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -129,18 +124,4 @@ VALUES
 
 
 
-UPDATE users 
-SET password_hash = '63fVi4XgA8Z/Qu7gFXmzXC8eLSbgz1aPS1Vqyl1+f0A=:zQ+105ZbfEWBC4ZzVhMdUA=='
-WHERE username = 'tt';
 
-UPDATE users 
-SET password_hash = '1SEyaD4T3hOJKC6GprcNFgv59RI63Uv3sSNq2bVDJ1I=:ESqKxhWaj831hm7GaXeoLg=='
-WHERE username = 'jd';
-
-UPDATE users 
-SET password_hash = '1gsk4Z9iB7ePlnP2YpJETFZpxTB2uQDvLIWqIJ7UpjA=:kHlr9n5p8b18faBtWZyFyQ=='
-WHERE username = 'sd';
-
-UPDATE users 
-SET password_hash = 'ORQoC32DpxWzoQ7W2U3d/DHN7ndX9JNcjsJ12XXJUJ0=:8bAAMfLnEGEp+FR9igTx5A=='
-WHERE username = 'man';
