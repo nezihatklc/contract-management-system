@@ -114,7 +114,7 @@ public class UserDaoImpl implements UserDao{
                 ps.setInt(2, userId);
 
                 int affected = ps.executeUpdate();
-                System.out.println("updatePassword → updated rows = " + affected);
+
                 return affected == 1;
             }
         } catch (SQLException e) {
@@ -151,7 +151,7 @@ public class UserDaoImpl implements UserDao{
                 ps.setInt(6, user.getUserId());
 
                 int affected = ps.executeUpdate();
-                System.out.println("updateUser → updated rows = " + affected);
+
 
                 return affected == 1;
             }
@@ -190,7 +190,7 @@ public class UserDaoImpl implements UserDao{
                 ps.setString(7, user.getRole().name());
 
                 int affected = ps.executeUpdate();
-                System.out.println("addUser → inserted rows = " + affected);
+
 
                 if (affected == 0) {
                     return -1;
@@ -226,7 +226,7 @@ public class UserDaoImpl implements UserDao{
                 ps.setInt(1, userId);
 
                 int affected = ps.executeUpdate();
-                System.out.println("deleteUser → deleted rows = " + affected);
+
 
                 return affected == 1;
             }

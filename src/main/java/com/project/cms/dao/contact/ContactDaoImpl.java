@@ -201,7 +201,7 @@ public class ContactDaoImpl implements ContactDao {
                 ps.setInt(11, c.getContactId());
 
                 int affected = ps.executeUpdate();
-                System.out.println("updateContact → updated rows = " + affected);
+
 
                 return affected == 1;
             }
@@ -225,7 +225,7 @@ public class ContactDaoImpl implements ContactDao {
                 ps.setInt(1, id);
 
                 int affected = ps.executeUpdate();
-                System.out.println("deleteContactById → deleted rows = " + affected);
+
 
                 return affected == 1;
             }

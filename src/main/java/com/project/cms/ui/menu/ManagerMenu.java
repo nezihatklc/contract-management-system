@@ -140,7 +140,8 @@ public class ManagerMenu {
                 return;
             }
 
-            ConsolePrinter.info("Updating user: " + existing.getUsername());
+            ConsolePrinter.info("Updating User:");
+            ConsolePrinter.printUserList(List.of(existing));
             System.out.println("(Press Enter to keep current value)");
 
             String username = InputHandler.readString("Username (" + existing.getUsername() + ")", false);

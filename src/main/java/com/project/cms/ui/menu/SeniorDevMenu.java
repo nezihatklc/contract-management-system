@@ -125,7 +125,7 @@ public class SeniorDevMenu {
         System.out.println("5. Phone (primary)");
         System.out.println("6. Email");
         System.out.println("7. Birth Date");
-        System.out.println("8. Created At");
+        
 
         
         int fieldChoice = InputHandler.readInt("Field", 1, 8);
@@ -137,7 +137,6 @@ public class SeniorDevMenu {
             case 5 -> "phone_primary";
             case 6 -> "email";
             case 7 -> "birth_date";
-            case 8 -> "created_at";
             default -> "first_name";
         };
 
@@ -188,19 +187,51 @@ public class SeniorDevMenu {
                 ConsolePrinter.error("Contact not found.");
                 return;
             }
-            System.out.println("Updating: " + contact);
+            System.out.println("Updating Contact:");
+            ConsolePrinter.printContactList(List.of(contact));
             System.out.println("(Press Enter to keep current value)");
 
-            String newPhone = InputHandler.readString("New Phone (" + contact.getPhonePrimary() + ")", false);
+            String fName = InputHandler.readString("First Name (" + contact.getFirstName() + ")", false);
+            if (!fName.isEmpty()) contact.setFirstName(fName);
+
+            String mName = InputHandler.readString("Middle Name (" + (contact.getMiddleName() == null ? "" : contact.getMiddleName()) + ")", false);
+            if (!mName.isEmpty()) contact.setMiddleName(mName);
+
+            String lName = InputHandler.readString("Last Name (" + contact.getLastName() + ")", false);
+            if (!lName.isEmpty()) contact.setLastName(lName);
+
+            String nick = InputHandler.readString("Nickname (" + (contact.getNickname() == null ? "" : contact.getNickname()) + ")", false);
+            if (!nick.isEmpty()) contact.setNickname(nick);
+
+            String city = InputHandler.readString("City (" + (contact.getCity() == null ? "" : contact.getCity()) + ")", false);
+            if (!city.isEmpty()) contact.setCity(city);
+
+            String newPhone = InputHandler.readString("New Phone 1 (" + contact.getPhonePrimary() + ")", false);
             if (!newPhone.isEmpty()) {
                 Validator.validatePhone(newPhone);
                 contact.setPhonePrimary(newPhone);
             }
 
-            String newEmail = InputHandler.readString("New Email (" + contact.getEmail() + ")", false);
+            String newPhone2 = InputHandler.readString("New Phone 2 (" + (contact.getPhoneSecondary() == null ? "" : contact.getPhoneSecondary()) + ")", false);
+            if (!newPhone2.isEmpty()) {
+                Validator.validatePhone(newPhone2);
+                contact.setPhoneSecondary(newPhone2);
+            }
+
+            String newEmail = InputHandler.readString("New Email (" + (contact.getEmail() == null ? "" : contact.getEmail()) + ")", false);
             if (!newEmail.isEmpty()) {
                 Validator.validateEmail(newEmail);
                 contact.setEmail(newEmail);
+            }
+
+            String linkedin = InputHandler.readString("LinkedIn (" + (contact.getLinkedinUrl() == null ? "" : contact.getLinkedinUrl()) + ")", false);
+            if (!linkedin.isEmpty()) contact.setLinkedinUrl(linkedin);
+
+            String dob = InputHandler.readString("Birth Date (dd/MM/yyyy) (" + (contact.getBirthDate() != null ? com.project.cms.util.DateUtils.dateToString(contact.getBirthDate()) : "") + ")", false);
+            if (!dob.isEmpty()) {
+                java.time.LocalDate date = com.project.cms.util.DateUtils.stringToDate(dob);
+                if (date != null) contact.setBirthDate(date);
+                else ConsolePrinter.error("Invalid date format. Skipped.");
             }
 
             contactService.updateContact(contact, user);

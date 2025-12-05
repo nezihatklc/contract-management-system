@@ -121,7 +121,6 @@ public class TesterMenu {
         System.out.println("5. Phone (primary)");
         System.out.println("6. Email");
         System.out.println("7. Birth Date");
-        System.out.println("8. Created At");
 
         
         int fieldChoice = InputHandler.readInt("Field", 1, 8);
@@ -133,7 +132,6 @@ public class TesterMenu {
             case 5 -> "phone_primary";
             case 6 -> "email";
             case 7 -> "birth_date";
-            case 8 -> "created_at";
             default -> "first_name";
         };
 
