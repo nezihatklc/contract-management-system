@@ -19,12 +19,11 @@ public class AsciiAnimator {
     private static String randomStarChar() {
         String[] stars = {"✦", "✧", "✸", "✺", "✶", "✷", "✹", "✵"};
         String s = stars[(int) (Math.random() * stars.length)];
-        int c = (int) (Math.random() * 3);
+        int c = (int) (Math.random() * 2);
         String color;
         switch (c) {
-            case 0 -> color = ConsoleColors.CYAN_BRIGHT;
-            case 1 -> color = ConsoleColors.WHITE_BRIGHT;
-            default -> color = ConsoleColors.BLUE_BRIGHT;
+            case 0 -> color = ConsoleColors.YELLOW_BRIGHT;
+            default -> color = ConsoleColors.RED_BOLD;
         }
         return color + s + ConsoleColors.RESET;
     }
@@ -100,8 +99,8 @@ public class AsciiAnimator {
 
                 // sol taraf
                 for (int i = 0; i < center - offset; i++) sb.append(" ");
-                sb.append(ConsoleColors.BLUE_BRIGHT).append("/").append(ConsoleColors.RESET);
-
+                sb.append(ConsoleColors.RED_BOLD).append("/").append(ConsoleColors.RESET);
+                
                 // orta boşluk
                 int gap = offset * 2;
                 for (int i = 0; i < gap; i++) {
@@ -109,7 +108,7 @@ public class AsciiAnimator {
                     else sb.append(" ");
                 }
 
-                sb.append(ConsoleColors.BLUE_BRIGHT).append("\\").append(ConsoleColors.RESET);
+                sb.append(ConsoleColors.RED_BOLD).append("\\").append(ConsoleColors.RESET);
                 sb.append("\n");
             }
 
@@ -117,7 +116,7 @@ public class AsciiAnimator {
             if (t > 0.45) {
                 sb.append("\n");
                 for (String line : logoLines) {
-                    sb.append(ConsoleColors.BLUE).append(line).append(ConsoleColors.RESET).append("\n");
+                    sb.append(ConsoleColors.RED).append(line).append(ConsoleColors.RESET).append("\n");
                 }
             }
 
@@ -166,9 +165,9 @@ public class AsciiAnimator {
                         else if (r < 0.66) noise = '@';
                         else noise = '*';
 
-                        sb.append(ConsoleColors.CYAN_BRIGHT).append(noise).append(ConsoleColors.RESET);
+                        sb.append(ConsoleColors.YELLOW_BRIGHT).append(noise).append(ConsoleColors.RESET);
                     } else {
-                        sb.append(ConsoleColors.BLUE_BOLD).append(ch).append(ConsoleColors.RESET);
+                        sb.append(ConsoleColors.RED_BOLD).append(ch).append(ConsoleColors.RESET);
                     }
                 }
 
@@ -197,9 +196,9 @@ public class AsciiAnimator {
                     if (r < 0.03) {
                         row.append(ConsoleColors.YELLOW_BRIGHT).append("*").append(ConsoleColors.RESET);
                     } else if (r < 0.06) {
-                        row.append(ConsoleColors.CYAN_BRIGHT).append("•").append(ConsoleColors.RESET);
+                        row.append(ConsoleColors.RED_BOLD).append("•").append(ConsoleColors.RESET);
                     } else if (r < 0.08) {
-                        row.append(ConsoleColors.BLUE_BRIGHT).append("×").append(ConsoleColors.RESET);
+                        row.append(ConsoleColors.RED).append("×").append(ConsoleColors.RESET);
                     } else {
                         row.append(" ");
                     }
@@ -259,10 +258,10 @@ public class AsciiAnimator {
                             v[r][c] = -v[r][c] * 0.25;
                             y[r][c] = r - 0.2;
                             done = false;
-                            out.append(ConsoleColors.CYAN_BRIGHT).append(ch).append(ConsoleColors.RESET);
+                            out.append(ConsoleColors.YELLOW_BRIGHT).append(ch).append(ConsoleColors.RESET);
                         } else {
                             y[r][c] = r;
-                            out.append(ConsoleColors.CYAN_BRIGHT).append(ch).append(ConsoleColors.RESET);
+                            out.append(ConsoleColors.YELLOW_BRIGHT).append(ch).append(ConsoleColors.RESET);
                         }
                     }
                 }
@@ -289,9 +288,9 @@ public class AsciiAnimator {
 
             double t = (double) s / (steps - 1);
             String color;
-            if (t < 0.33) color = ConsoleColors.BLUE;
-            else if (t < 0.66) color = ConsoleColors.BLUE_BRIGHT;
-            else color = ConsoleColors.CYAN_BRIGHT;
+            if (t < 0.33) color = ConsoleColors.RED;
+            else if (t < 0.66) color = ConsoleColors.RED_BOLD;
+            else color = ConsoleColors.YELLOW_BRIGHT;
 
             for (String line : lines) {
                 System.out.println(color + line + ConsoleColors.RESET);
@@ -328,7 +327,7 @@ public class AsciiAnimator {
 
             // logo sabit
             for (String line : logoLines) {
-                System.out.println(ConsoleColors.CYAN_BRIGHT + line + ConsoleColors.RESET);
+                System.out.println(ConsoleColors.YELLOW_BRIGHT + line + ConsoleColors.RESET);
             }
 
             System.out.println();
