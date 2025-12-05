@@ -82,8 +82,8 @@ public class Validator {
          if (password == null || password.trim().isEmpty())
             return false;
 
-    // Minimum 4 characters
-         if (password.length() <= 2)
+    // Minimum 2 characters
+         if (password.length() < 2)
             return false;
 
     

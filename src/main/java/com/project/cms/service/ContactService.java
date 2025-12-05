@@ -25,8 +25,14 @@ public interface ContactService {
     void updateContact(Contact updated, User performingUser)
             throws ValidationException, ContactNotFoundException, AccessDeniedException;
 
+    void updateContact(Contact updated, User performingUser, boolean recordUndo)
+            throws ValidationException, ContactNotFoundException, AccessDeniedException;
+
     // DELETE (Senior only)
     void deleteContact(int contactId, User performingUser)
+            throws ContactNotFoundException, AccessDeniedException;
+
+    void deleteContact(int contactId, User performingUser, boolean recordUndo)
             throws ContactNotFoundException, AccessDeniedException;
 
     // GET SINGLE CONTACT

@@ -11,7 +11,8 @@ public class UndoAction {
         CONTACT_DELETE,
         USER_CREATE,
         USER_UPDATE,
-        USER_DELETE
+        USER_DELETE,
+        PASSWORD_CHANGE
     }
 
     private final ActionType type;
@@ -134,6 +135,17 @@ public class UndoAction {
                 null,
                 deleted,
                 null
+        );
+    }
+
+    // PASSWORD → CHANGE (undo = restore old password)
+    public static UndoAction forPasswordChange(User oldU, User newU) {
+        return new UndoAction(
+                ActionType.PASSWORD_CHANGE,
+                null,
+                null,
+                oldU,
+                newU
         );
     }
 }

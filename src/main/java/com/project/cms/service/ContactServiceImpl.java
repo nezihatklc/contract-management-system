@@ -108,6 +108,12 @@ public class ContactServiceImpl implements ContactService {
     @Override
     public void updateContact(Contact updated, User performingUser)
             throws ValidationException, ContactNotFoundException, AccessDeniedException {
+        updateContact(updated, performingUser, true);
+    }
+
+    @Override
+    public void updateContact(Contact updated, User performingUser, boolean recordUndo)
+            throws ValidationException, ContactNotFoundException, AccessDeniedException {
 
         // Role check
         try {
@@ -129,10 +135,12 @@ public class ContactServiceImpl implements ContactService {
             throw new ContactNotFoundException("Update failed.");
 
         // Undo: UPDATE → restore old version
-        undoService.recordUndoAction(
-                performingUser,
-                UndoAction.forContactUpdate(old, updated)
-        );
+        if (recordUndo) {
+            undoService.recordUndoAction(
+                    performingUser,
+                    UndoAction.forContactUpdate(old, updated)
+            );
+        }
     }
 
     /* =========================================================
@@ -140,6 +148,12 @@ public class ContactServiceImpl implements ContactService {
     ========================================================= */
     @Override
     public void deleteContact(int contactId, User performingUser)
+            throws ContactNotFoundException, AccessDeniedException {
+        deleteContact(contactId, performingUser, true);
+    }
+
+    @Override
+    public void deleteContact(int contactId, User performingUser, boolean recordUndo)
             throws ContactNotFoundException, AccessDeniedException {
 
         // Role check
@@ -158,10 +172,12 @@ public class ContactServiceImpl implements ContactService {
             throw new ContactNotFoundException("Delete failed.");
 
         // Undo: DELETE → recreate old contact
-        undoService.recordUndoAction(
-                performingUser,
-                UndoAction.forContactDelete(old)
-        );
+        if (recordUndo) {
+            undoService.recordUndoAction(
+                    performingUser,
+                    UndoAction.forContactDelete(old)
+            );
+        }
     }
 
     /* =========================================================

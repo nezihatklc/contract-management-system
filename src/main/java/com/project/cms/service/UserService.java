@@ -18,6 +18,10 @@ public interface UserService {
         void changePassword(int userId, String oldPass, String newPass)
                 throws ValidationException, InvalidCredentialsException;
 
+        void restorePreviousPassword(int userId, String oldPasswordHash, User performingUser)
+                throws UserNotFoundException, AccessDeniedException;
+
+
         // GET ROLE PERMISSIONS
         RolePermissions getPermissionsFor(User user);
 

@@ -8,6 +8,7 @@ import com.project.cms.exception.AppExceptions.UserNotFoundException;
 import com.project.cms.exception.AppExceptions.ValidationException;
 import com.project.cms.model.UndoAction;
 import com.project.cms.model.User;
+import com.project.cms.model.RoleType;
 import com.project.cms.model.role.RolePermissions;
 import com.project.cms.util.PasswordHasher;
 import com.project.cms.util.Validator;
@@ -62,8 +63,17 @@ public class UserServiceImpl implements UserService {
         if (!Validator.isValidPassword(newPass))
             throw new ValidationException("Weak password.");
 
+        // Capture old state for undo
+        User oldUserCopy = new User(user);
+
         String hashed = PasswordHasher.hashPassword(newPass);
         userDao.updatePassword(userId, hashed);
+
+        // Capture new state for undo
+        User newUserCopy = new User(user);
+        newUserCopy.setPasswordHash(hashed);
+
+        undoService.recordUndoAction(user, UndoAction.forPasswordChange(oldUserCopy, newUserCopy));
     }
 
     /* ===================== ROLE PERMISSIONS ===================== */
@@ -217,4 +227,23 @@ public class UserServiceImpl implements UserService {
     }
 
     
+
+
+    @Override
+    public void restorePreviousPassword(int userId, String oldPasswordHash, User performingUser)
+            throws UserNotFoundException, AccessDeniedException {
+
+        User user = userDao.getUserById(userId);
+        if (user == null)
+            throw new UserNotFoundException("User not found.");
+
+        boolean isSelf = (performingUser.getUserId() == userId);
+        boolean isManager = (performingUser.getRole() == RoleType.MANAGER);
+
+        if (!isSelf && !isManager) {
+            throw new AccessDeniedException("Cannot restore password for another user.");
+        }
+
+        userDao.updatePassword(userId, oldPasswordHash);
+    }
 }

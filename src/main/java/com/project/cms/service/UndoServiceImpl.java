@@ -53,11 +53,11 @@ public class UndoServiceImpl implements UndoService {
                ================================================== */
             case CONTACT_CREATE -> {
                 Contact created = action.getNewContact();
-                contactService.deleteContact(created.getContactId(), performingUser);
+                contactService.deleteContact(created.getContactId(), performingUser, false);
             }
 
             case CONTACT_UPDATE -> {
-                contactService.updateContact(action.getOldContact(), performingUser);
+                contactService.updateContact(action.getOldContact(), performingUser, false);
             }
 
             case CONTACT_DELETE -> {
@@ -97,6 +97,18 @@ public class UndoServiceImpl implements UndoService {
                     userService.createUser(deletedUser, performingUser, false);
                 } catch (Exception e) {
                     throw new UndoOperationException("Cannot undo user deletion: " + e.getMessage());
+                }
+            }
+
+            case PASSWORD_CHANGE -> {
+                try {
+                     User oldUser = action.getOldUser();
+                     if (oldUser == null || oldUser.getPasswordHash() == null) {
+                         throw new UndoOperationException("Invalid undo data for password restore.");
+                     }
+                     userService.restorePreviousPassword(oldUser.getUserId(), oldUser.getPasswordHash(), performingUser);
+                } catch (Exception e) {
+                     throw new UndoOperationException("Cannot undo password change: " + e.getMessage());
                 }
             }
         } 
