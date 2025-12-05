@@ -9,6 +9,7 @@ import com.project.cms.service.UserService;
 import com.project.cms.ui.input.ConsolePrinter;
 import com.project.cms.ui.input.InputHandler;
 import com.project.cms.util.DateUtils;
+import com.project.cms.util.Validator;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -128,8 +129,67 @@ public class ManagerMenu {
     }
 
     private void updateUser() {
-        ConsolePrinter.info("Update User feature coming soon...");
-       }
+        ConsolePrinter.subTitle("Update User");
+        int id = InputHandler.readInt("Enter User ID to update");
+
+        try {
+            List<User> users = userService.getAllUsers();
+            User existing = users.stream().filter(u -> u.getUserId() == id).findFirst().orElse(null);
+            if (existing == null) {
+                ConsolePrinter.error("User not found with ID: " + id);
+                return;
+            }
+
+            ConsolePrinter.info("Updating user: " + existing.getUsername());
+            System.out.println("(Press Enter to keep current value)");
+
+            String username = InputHandler.readString("Username (" + existing.getUsername() + ")", false);
+            String password = InputHandler.readPassword("Password (leave empty to keep)");
+            String name = InputHandler.readString("First Name (" + existing.getName() + ")", false);
+            String surname = InputHandler.readString("Last Name (" + existing.getSurname() + ")", false);
+            String phone = InputHandler.readString("Phone (" + existing.getPhone() + ")", false);
+            String dob = InputHandler.readString("Birth Date (dd/MM/yyyy) (" + (existing.getBirthDate() != null ? DateUtils.dateToString(existing.getBirthDate()) : "") + ")", false);
+
+            // Role selection
+            System.out.println("Select Role: 1.Tester 2.Junior 3.Senior 4.Manager (current: " + existing.getRole() + ")");
+            int roleChoice = InputHandler.readInt("Role (0 to keep current)", 0, 4);
+
+            // create a copy and apply changes
+            User updated = new User(existing);
+
+            if (!username.isEmpty()) updated.setUsername(username);
+            if (!password.isEmpty()) updated.setPlainPassword(password);
+            if (!name.isEmpty()) updated.setName(name);
+            if (!surname.isEmpty()) updated.setSurname(surname);
+            if (!phone.isEmpty()) {
+                Validator.validatePhone(phone);
+                updated.setPhone(phone);
+            }
+
+            if (!dob.isEmpty()) {
+                LocalDate date = DateUtils.stringToDate(dob);
+                if (date == null) {
+                    ConsolePrinter.error("Invalid date format. Update cancelled.");
+                    return;
+                }
+                updated.setBirthDate(date);
+            }
+
+            switch (roleChoice) {
+                case 1 -> updated.setRole(RoleType.TESTER);
+                case 2 -> updated.setRole(RoleType.JUNIOR_DEVELOPER);
+                case 3 -> updated.setRole(RoleType.SENIOR_DEVELOPER);
+                case 4 -> updated.setRole(RoleType.MANAGER);
+                default -> { /* keep current */ }
+            }
+
+            userService.updateUser(updated, user);
+            ConsolePrinter.success("User updated successfully: " + updated.getUsername());
+
+        } catch (Exception e) {
+            ConsolePrinter.error("Update failed: " + e.getMessage());
+        }
+    }
 
     private void deleteUser() {
         int id = InputHandler.readInt("Enter User ID to delete");

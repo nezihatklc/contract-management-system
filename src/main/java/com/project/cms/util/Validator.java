@@ -111,6 +111,10 @@ public class Validator {
 
         String p = phone.replaceAll("[\\s-]", "");
 
+        if (!p.matches("^\\+?[0-9]+$")) {
+            throw new ValidationException("Phone number cannot contain letters or special characters.");
+        }
+
         // +90 5xxxxxxxxx → 13 character
         if (p.startsWith("+90") && p.length() == 13 && p.charAt(3) == '5')
             return;
