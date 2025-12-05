@@ -10,7 +10,17 @@ import com.project.cms.ui.input.ConsolePrinter;
 import com.project.cms.ui.input.InputHandler;
 import com.project.cms.util.Validator;
 import java.util.List;
-
+/**
+ * Menu interface for the Senior Developer role.
+ * <p>
+ * Senior Developers have advanced permissions including:
+ * <ul>
+ * <li>All Junior capabilities (Read, Update, Undo, Password Change).</li>
+ * <li><b>Create:</b> Can add new contacts to the system.</li>
+ * <li><b>Delete:</b> Can remove existing contacts.</li>
+ * <li><b>Undo:</b> Can undo create, update, and delete operations.</li>
+ * </ul>
+ */
 public class SeniorDevMenu {
     
     private final User user;

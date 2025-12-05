@@ -12,7 +12,17 @@ import com.project.cms.util.DateUtils;
 import com.project.cms.util.Validator;
 import java.time.LocalDate;
 import java.util.List;
-
+/**
+ * Menu interface for the Manager role.
+ * <p>
+ * Managers have full administrative privileges, including:
+ * <ul>
+ * <li><b>Contact Operations:</b> Access to all Senior Developer capabilities via sub-menu.</li>
+ * <li><b>User Management:</b> Create, Read, Update, and Delete (CRUD) system users.</li>
+ * <li><b>Statistics:</b> View detailed system analytics and reports.</li>
+ * <li><b>Undo:</b> Can undo their own administrative actions.</li>
+ * </ul>
+ */
 public class ManagerMenu {
     
     private final User user;
@@ -20,7 +30,15 @@ public class ManagerMenu {
     private final UserService userService;
     private final StatisticsService statisticsService;
     private final UndoService undoService;
-   
+   /**
+     * Constructs a new ManagerMenu with all required services.
+     *
+     * @param user              The currently logged-in Manager.
+     * @param contactService    Service for contact operations.
+     * @param userService       Service for user management operations.
+     * @param undoService       Service for undo operations.
+     * @param statisticsService Service for generating system statistics.
+     */
     public ManagerMenu(User user, ContactService contactService, UserService userService, UndoService undoService , StatisticsService statisticsService) {
         this.user = user;
         this.contactService = contactService;
@@ -28,7 +46,10 @@ public class ManagerMenu {
         this.statisticsService = statisticsService;
         this.undoService = undoService;
     }
-
+/**
+     * Starts the Manager menu loop.
+     * Displays administrative options and processes user input until logout.
+     */
      public void start() {
         while (true) {
             ConsolePrinter.clearScreen();
@@ -53,8 +74,11 @@ public class ManagerMenu {
             InputHandler.WaitEnter();
         }
     }
-
-    // --- USER MANAGEMENT SUB-MENU ---
+// --- USER MANAGEMENT SUB-MENU ---
+    /**
+     * Handles the User Management sub-menu logic.
+     * Allows the Manager to list, add, update, or delete system users.
+     */
     private void handleUserManagement() {
         boolean back = false;
         while (!back) {
@@ -81,12 +105,18 @@ public class ManagerMenu {
             }
         }
     }
-
+/**
+     * Lists all registered users in the system.
+     */
     private void listUsers() {
         ConsolePrinter.subTitle("All System Users");
         List<User> users = userService.getAllUsers();
         ConsolePrinter.printUserList(users);
     }
+    /**
+     * Adds a new user to the system.
+     * Prompts for user details including role and performs validation.
+     */
 
     private void addUser() {
         try {
@@ -106,7 +136,7 @@ public class ManagerMenu {
                 else ConsolePrinter.error("Invalid date format. Skipped.");
             }
 
-            // Rol Seçimi
+            // Role selection
             System.out.println("Select Role: 1.Tester 2.Junior 3.Senior 4.Manager");
             int roleChoice = InputHandler.readInt("Role", 1, 4);
             switch (roleChoice) {
@@ -127,7 +157,10 @@ public class ManagerMenu {
             ConsolePrinter.error("Failed to add user: " + e.getMessage());
         }
     }
-
+/**
+     * Updates an existing user's information.
+     * Prompts for new values; empty inputs retain the existing data.
+     */
     private void updateUser() {
         ConsolePrinter.subTitle("Update User");
         int id = InputHandler.readInt("Enter User ID to update");
@@ -191,7 +224,9 @@ public class ManagerMenu {
             ConsolePrinter.error("Update failed: " + e.getMessage());
         }
     }
-
+/**
+     * Deletes an existing user from the system.
+     */
     private void deleteUser() {
         int id = InputHandler.readInt("Enter User ID to delete");
         try {
@@ -201,7 +236,9 @@ public class ManagerMenu {
             ConsolePrinter.error("Delete failed: " + e.getMessage());
         }
     }
-   
+   /**
+     * Displays the system statistics dashboard.
+     */
     private void viewStatistics() {
         try {
             statisticsService.showStatistics();
@@ -209,7 +246,9 @@ public class ManagerMenu {
             ConsolePrinter.error(e.getMessage());
         }
     }
-
+/**
+     * Allows the Manager to change their own password.
+     */
     private void changePassword() {
         ConsolePrinter.subTitle("Change Password");
         String oldPass = InputHandler.readPassword("Old Password");
@@ -222,7 +261,9 @@ public class ManagerMenu {
             ConsolePrinter.error("Failed to change password: " + e.getMessage());
         }
     }
-
+/**
+     * Reverts the last operation performed by the Manager.
+     */
     private void undoLastAction() {
         try {
             undoService.undo(user);

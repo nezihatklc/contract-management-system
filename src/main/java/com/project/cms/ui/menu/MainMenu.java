@@ -8,7 +8,13 @@ import com.project.cms.service.UndoService;
 import com.project.cms.service.UserService;
 import com.project.cms.ui.input.ConsolePrinter;
 import com.project.cms.ui.input.InputHandler;
-
+/**
+ * The main entry point for the application's UI.
+ * <p>
+ * This class handles the initial user login process and redirects the authenticated user
+ * to the appropriate role-specific menu (e.g., ManagerMenu, TesterMenu).
+ * It acts as the central hub for navigating through the application.
+ */
 public class MainMenu {
 
     private final UserService userService;
@@ -16,7 +22,14 @@ public class MainMenu {
     private final StatisticsService statisticsService;
     private final UndoService undoService;
 
-
+/**
+     * Constructs the MainMenu with all required services.
+     *
+     * @param userService       Service for user authentication and management.
+     * @param contactService    Service for contact operations.
+     * @param statisticsService Service for statistical data.
+     * @param undoService       Service for undo operations.
+     */
     public MainMenu(UserService userService,
                     ContactService contactService,
                     StatisticsService statisticsService, 
@@ -27,7 +40,12 @@ public class MainMenu {
         this.statisticsService = statisticsService;
         this.undoService = undoService;
     }
-
+/**
+     * Starts the main application loop.
+     * <p>
+     * Displays the login screen, accepts credentials, and attempts to authenticate the user.
+     * On successful login, it redirects to the role-specific menu.
+     */
     
     public void start() {
 
@@ -75,7 +93,11 @@ public class MainMenu {
             }
         }
     }
-
+/**
+     * Redirects the logged-in user to the menu corresponding to their role.
+     *
+     * @param user The authenticated user object.
+     */
     private void redirectToRoleMenu(User user) {
 
         RoleType role = user.getRole();

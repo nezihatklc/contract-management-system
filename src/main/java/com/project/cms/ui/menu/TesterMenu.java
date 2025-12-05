@@ -9,21 +9,40 @@ import com.project.cms.service.UserService;
 import com.project.cms.ui.input.ConsolePrinter;
 import com.project.cms.ui.input.InputHandler;
 import java.util.List;
-
+/**
+ * Menu interface for the Tester role.
+ * <p>
+ * Testers have restricted, read-only access to the system:
+ * <ul>
+ * <li><b>List:</b> Can view all contacts.</li>
+ * <li><b>Search:</b> Can search contacts using multiple criteria.</li>
+ * <li><b>Sort:</b> Can sort contacts by various fields.</li>
+ * <li><b>Restricted:</b> Cannot Add, Update, Delete contacts or perform Undo operations.</li>
+ * </ul>
+ */
 public class TesterMenu {
     
     private final User user;
     private final ContactService contactService;
     private final UserService userService;
     private final UndoService undoService;
-
+/**
+     * Constructs a new TesterMenu with required services.
+     *
+     * @param user           The currently logged-in Tester.
+     * @param contactService Service for handling read-only contact operations.
+     * @param userService    Service for handling user operations (password change only).
+     */
     public TesterMenu(User user, ContactService contactService, UserService userService, UndoService undoService) {
         this.user = user;
         this.contactService = contactService;
         this.userService = userService;
         this.undoService = undoService;
     }
-
+/**
+     * Starts the Tester menu loop.
+     * Displays available read-only options and processes user input until logout.
+     */
     public void start() {
         while (true) {
             ConsolePrinter.clearScreen();
@@ -53,14 +72,18 @@ public class TesterMenu {
             InputHandler.WaitEnter();
         }
     }
-
+/**
+     * Lists all contacts available in the system.
+     */
     private void listContacts() {
         ConsolePrinter.subTitle("All Contacts");
         
         List<Contact> contacts = contactService.getAllContacts();
         ConsolePrinter.printContactList(contacts);
     }
-
+/**
+     * Performs a multi-field search on contacts based on user input.
+     */
     private void searchContacts() {
         ConsolePrinter.subTitle("Search Contacts");
         SearchCriteria criteria = new SearchCriteria();
@@ -109,7 +132,9 @@ public class TesterMenu {
             ConsolePrinter.error("Search failed: " + e.getMessage());
         }
     }
-
+/**
+     * Sorts contacts based on a selected field and order (Ascending/Descending).
+     */
     private void sortContacts() {
         ConsolePrinter.subTitle("Sort Contacts");
         
@@ -159,7 +184,9 @@ public class TesterMenu {
             ConsolePrinter.error("Undo failed: " + e.getMessage());
         }
     }
-
+/**
+     * Allows the Tester to change their own password.
+     */
     private void changePassword() {
         ConsolePrinter.subTitle("Change Password");
         
