@@ -344,6 +344,156 @@ public class AsciiAnimator {
     }
 
     // =========================================
+    //       6) DISCO DANCE
+    // =========================================
+    private static void playDiscoDance() {
+        String RESET = "\u001B[0m";
+        String CYAN = "\u001B[96m";
+        String MAGENTA = "\u001B[95m";
+        String YELLOW = "\u001B[93m";
+        String RED = "\u001B[91m";
+        String GREEN = "\u001B[92m";
+
+        // Disco ball frames
+        String[] ballFrames = {
+                "   🪩   ",
+                " ✨🪩✨ ",
+                "   🪩   ",
+                " ✨🪩✨ "
+        };
+
+        // Stickman dance frames
+        String[] dancerFrames = {
+                "   \\o/   \n    |    \n   / \\   ",
+                "    o    \n   /|\\   \n   / \\   ",
+                "   \\o    \n    |\\   \n   / \\   ",
+                "    o/   \n   /|    \n   / \\   "
+        };
+        
+        int numDancers = 5; // Parti kalabalığı
+
+        for (int i = 0; i < 40; i++) {
+            clearScreen();
+
+            // --- 1) Disco Balls Satırı (Yan Yana) ---
+            StringBuilder sbBalls = new StringBuilder();
+            String ballColor = (i % 2 == 0) ? CYAN : MAGENTA;
+            String currentBall = ballFrames[i % ballFrames.length];
+            
+            sbBalls.append("     "); // Sol boşluk
+            for(int k=0; k < numDancers; k++) {
+                 // Her topun yanına biraz boşluk
+                 sbBalls.append(ballColor).append(currentBall).append("   ").append(RESET);
+            }
+            System.out.println(sbBalls.toString());
+            System.out.println(); 
+
+            // --- 2) Dansçılar Satırları (Yan Yana) ---
+            // Seçili dans karesini satır satır bölüyoruz
+            String currentDancerFrame = dancerFrames[i % dancerFrames.length];
+            String[] lines = currentDancerFrame.split("\n");
+            
+            // Dansçının her satırı için (kafa, gövde, bacak vs.)
+            for (String linePart : lines) {
+                StringBuilder sbDancerLine = new StringBuilder();
+                sbDancerLine.append("     "); // Sol boşluk
+                
+                for (int k = 0; k < numDancers; k++) {
+                    // Renkleri çeşitlendir
+                    String dColor;
+                    if (k % 3 == 0) dColor = YELLOW;
+                    else if (k % 3 == 1) dColor = GREEN;
+                    else dColor = RED;
+                    
+                    // Dansçılar arası boşluk
+                    sbDancerLine.append(dColor).append(linePart).append("   ").append(RESET);
+                }
+                System.out.println(sbDancerLine.toString());
+            }
+
+            sleep(150);
+        }
+
+        System.out.println();
+    }
+
+    // =========================================
+    //          7) FULL PARTY BALLOON ANIMATION
+    // =========================================
+    private static void playFullPartyBalloons() {
+
+        String[] COLORS = {
+                ConsoleColors.CYAN_BOLD,
+                ConsoleColors.PURPLE_BOLD,
+                ConsoleColors.YELLOW_BRIGHT,
+                ConsoleColors.RED_BOLD,
+                ConsoleColors.GREEN_BOLD
+        };
+
+        String[] balloonLines = {
+                " 🎈  🎈  🎈    🎈  🎈     🎈   🎈    🎈  🎈   🎈  🎈 ",
+                "   🎈    🎈  🎈     🎈    🎈   🎈    🎈   🎈     🎈 ",
+                " 🎈    🎈     🎈   🎈    🎈     🎈   🎈   🎈    🎈 ",
+                "    🎈  🎈    🎈    🎈    🎈   🎈     🎈   🎈     ",
+                " 🎈   🎈    🎈     🎈    🎈    🎈     🎈   🎈   🎈 ",
+                "   🎈     🎈   🎈      🎈   🎈     🎈   🎈     🎈  ",
+                " 🎈    🎈    🎈    🎈     🎈    🎈    🎈     🎈   ",
+                "     🎈    🎈     🎈    🎈     🎈    🎈     🎈     ",
+                " 🎈    🎈    🎈     🎈     🎈      🎈     🎈    🎈 ",
+                "   🎈   🎈     🎈    🎈      🎈     🎈    🎈       ",
+                " 🎈   🎈    🎈     🎈    🎈     🎈   🎈    🎈   🎈 ",
+                "     🎈     🎈    🎈     🎈     🎈    🎈      🎈   ",
+                " 🎈     🎈    🎈      🎈     🎈     🎈    🎈   🎈  ",
+                "   🎈     🎈    🎈    🎈      🎈    🎈     🎈      "
+        };
+
+
+        // Yukarı doğru kayan balon animasyonu
+        for (int frame = 0; frame < 25; frame++) {
+            clearScreen();
+
+            int offset = frame % balloonLines.length;
+
+            // Konfeti karışması
+            StringBuilder confetti = new StringBuilder();
+            for (int i = 0; i < 80; i++) {
+                double r = Math.random();
+                if (r < 0.04) confetti.append(ConsoleColors.YELLOW_BRIGHT).append("✦").append(ConsoleColors.RESET);
+                else if (r < 0.08) confetti.append(ConsoleColors.RED_BOLD).append("✶").append(ConsoleColors.RESET);
+                else confetti.append(" ");
+            }
+            System.out.println(confetti);
+
+            // Balon çizimi
+            for (int i = 0; i < balloonLines.length; i++) {
+                String color = COLORS[(frame + i) % COLORS.length];
+                System.out.println(color + balloonLines[(i + offset) % balloonLines.length] + ConsoleColors.RESET);
+            }
+
+            sleep(180);
+        }
+
+        // BALON PATLAMA EFEKTİ
+        for (int i = 0; i < 6; i++) {
+            clearScreen();
+            StringBuilder explosion = new StringBuilder();
+
+            for (int j = 0; j < 80; j++) {
+                double r = Math.random();
+                if (r < 0.05) explosion.append(ConsoleColors.RED_BOLD).append("💥").append(ConsoleColors.RESET);
+                else if (r < 0.10) explosion.append(ConsoleColors.YELLOW_BRIGHT).append("*").append(ConsoleColors.RESET);
+                else if (r < 0.15) explosion.append(ConsoleColors.PURPLE_BOLD).append("✧").append(ConsoleColors.RESET);
+                else explosion.append(" ");
+            }
+
+            System.out.println(explosion);
+            sleep(150);
+        }
+
+        System.out.println();
+    }
+
+    // =========================================
     //            WELCOME / GOODBYE
     // =========================================
     public static void showWelcome() {
@@ -363,6 +513,10 @@ public class AsciiAnimator {
         slideInGroupBox(WELCOME_ASCII, 6, 90);
 
         sleep(1500);
+
+        // 6) Disco Dance
+        playDiscoDance();
+        sleep(500);
     }
 
     public static void showGoodbye() {
@@ -374,6 +528,9 @@ public class AsciiAnimator {
         slideInGroupBox(GOODBYE_ASCII, 5, 90);
 
         sleep(1500);
+
+        // 7) Full Party Balloons
+        playFullPartyBalloons();
     }
 
    
