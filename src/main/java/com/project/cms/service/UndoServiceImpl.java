@@ -11,13 +11,28 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
+/**
+ * Implementation of the UndoService.
+ * <p>
+ * Stores undo actions for each user and performs the undo operations.
+ * Undo is supported for contact create/update/delete and
+ * user create/update/delete/password-change operations.
+ *
+ * @author Simay
+ */
+
 public class UndoServiceImpl implements UndoService {
 
     private final Map<Integer, Stack<UndoAction>> undoStacks = new HashMap<>();
-
     private final ContactService contactService;
     private final UserService userService;
 
+
+    /**
+     * 
+     * @param contactService - the contact service used for contact undo operations
+     * @param userService - the user service used for user undo operations
+     */
     public UndoServiceImpl(ContactService contactService, UserService userService) {
         this.contactService = contactService;
         this.userService = userService;
