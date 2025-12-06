@@ -14,6 +14,7 @@ import com.project.cms.ui.input.InputHandler;
  * This class handles the initial user login process and redirects the authenticated user
  * to the appropriate role-specific menu (e.g., ManagerMenu, TesterMenu).
  * It acts as the central hub for navigating through the application.
+ * @author Zeynep Sıla Şimşek
  */
 public class MainMenu {
 

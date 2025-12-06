@@ -13,7 +13,32 @@ import com.project.cms.ui.animation.AsciiAnimator;
 import com.project.cms.ui.input.ConsolePrinter;
 import com.project.cms.ui.menu.MainMenu;
 
+/**
+ * Initializes and starts the entire CMS application.
+ * <p>
+ * This class is responsible for creating DAO and Service layer instances,
+ * wiring dependencies, preparing undo-support connections, launching
+ * startup animations, and finally opening the main menu. It also ensures
+ * that a goodbye animation is shown even if an unexpected error occurs.
+ * </p>
+ * @author Zeynep Sıla Şimşek
+ */
+
 public class ApplicationInitializer {
+
+    /**
+     * Starts the CMS application by setting up all required components.
+     * <p>
+     * Responsibilities:
+     * <ul>
+     *     <li>Creates DAO instances required by services.</li>
+     *     <li>Initializes UserService, ContactService, UndoService, and StatisticsService.</li>
+     *     <li>Links UndoService back into UserService and ContactService.</li>
+     *     <li>Displays welcome animation and launches the main menu UI.</li>
+     *     <li>Always plays the goodbye animation on exit.</li>
+     * </ul>
+     * </p>
+     */
 
     public static void start() {
         try {

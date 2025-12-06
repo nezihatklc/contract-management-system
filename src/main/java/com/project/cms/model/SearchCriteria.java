@@ -8,6 +8,7 @@ import java.util.Map;
  * This class allows the collection of multiple field-value pairs to construct
  * flexible search queries (e.g., search by Name AND City). It supports the
  * project requirement for both single-field and multi-field searches.
+ * @author Zeynep Sıla Şimşek
  */
 public class SearchCriteria {
 // Stores field names and their corresponding search values
