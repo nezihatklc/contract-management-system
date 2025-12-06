@@ -1,8 +1,17 @@
 package com.project.cms.util;
 
-
+/**
+ * Provides ANSI color codes for styling console output.
+ * Used by the UI layer to display colored or highlighted text.
+ *
+ * Example:
+ * System.out.println(ConsoleColors.RED + "Error" + ConsoleColors.RESET);
+ *
+ * @author Zeynep Sıla Şimşek
+ */
 
 public class ConsoleColors {
+    /** Reset all styles. */
 
     public static final String RESET = "\u001B[0m";
 
