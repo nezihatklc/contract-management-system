@@ -2,19 +2,43 @@ package com.project.cms.ui.animation;
 
 import com.project.cms.util.ConsoleColors;
 
+/**
+ * Utility class responsible for rendering all ASCII-based animations used in the CMS project.
+ * <p>
+ * This class provides multiple visual effects such as space warp transitions, glitch reveal,
+ * particle explosions, glowing color shifts, sliding group banners, disco animations, and
+ * balloon party effects. It is used primarily during application startup and shutdown.
+ */
+
 public class AsciiAnimator {
 
     // =========================================
     //              UTIL
     // =========================================
+
+    /**
+     * Pauses the animation for the given number of milliseconds.
+     *
+     * @param ms time to sleep in milliseconds
+     */
     private static void sleep(int ms) {
         try { Thread.sleep(ms); } catch (Exception ignored) {}
     }
+
+    /**
+     * Clears the console screen using ANSI escape codes.
+     */
 
     private static void clearScreen() {
         System.out.print("\033[H\033[2J");
         System.out.flush();
     }
+
+     /**
+     * Returns a randomly selected star character decorated with a random color.
+     *
+     * @return a colored ASCII star
+     */
 
     private static String randomStarChar() {
         String[] stars = {"✦", "✧", "✸", "✺", "✶", "✷", "✹", "✵"};
@@ -28,6 +52,13 @@ public class AsciiAnimator {
         return color + s + ConsoleColors.RESET;
     }
 
+     /**
+     * Generates a horizontal line of random star characters.
+     *
+     * @param count number of stars in the line
+     * @return full star line as string
+     */
+
     private static String starLine(int count) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < count; i++) {
@@ -36,15 +67,19 @@ public class AsciiAnimator {
         return sb.toString();
     }
 
+    /**
+     * Prints a star-filled background of the specified number of lines.
+     *
+     * @param lines number of starfield lines
+     */
+
     private static void drawStarfield(int lines) {
         for (int i = 0; i < lines; i++) {
             System.out.println(starLine(80));
         }
     }
 
-    // =========================================
-    //              SABİT METİNLER
-    // =========================================
+    
     private static final String WELCOME_ASCII = """
  __        __   _
  \\ \\      / /__| | ___ ___  _ __ ___   ___
@@ -80,6 +115,13 @@ public class AsciiAnimator {
     // =========================================
     //       1) SPACE WARP / TUNNEL INTRO
     // =========================================
+
+     /**
+     * Plays a tunnel-like “space warp” intro animation, then reveals the given ASCII text.
+     *
+     * @param ascii  ASCII logo to display
+     * @param frames number of animation frames
+     */
     private static void spaceWarpIntro(String ascii, int frames) {
         String[] logoLines = ascii.split("\n");
         int logoHeight = logoLines.length;
@@ -97,11 +139,11 @@ public class AsciiAnimator {
                 int dy = Math.abs(y - height / 2);
                 int offset = (int) (dy * (1.5 + 6 * t));
 
-                // sol taraf
+                
                 for (int i = 0; i < center - offset; i++) sb.append(" ");
                 sb.append(ConsoleColors.RED_BOLD).append("/").append(ConsoleColors.RESET);
                 
-                // orta boşluk
+                
                 int gap = offset * 2;
                 for (int i = 0; i < gap; i++) {
                     if (Math.random() < 0.06) sb.append(randomStarChar());
@@ -112,7 +154,7 @@ public class AsciiAnimator {
                 sb.append("\n");
             }
 
-            // ortalarda logo gölgesi
+            
             if (t > 0.45) {
                 sb.append("\n");
                 for (String line : logoLines) {
@@ -130,6 +172,14 @@ public class AsciiAnimator {
     // =========================================
     //       2) GLITCH REVEAL
     // =========================================
+
+    /**
+     * Displays a glitchy reveal effect over the given ASCII text. Characters shake, distort,
+     * and randomly transform before stabilizing.
+     *
+     * @param ascii  ASCII text to reveal
+     * @param frames number of glitch animation frames
+     */
     private static void glitchReveal(String ascii, int frames) {
         String[] lines = ascii.split("\n");
 
@@ -138,7 +188,7 @@ public class AsciiAnimator {
             drawStarfield(2);
             System.out.println();
 
-            double intensity = 1.0 - (double) f / (frames - 1); // başlangıçta çok glitch, sonra azalıyor
+            double intensity = 1.0 - (double) f / (frames - 1); 
 
             for (String line : lines) {
                 StringBuilder sb = new StringBuilder();
@@ -158,7 +208,7 @@ public class AsciiAnimator {
                     }
 
                     if (Math.random() < 0.15 * intensity) {
-                        // random glitch karakter
+                        
                         char noise;
                         double r = Math.random();
                         if (r < 0.33) noise = '#';
@@ -185,8 +235,17 @@ public class AsciiAnimator {
     // =========================================
     //       3) PARTICLE EXPLOSION + ASSEMBLE
     // =========================================
+
+     /**
+     * Plays a particle explosion animation followed by a falling-letter assembly
+     * of the ASCII logo.
+     *
+     * @param ascii           ASCII text to assemble
+     * @param explosionFrames number of explosion frames
+     * @param delayMs         delay between explosion frames
+     */
     private static void particleExplosion(String ascii, int explosionFrames, int delayMs) {
-        // 3.1 – patlama gürültüsü
+        
         for (int f = 0; f < explosionFrames; f++) {
             clearScreen();
             for (int y = 0; y < 18; y++) {
@@ -208,9 +267,16 @@ public class AsciiAnimator {
             sleep(delayMs);
         }
 
-        // 3.2 – harf düşerek toplanma
         letterDropAssemble(ascii, 35);
     }
+
+     /**
+     * Performs the falling-letter assembly effect, where each character drops
+     * from above and settles into its final ASCII logo position.
+     *
+     * @param ascii ASCII text to assemble
+     * @param speed animation speed in milliseconds
+     */
 
     private static void letterDropAssemble(String ascii, int speed) {
         String[] L = ascii.split("\n");
@@ -249,7 +315,7 @@ public class AsciiAnimator {
 
                     if (y[r][c] < r) {
                         y[r][c] += v[r][c];
-                        v[r][c] += 0.04;          // gravity
+                        v[r][c] += 0.04;          
                         out.append(" ");
                         done = false;
                     } else {
@@ -278,6 +344,15 @@ public class AsciiAnimator {
     // =========================================
     //       4) COLOR SHIFT GLOW
     // =========================================
+
+    /**
+     * Applies a multi-stage glowing color transition (red → bold red → yellow)
+     * on the ASCII text, creating a smooth lighting effect.
+     *
+     * @param ascii   ASCII text to animate
+     * @param steps   number of glow steps
+     * @param delayMs delay between frames
+     */
     private static void colorShiftGlow(String ascii, int steps, int delayMs) {
         String[] lines = ascii.split("\n");
 
@@ -301,7 +376,7 @@ public class AsciiAnimator {
             sleep(delayMs);
         }
 
-        // final beyaz parıltı
+        
         clearScreen();
         drawStarfield(2);
         System.out.println();
@@ -316,6 +391,15 @@ public class AsciiAnimator {
     // =========================================
     //       5) GROUP BOX SLIDE-IN
     // =========================================
+
+    /**
+     * Slides in the group title and team members box from top to bottom while
+     * keeping the ASCII logo visible above.
+     *
+     * @param ascii   ASCII logo
+     * @param steps   number of animation steps
+     * @param delayMs delay between frames
+     */
     private static void slideInGroupBox(String ascii, int steps, int delayMs) {
         String[] logoLines = ascii.split("\n");
         String[] boxLines = (GROUP_TITLE + "\n" + NAMES_BOX).split("\n");
@@ -325,7 +409,6 @@ public class AsciiAnimator {
             drawStarfield(1);
             System.out.println();
 
-            // logo sabit
             for (String line : logoLines) {
                 System.out.println(ConsoleColors.YELLOW_BRIGHT + line + ConsoleColors.RESET);
             }
@@ -346,6 +429,11 @@ public class AsciiAnimator {
     // =========================================
     //       6) DISCO DANCE
     // =========================================
+
+    /**
+     * Shows a dancing stickman animation accompanied by a moving disco ball
+     * and multiple dancers with alternating colors.
+     */
     private static void playDiscoDance() {
         String RESET = "\u001B[0m";
         String CYAN = "\u001B[96m";
@@ -370,33 +458,32 @@ public class AsciiAnimator {
                 "    o/   \n   /|    \n   / \\   "
         };
         
-        int numDancers = 5; // Parti kalabalığı
+        int numDancers = 5; 
 
         for (int i = 0; i < 40; i++) {
             clearScreen();
 
-            // --- 1) Disco Balls Satırı (Yan Yana) ---
+            
             StringBuilder sbBalls = new StringBuilder();
             String ballColor = (i % 2 == 0) ? CYAN : MAGENTA;
             String currentBall = ballFrames[i % ballFrames.length];
             
-            sbBalls.append("     "); // Sol boşluk
+            sbBalls.append("     "); 
             for(int k=0; k < numDancers; k++) {
-                 // Her topun yanına biraz boşluk
+                 
                  sbBalls.append(ballColor).append(currentBall).append("   ").append(RESET);
             }
             System.out.println(sbBalls.toString());
             System.out.println(); 
 
-            // --- 2) Dansçılar Satırları (Yan Yana) ---
-            // Seçili dans karesini satır satır bölüyoruz
+            
             String currentDancerFrame = dancerFrames[i % dancerFrames.length];
             String[] lines = currentDancerFrame.split("\n");
             
-            // Dansçının her satırı için (kafa, gövde, bacak vs.)
+           
             for (String linePart : lines) {
                 StringBuilder sbDancerLine = new StringBuilder();
-                sbDancerLine.append("     "); // Sol boşluk
+                sbDancerLine.append("     "); 
                 
                 for (int k = 0; k < numDancers; k++) {
                     // Renkleri çeşitlendir
@@ -405,7 +492,6 @@ public class AsciiAnimator {
                     else if (k % 3 == 1) dColor = GREEN;
                     else dColor = RED;
                     
-                    // Dansçılar arası boşluk
                     sbDancerLine.append(dColor).append(linePart).append("   ").append(RESET);
                 }
                 System.out.println(sbDancerLine.toString());
@@ -420,6 +506,11 @@ public class AsciiAnimator {
     // =========================================
     //          7) FULL PARTY BALLOON ANIMATION
     // =========================================
+
+    /**
+     * Plays a decorative balloon animation with floating patterns, confetti
+     * movement, and a final explosion effect.
+     */
     private static void playFullPartyBalloons() {
 
         String[] COLORS = {
@@ -448,13 +539,12 @@ public class AsciiAnimator {
         };
 
 
-        // Yukarı doğru kayan balon animasyonu
         for (int frame = 0; frame < 25; frame++) {
             clearScreen();
 
             int offset = frame % balloonLines.length;
 
-            // Konfeti karışması
+            
             StringBuilder confetti = new StringBuilder();
             for (int i = 0; i < 80; i++) {
                 double r = Math.random();
@@ -464,7 +554,7 @@ public class AsciiAnimator {
             }
             System.out.println(confetti);
 
-            // Balon çizimi
+            
             for (int i = 0; i < balloonLines.length; i++) {
                 String color = COLORS[(frame + i) % COLORS.length];
                 System.out.println(color + balloonLines[(i + offset) % balloonLines.length] + ConsoleColors.RESET);
@@ -473,7 +563,7 @@ public class AsciiAnimator {
             sleep(180);
         }
 
-        // BALON PATLAMA EFEKTİ
+        
         for (int i = 0; i < 6; i++) {
             clearScreen();
             StringBuilder explosion = new StringBuilder();
@@ -496,31 +586,48 @@ public class AsciiAnimator {
     // =========================================
     //            WELCOME / GOODBYE
     // =========================================
+
+     /**
+     * Plays the full welcome animation sequence, including:
+     * <ul>
+     *     <li>Space warp intro</li>
+     *     <li>Glitch reveal</li>
+     *     <li>Particle explosion and logo assembly</li>
+     *     <li>Color glow transition</li>
+     *     <li>Group banner slide-in</li>
+     *     <li>Disco dance finale</li>
+     * </ul>
+     */
     public static void showWelcome() {
-        // 1) uzay tüneli
+        
         spaceWarpIntro(WELCOME_ASCII, 18);
 
-        // 2) glitch reveal
         glitchReveal(WELCOME_ASCII, 10);
 
-        // 3) patlama + toplanma
+        
         particleExplosion(WELCOME_ASCII, 9, 45);
 
-        // 4) renk geçişli glow
+        
         colorShiftGlow(WELCOME_ASCII, 6, 80);
 
-        // 5) group 18 + isim kutusu aşağıdan kayarak gelsin
+        
         slideInGroupBox(WELCOME_ASCII, 6, 90);
 
         sleep(1500);
 
-        // 6) Disco Dance
+        
         playDiscoDance();
         sleep(500);
     }
 
+    /**
+     * Plays the goodbye animation sequence shown when the program exits.
+     * Includes a space warp transition, glitch effects, explosion,
+     * glowing fade-out, group box slide-in, and a celebratory balloon show.
+     */
+
     public static void showGoodbye() {
-        // goodbye için biraz daha kısa ama aynı tarz epik animasyon
+        
         spaceWarpIntro(GOODBYE_ASCII, 14);
         glitchReveal(GOODBYE_ASCII, 8);
         particleExplosion(GOODBYE_ASCII, 7, 45);
@@ -529,7 +636,7 @@ public class AsciiAnimator {
 
         sleep(1500);
 
-        // 7) Full Party Balloons
+       
         playFullPartyBalloons();
     }
 
