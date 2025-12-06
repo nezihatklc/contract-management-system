@@ -14,16 +14,31 @@ import com.project.cms.util.PasswordHasher;
 import com.project.cms.util.Validator;
 import java.util.List;
 
+/**
+ * Implementation of UserService.
+ * Handles login, password changes, user management, and undo support.
+ *
+ * @author Simay
+ */
+
 public class UserServiceImpl implements UserService {
 
     private final UserDao userDao = new UserDaoImpl();
 
     private  UndoService undoService;
 
+    /**
+     * Creates a new UserServiceImpl instance.
+     * @param undoService - the undo service used for recording undo actions
+     */
     public UserServiceImpl(UndoService undoService) {
         this.undoService = undoService;
     }
 
+    /**
+     * For replacing the undo service.
+     * @param undoService - the undo service to use
+     */
     public void setUndoService(UndoService undoService) {
         this.undoService = undoService;
     }    
