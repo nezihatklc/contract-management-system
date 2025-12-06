@@ -6,6 +6,14 @@ import com.project.cms.util.ConsoleColors;
 import com.project.cms.util.ConsoleTable;
 import java.util.List;
 
+/**
+ * Shows contact statistics using tables and simple animations.
+ * Uses ContactDao to fetch data and display results.
+ *
+ * @author Simay
+ */
+
+
 public class StatisticsService {
 
     private final ContactDao contactDao;
@@ -13,6 +21,10 @@ public class StatisticsService {
     // dynamic label width for alignment
     private int maxLabelWidth = 0;
 
+   /**
+    * Creates a new StatisticsService.
+    * @param contactDao - the DAO used to fetch statistics
+    */
     public StatisticsService(ContactDao contactDao) {
         this.contactDao = contactDao;
     }
@@ -20,6 +32,13 @@ public class StatisticsService {
     // ----------------------------------------------------------------------
     // Loading Animation (header)
     // ----------------------------------------------------------------------
+
+    /**
+     *  Plays a simple animated loading effect
+     * @param text 
+     * @param cycles
+     * @param delay
+     */
     private void playLoadingAnimation(String text, int cycles, int delay) {
         for (int i = 0; i < cycles; i++) {
             System.out.print("\r" + ConsoleColors.YELLOW_BOLD + text + ".".repeat(i % 4) + ConsoleColors.RESET);
@@ -35,6 +54,10 @@ public class StatisticsService {
     // ----------------------------------------------------------------------
     // Update dynamic label width
     // ----------------------------------------------------------------------
+    /**
+     * Updates the maximum label width for aligning bar chart labels.
+     * @param data
+     */
     private void updateMaxLabelWidth(List<String[]> data) {
         maxLabelWidth = 0;
         for (String[] row : data) {
@@ -45,6 +68,13 @@ public class StatisticsService {
     // ----------------------------------------------------------------------
     // Animated bar chart
     // ----------------------------------------------------------------------
+    /**
+     * Prints an animated horizontal bar for charts.
+     * @param label
+     * @param value
+     * @param maxValue
+     * @param color
+     */
     private void printAnimatedBar(String label, int value, int maxValue, String color) {
 
         int totalLength = (int) ((value / (double) maxValue) * 40);
@@ -75,6 +105,11 @@ public class StatisticsService {
     // ----------------------------------------------------------------------
     // Console Table Section
     // ----------------------------------------------------------------------
+    /**
+     * Prints a formatted table section using ConsoleTable.
+     * @param title
+     * @param data
+     */
     private void printTableSection(String title, List<String[]> data) {
 
         System.out.println(ConsoleColors.PURPLE_BOLD_BRIGHT + "\n" + title + ConsoleColors.RESET);
@@ -92,8 +127,12 @@ public class StatisticsService {
     // ----------------------------------------------------------------------
     // MAIN DASHBOARD
     // ----------------------------------------------------------------------
+    
+    /**
+     * Shows the full statistics dashboard.
+     * Includes general info, charts, tables, and animations.
+     */
     public void showStatistics() {
-
         // Loading animation before stats
         playLoadingAnimation("Loading statistics", 25, 80);
 
