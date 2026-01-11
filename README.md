@@ -1,4 +1,4 @@
-# 📇 Contract Management System
+# 📇 Contact Management System
 
 A **console-based, role-driven contact management system** built with **Java** and **MySQL**.  
 The application demonstrates clean object-oriented design, secure authentication, and database-backed data management with role-based access control.
@@ -7,7 +7,7 @@ The application demonstrates clean object-oriented design, secure authentication
 
 ## 📖 Overview
 
-The **Contract Management System** is designed to manage users and contacts through a structured, permission-based workflow.  
+The **Contact Management System** is designed to manage users and contacts through a structured, permission-based workflow.  
 Each authenticated user interacts with the system according to their assigned role, ensuring controlled access to operations.
 
 The application:
@@ -118,18 +118,25 @@ This allows flexible querying without exposing database complexity to the user.
 ```bash
 git clone https://github.com/nezihatklc/contract-management-system.git
 cd contract-management-system
-````
+```
 
 ### Database Setup
 
-1. Import the provided `.sql` file into MySQL
-2. Update database credentials if necessary
+1. Import the provided `.sql` file into MySQL:
+   `src/main/resource/Group18.sql`
+2. Update database credentials if necessary in:
+   `src/main/java/com/project/cms/util/DbConnection.java`
 
 ### Compile & Run
 
+Prerequisites: Java Development Kit (JDK) installed.
+
 ```bash
-javac *.java
-java Main
+# Compile the project (from the project root)
+javac -d bin -sourcepath src/main/java src/main/java/com/project/cms/app/App.java
+
+# Run the application
+java -cp bin com.project.cms.app.App
 ```
 
 ---
@@ -139,15 +146,20 @@ java Main
 ```
 contract-management-system
 ├── src/
-│   ├── model/
-│   ├── service/
-│   ├── repository/
-│   ├── util/
-│   └── Main.java
-├── database/
-│   └── schema.sql
-├── README.md
-└── .gitignore
+│   └── main/
+│       ├── java/
+│       │   └── com/project/cms/
+│       │       ├── app/       # Application entry point
+│       │       ├── dao/       # Data Access Objects (Database Layer)
+│       │       ├── model/     # Domain Models (User, Contact)
+│       │       ├── service/   # Business Logic Services
+│       │       ├── ui/        # Console UI & Menus
+│       │       └── util/      # Utilities (DB Connection, Hashing)
+│       └── resource/
+│           └── Group18.sql    # Database Schema
+├── bin/                       # Compiled Bytecode
+├── doc/                       # JavaDoc Documentation
+└── README.md
 ```
 
 ---
@@ -180,4 +192,3 @@ contract-management-system
 * Nezihat Kılıç
 
 ---
-
